@@ -4,17 +4,20 @@ extends CanvasLayer
 
 signal restart_pressed
 signal workshop_pressed
+signal menu_pressed
 
 @onready var _title: Label = $Box/Title
 @onready var _stats: Label = $Box/Stats
 @onready var _shells: Label = $Box/Shells
 @onready var _restart: Button = $Box/Restart
 @onready var _workshop: Button = $Box/Workshop
+@onready var _to_menu: Button = $Box/ToMenu
 
 
 func _ready() -> void:
 	_restart.pressed.connect(restart_pressed.emit)
 	_workshop.pressed.connect(workshop_pressed.emit)
+	_to_menu.pressed.connect(menu_pressed.emit)
 
 
 func show_result(won: bool, level: int, survived: float, shells: int) -> void:

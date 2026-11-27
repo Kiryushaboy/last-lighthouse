@@ -13,6 +13,8 @@ signal killed(at: Vector2, xp_value: int)
 @export var armor := 0  ## вычитается из каждого попадания, но урон не меньше 1
 @export var color := Color(0.9, 0.35, 0.3)
 @export var radius := 16.0
+@export var texture: Texture2D  ## картинка врага; без неё рисуется круг
+@export var texture_scale := 1.0
 
 var target: Node2D
 var beam: Beam
@@ -57,18 +59,31 @@ func hit(amount: int) -> void:
 	if in_beam():
 		dmg *= Beam.DAMAGE_FACTOR
 	hp -= dmg
+	Sound.play("hit", -10.0)
 	_flash = 0.08
 	if hp <= 0:
 		_dead = true
+		Sound.play("death", -6.0)
 		killed.emit(global_position, xp_value)
 		queue_free()
 
 
 func _draw() -> void:
-	_draw_body(Color.WHITE if _flash > 0.0 else color)
+	if texture:
+		_draw_texture()
+	else:
+		_draw_body(Color.WHITE if _flash > 0.0 else color)
 	if in_beam():
 		draw_arc(Vector2.ZERO, radius + 4.0, 0.0, TAU, 24, Color(1, 0.9, 0.5, 0.8), 2.0)
 
 
 func _draw_body(c: Color) -> void:
 	draw_circle(Vector2.ZERO, radius, c)
+
+
+## Картинка по центру; при попадании поверх неё короткая белая вспышка.
+func _draw_texture() -> void:
+	var size := texture.get_size() * 0.5 * texture_scale
+	draw_texture_rect(texture, Rect2(-size / 2.0, size), false)
+	if _flash > 0.0:
+		draw_circle(Vector2.ZERO, radius, Color(1, 1, 1, 0.6))

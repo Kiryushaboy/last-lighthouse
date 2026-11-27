@@ -8,11 +8,14 @@ var damage := 1
 var pierce := 0
 var lifetime := 1.0
 
+const TEXTURE := preload("res://art/sprites/harpoon.svg")
+
 var _spent := false
 
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
+	rotation = direction.angle()
 
 
 func _physics_process(delta: float) -> void:
@@ -34,4 +37,5 @@ func _on_area_entered(area: Area2D) -> void:
 
 
 func _draw() -> void:
-	draw_circle(Vector2.ZERO, 6.0, Color(0.6, 0.9, 1.0))
+	var size := TEXTURE.get_size() * 0.5
+	draw_texture_rect(TEXTURE, Rect2(-size / 2.0, size), false)

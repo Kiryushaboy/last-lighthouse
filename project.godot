@@ -7,7 +7,7 @@ config_version=5
 
 config/name="Последний маяк"
 config/description="Арена на выживание: продержитесь 5 минут до рассвета."
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/menu.tscn"
 config/icon="res://icon.svg"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
@@ -15,6 +15,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 
 Settings="*res://scripts/settings.gd"
 SaveData="*res://scripts/save_data.gd"
+Sound="*res://scripts/sound.gd"
 
 [display]
 
