@@ -23,9 +23,9 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_area_entered(area: Area2D) -> void:
-	if _spent or not area is Crab:
+	if _spent or not area is Enemy:
 		return
-	(area as Crab).hit(damage)
+	(area as Enemy).hit(damage)
 	if pierce > 0:
 		pierce -= 1
 	else:
