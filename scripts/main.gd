@@ -18,6 +18,7 @@ const SPAWN_DISTANCE := 800.0  ## чуть дальше края экрана
 @onready var joystick: TouchJoystick = $Controls/Joystick
 @onready var upgrade_menu: UpgradeMenu = $UpgradeMenu
 @onready var end_screen: EndScreen = $EndScreen
+@onready var pause_menu: PauseMenu = $PauseMenu
 
 var time_left := RUN_TIME
 var level := 1
@@ -42,6 +43,10 @@ func _ready() -> void:
 	spawn_timer.timeout.connect(_on_spawn_timer)
 	upgrade_menu.chosen.connect(_on_upgrade_chosen)
 	end_screen.restart_pressed.connect(_restart)
+	hud.pause_pressed.connect(_open_pause)
+	pause_menu.open_requested.connect(_open_pause)
+	pause_menu.resume_pressed.connect(_close_pause)
+	pause_menu.restart_pressed.connect(_restart)
 
 	hud.set_health(player.hp, player.max_hp)
 	hud.set_xp(xp, xp_to_next, level)
@@ -59,12 +64,24 @@ func _process(delta: float) -> void:
 
 
 func _notification(what: int) -> void:
-	# Свернули приложение на телефоне: останавливаем время.
-	# Полноценное меню паузы сделаем позже.
-	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and not _over and not upgrade_menu.visible:
-		get_tree().paused = true
-	elif what == NOTIFICATION_APPLICATION_FOCUS_IN and not _over and not upgrade_menu.visible:
-		get_tree().paused = false
+	# Свернули приложение на телефоне: открываем паузу, чтобы не погибнуть без нас.
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		_open_pause()
+
+
+# --- Пауза -------------------------------------------------------------
+
+func _open_pause() -> void:
+	if _over or upgrade_menu.visible or pause_menu.visible:
+		return
+	joystick.reset()
+	get_tree().paused = true
+	pause_menu.show()
+
+
+func _close_pause() -> void:
+	pause_menu.hide()
+	get_tree().paused = false
 
 
 # --- Враги -------------------------------------------------------------

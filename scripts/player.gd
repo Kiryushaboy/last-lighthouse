@@ -9,7 +9,7 @@ signal health_changed(hp: int, max_hp: int)
 const BULLET_SCENE := preload("res://scenes/bullet.tscn")
 
 # Характеристики. Улучшения меняют их во время забега.
-@export var speed := 300.0
+@export var speed := 260.0
 @export var max_hp := 5
 @export var fire_interval := 0.45 ## секунд между выстрелами
 @export var damage := 1
@@ -37,9 +37,7 @@ func _physics_process(delta: float) -> void:
 	var dir := joystick_vector
 	if dir == Vector2.ZERO:
 		dir = _keyboard_vector()
-	# Разгон и торможение за доли секунды: отзывчиво, но без рывков.
-	var target_velocity := dir.limit_length(1.0) * speed
-	velocity = velocity.move_toward(target_velocity, speed * 12.0 * delta)
+	velocity = dir.limit_length(1.0) * speed
 	move_and_slide()
 	position = position.clamp(arena_rect.position, arena_rect.end)
 
