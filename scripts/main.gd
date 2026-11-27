@@ -47,6 +47,7 @@ var boss: Boss
 
 func _ready() -> void:
 	Fx.reset()
+	Sound.play_music("battle")
 	player.arena_rect = ARENA
 	player.bullet_container = $World/Bullets
 	camera.limit_left = int(ARENA.position.x)
@@ -163,6 +164,7 @@ func _spawn_boss() -> void:
 	var pos := player.global_position + Vector2.UP * SPAWN_DISTANCE * 0.8
 	boss.global_position = pos.clamp(ARENA.position, ARENA.end)
 	hud.show_boss(boss.hp, boss.max_hp)
+	Sound.play_music("boss")
 	Sound.play("warning")
 
 

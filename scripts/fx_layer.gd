@@ -75,8 +75,10 @@ func _draw() -> void:
 		var k: float = p.life / p.max
 		var s: float = p.size * (0.4 + 0.6 * k)
 		var c: Color = p.color
-		draw_texture_rect(GLOW, Rect2(p.p - Vector2(s, s) * 2.0, Vector2(s, s) * 4.0), false, Color(c, 0.5 * k))
-		draw_circle(p.p, s * 0.5, Color(c.lightened(0.5), k))
+		draw_texture_rect(GLOW, Rect2(p.p - Vector2(s, s) * 2.0, Vector2(s, s) * 4.0), false, Color(c, 0.45 * k))
+		# Искра-росчерк вдоль полёта: выглядит как брызги света, а не точки.
+		var tail: Vector2 = p.v * 0.035
+		draw_line(p.p - tail, p.p, Color(c.lightened(0.6), k), s * 0.6)
 	for r in _rings:
 		var k: float = 1.0 - r.life / r.max
 		var ease_k := 1.0 - pow(1.0 - k, 3.0)

@@ -15,6 +15,7 @@ const GAME_SCENE := "res://scenes/main.tscn"
 
 func _ready() -> void:
 	get_tree().paused = false
+	Sound.play_music("menu")
 	_play.pressed.connect(func(): get_tree().change_scene_to_file(GAME_SCENE))
 	_workshop_btn.pressed.connect(func(): _ui.hide(); _workshop.open())
 	_workshop.closed.connect(_show_menu)

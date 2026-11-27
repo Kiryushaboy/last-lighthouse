@@ -3,7 +3,6 @@ extends Node2D
 
 const RECT := Rect2(-900, -900, 1800, 1800)
 const ISLAND_RADIUS := 300.0
-const LIGHTHOUSE := preload("res://art/sprites/lighthouse.svg")
 const GLOW := preload("res://art/fx/glow.tres")
 const WATER_SHADER := preload("res://shaders/water.gdshader")
 
@@ -38,19 +37,27 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	var t := Time.get_ticks_msec() / 1000.0
 	# Мокрый песок, сухой песок, лёгкая тень по краю.
-	draw_circle(Vector2.ZERO, ISLAND_RADIUS, Color(0.55, 0.47, 0.34))
-	draw_circle(Vector2.ZERO, ISLAND_RADIUS - 14.0, Color(0.78, 0.67, 0.47))
-	draw_circle(Vector2(0, -10), ISLAND_RADIUS - 40.0, Color(0.85, 0.75, 0.54))
+	# Ночной остров: тёмный камень с бирюзовой светящейся кромкой.
+	draw_circle(Vector2.ZERO, ISLAND_RADIUS, Color(0.09, 0.11, 0.17))
+	draw_circle(Vector2(0, -8), ISLAND_RADIUS - 24.0, Color(0.12, 0.14, 0.21))
+	var rim := 0.75 + 0.25 * sin(t * 1.5)
+	draw_arc(Vector2.ZERO, ISLAND_RADIUS, 0.0, TAU, 96, Color(0.3, 0.9, 1.0, 0.85 * rim), 4.0)
+	draw_arc(Vector2.ZERO, ISLAND_RADIUS + 6.0, 0.0, TAU, 96, Color(0.3, 0.9, 1.0, 0.2 * rim), 10.0)
+	# Тёплый свет маяка на камнях вокруг башни.
+	draw_texture_rect(GLOW, Rect2(-ISLAND_RADIUS, -ISLAND_RADIUS, ISLAND_RADIUS * 2, ISLAND_RADIUS * 2), false, Color(1.0, 0.75, 0.4, 0.12))
 	for r in _rocks:
-		draw_circle(Vector2(r.x + 4, r.y + 6), r.z, Color(0, 0, 0, 0.18))
-		draw_circle(Vector2(r.x, r.y), r.z, Color(0.42, 0.42, 0.46))
-		draw_circle(Vector2(r.x - r.z * 0.3, r.y - r.z * 0.3), r.z * 0.45, Color(0.55, 0.55, 0.6))
+		draw_circle(Vector2(r.x, r.y), r.z, Color(0.17, 0.2, 0.29))
+		draw_arc(Vector2(r.x, r.y), r.z, PI * 1.0, PI * 1.6, 10, Color(0.4, 0.85, 1.0, 0.35), 2.0)
 	# Тень маяка и сам маяк.
-	var size := LIGHTHOUSE.get_size() * 0.5
-	draw_circle(Vector2(10, 14), size.x * 0.48, Color(0, 0, 0, 0.25))
-	draw_texture_rect(LIGHTHOUSE, Rect2(-size / 2.0, size), false)
-	# Фонарь маяка мягко пульсирует.
+	# Маяк сверху: тёмная башня, золотые неоновые кольца, яркий фонарь.
 	var pulse := 0.8 + 0.2 * sin(t * 2.0)
+	draw_circle(Vector2.ZERO, 54.0, Color(0.06, 0.07, 0.11))
+	draw_arc(Vector2.ZERO, 54.0, 0.0, TAU, 48, Color(1.0, 0.78, 0.4, 0.9), 4.0)
+	draw_arc(Vector2.ZERO, 40.0, 0.0, TAU, 48, Color(1.0, 0.78, 0.4, 0.35), 2.0)
+	for i in 8:
+		var a := TAU * i / 8.0 + t * 0.2
+		draw_line(Vector2.RIGHT.rotated(a) * 40.0, Vector2.RIGHT.rotated(a) * 54.0, Color(1.0, 0.78, 0.4, 0.5), 2.0)
+	draw_circle(Vector2.ZERO, 22.0 * pulse, Color(1.0, 0.92, 0.7))
 	var g := 160.0 * pulse
 	draw_texture_rect(GLOW, Rect2(-g, -g, g * 2.0, g * 2.0), false, Color(1.0, 0.85, 0.45, 0.35 * pulse))
 	# Граница арены: светящиеся буйки вместо линии.

@@ -25,11 +25,20 @@ var _dead := false
 var _squash := 0.0  ## 0..1, сплющивание после попадания
 var _age := 0.0  ## для появления из воды
 var _knock := Vector2.ZERO  ## отбрасывание от попадания
+var _body: Node2D  ## узел, на котором рисуется сама картинка (с неоновым материалом)
+
+const GLOW := preload("res://art/fx/glow.tres")
+const NEON := preload("res://shaders/neon_outline.gdshader")
+static var _materials := {}
 
 
 func _ready() -> void:
 	hp = max_hp
 	add_to_group("enemies")
+	_body = Node2D.new()
+	_body.material = neon_material(color, 3.0 if radius > 60.0 else 6.0)
+	_body.draw.connect(_draw_texture if texture else func(): pass)
+	add_child(_body)
 	Fx.ring.call_deferred(global_position, Color(0.7, 0.9, 1.0, 0.7), radius * 2.2, 0.5, 4.0)  # всплеск
 
 
@@ -48,6 +57,7 @@ func _physics_process(delta: float) -> void:
 
 	if _flash > 0.0:
 		_flash -= delta
+	_update_body()
 	queue_redraw()
 
 
@@ -89,21 +99,33 @@ func _on_death_fx() -> void:
 	Fx.shake(0.08)
 
 
-func _draw() -> void:
-	# Появление: вырастает из воды за 0.25 с с лёгким перехлёстом.
+## Материал с неоновым контуром цвета врага. Один на цвет — общий для всех таких врагов.
+static func neon_material(c: Color, width := 3.0) -> ShaderMaterial:
+	var key := "%s_%s" % [c.to_html(), width]
+	if not _materials.has(key):
+		var m := ShaderMaterial.new()
+		m.shader = NEON
+		m.set_shader_parameter("glow_color", c.lightened(0.35))
+		m.set_shader_parameter("width", width)
+		_materials[key] = m
+	return _materials[key]
+
+
+func _update_body() -> void:
+	# Появление: вырастает из воды за 0.25 с с лёгким перехлёстом; при попадании сплющивается.
 	var grow := clampf(_age / 0.25, 0.0, 1.0)
 	var pop := 1.0 + sin(grow * PI) * 0.15
 	var sq := 1.0 + _squash * 0.25
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2(sq, 1.0 / sq) * grow * pop)
-	# Тень под врагом даёт объём.
-	draw_set_transform(Vector2(radius * 0.25, radius * 0.4), 0.0, Vector2(1.0, 0.6) * grow)
-	draw_circle(Vector2.ZERO, radius * 0.95, Color(0, 0, 0, 0.28))
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2(sq, 1.0 / sq) * grow * pop)
-	if texture:
-		_draw_texture()
-	else:
+	_body.scale = Vector2(sq, 1.0 / sq) * grow * pop
+	_body.queue_redraw()
+
+
+func _draw() -> void:
+	# Ореол цвета врага под ним — в неоновой ночи враги видны издалека.
+	var g := radius * 2.6
+	draw_texture_rect(GLOW, Rect2(-g, -g, g * 2.0, g * 2.0), false, Color(color, 0.4))
+	if not texture:
 		_draw_body(Color.WHITE if _flash > 0.0 else color)
-	draw_set_transform(Vector2.ZERO)
 	if in_beam():
 		var t := Time.get_ticks_msec() / 200.0
 		draw_arc(Vector2.ZERO, radius + 5.0 + sin(t) * 1.5, 0.0, TAU, 28, Color(1, 0.9, 0.5, 0.7), 2.5)
@@ -113,8 +135,8 @@ func _draw_body(c: Color) -> void:
 	draw_circle(Vector2.ZERO, radius, c)
 
 
-## Картинка по центру; при попадании картинка на миг вспыхивает белым.
+## Картинка рисуется на дочернем узле _body с неоновым контуром; при попадании вспыхивает белым.
 func _draw_texture() -> void:
 	var size := texture.get_size() * 0.5 * texture_scale
 	var mod := Color(4, 4, 4) if _flash > 0.0 else Color.WHITE
-	draw_texture_rect(texture, Rect2(-size / 2.0, size), false, mod)
+	_body.draw_texture_rect(texture, Rect2(-size / 2.0, size), false, mod)

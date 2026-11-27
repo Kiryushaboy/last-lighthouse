@@ -34,6 +34,7 @@ theme_override_constants/separation = 28
 alignment = 1
 
 [node name="Title" type="Label" parent="Card/Box"]
+theme_type_variation = &"TitleLabel"
 layout_mode = 2
 theme_override_font_sizes/font_size = 52
 text = "Пауза"

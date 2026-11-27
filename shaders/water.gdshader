@@ -4,9 +4,9 @@ shader_type canvas_item;
 
 uniform vec2 arena_half = vec2(900.0, 900.0);
 uniform float island_radius = 300.0;
-uniform vec4 deep : source_color = vec4(0.02, 0.07, 0.14, 1.0);
-uniform vec4 shallow : source_color = vec4(0.05, 0.22, 0.32, 1.0);
-uniform vec4 foam : source_color = vec4(0.75, 0.92, 1.0, 1.0);
+uniform vec4 deep : source_color = vec4(0.0, 0.02, 0.06, 1.0);
+uniform vec4 shallow : source_color = vec4(0.02, 0.09, 0.17, 1.0);
+uniform vec4 foam : source_color = vec4(0.3, 0.9, 1.0, 1.0);
 
 varying vec2 world;
 
@@ -30,7 +30,7 @@ void fragment() {
 	// Рябь и блики: тонкие светлые гребни.
 	float r = ripple(world, t);
 	float crest = smoothstep(0.55, 0.95, r);
-	col += foam.rgb * crest * (0.05 + 0.10 * near_island);
+	col += foam.rgb * crest * (0.06 + 0.12 * near_island);
 	col *= 0.92 + 0.08 * r;
 	// Пена прибоя вокруг острова, дышит.
 	float surf = island_radius + 18.0 + sin(t * 1.4 + atan(world.y, world.x) * 6.0) * 6.0;

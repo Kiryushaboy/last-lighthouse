@@ -98,7 +98,7 @@ func _draw_texture() -> void:
 	var tint := Color(0.8, 0.6, 1.0) if _barrage_warning >= 0.0 else Color.WHITE
 	if _flash > 0.0:
 		tint = Color(2.5, 2.5, 2.5)
-	draw_texture_rect(texture, Rect2(-size / 2.0, size), false, tint)
+	_body.draw_texture_rect(texture, Rect2(-size / 2.0, size), false, tint)
 
 
 func _draw_body(c: Color) -> void:
