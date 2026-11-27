@@ -20,6 +20,7 @@ func _ready() -> void:
 	_workshop_btn.pressed.connect(func(): _ui.hide(); _workshop.open())
 	_workshop.closed.connect(_show_menu)
 	_settings_btn.pressed.connect(func(): _ui.hide(); _settings.show())
+	$UI/Root/Box/Quit.pressed.connect(func(): get_tree().quit())
 	_settings_back.pressed.connect(func(): _settings.hide(); _show_menu())
 	_settings.visibility_changed.connect(_on_settings_visibility)
 	_show_menu()
