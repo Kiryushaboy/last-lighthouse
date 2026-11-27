@@ -10,6 +10,7 @@ const MENU_SCENE := "res://scenes/menu.tscn"
 
 
 func _ready() -> void:
+	SafeArea.apply_margin($Margin)
 	get_tree().paused = false
 	Sound.play_music("menu")
 	$Margin/Box/Back.pressed.connect(_back)
@@ -21,6 +22,7 @@ func _ready() -> void:
 		if focus == null and Nights.is_unlocked(i) and SaveData.stars_of(i) < 3:
 			focus = card
 	_list.add_child(_make_endless_card())
+	UiFx.touch_scroll(_scroll)
 	UiFx.stagger(_list.get_children(), 0.04, 0.05)
 	if focus:
 		await get_tree().process_frame
@@ -140,5 +142,7 @@ func _label(t: String, font_size: int, color: Color) -> Label:
 
 
 func _start(i: int) -> void:
+	if not UiFx.tap_ok(_scroll):
+		return
 	SaveData.current_night = i
 	get_tree().change_scene_to_file(GAME_SCENE)

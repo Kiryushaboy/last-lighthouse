@@ -10,6 +10,11 @@ config/description="Арена на выживание: продержитесь
 run/main_scene="res://scenes/menu.tscn"
 config/icon="res://icon.svg"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/bg_color=Color(0.0275, 0.1255, 0.2275, 1)
+boot_splash/show_image=true
+boot_splash/image="res://art/splash.png"
+boot_splash/stretch_mode=4
+boot_splash/minimum_display_time=1200
 
 [autoload]
 

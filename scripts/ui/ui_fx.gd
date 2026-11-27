@@ -56,3 +56,38 @@ static func _scale_to(c: Control, s: float, t: float) -> void:
 		return
 	var tw := c.create_tween().set_ignore_time_scale()
 	tw.tween_property(c, "scale", Vector2(s, s), t).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+## Прокрутка пальцем: тянуть список можно, даже начав с кнопки, а кнопка
+## не срабатывает, если палец её тащил. Вызывать после каждой пересборки списка.
+static func touch_scroll(scroll: ScrollContainer) -> void:
+	scroll.scroll_deadzone = 18
+	if not scroll.scroll_started.is_connected(_on_scroll_started.bind(scroll)):
+		scroll.scroll_started.connect(_on_scroll_started.bind(scroll))
+		scroll.scroll_ended.connect(_on_scroll_ended.bind(scroll))
+	_pass_mouse(scroll)
+
+
+## true, если нажатие настоящее, а не конец прокрутки.
+static func tap_ok(scroll: ScrollContainer) -> bool:
+	if scroll.get_meta("dragging", false):
+		return false
+	var ended: int = scroll.get_meta("ended_at", -1000)
+	return Time.get_ticks_msec() - ended > 150
+
+
+static func _on_scroll_started(scroll: ScrollContainer) -> void:
+	scroll.set_meta("dragging", true)
+
+
+static func _on_scroll_ended(scroll: ScrollContainer) -> void:
+	scroll.set_meta("dragging", false)
+	scroll.set_meta("ended_at", Time.get_ticks_msec())
+
+
+## Элементы внутри списка пропускают касание дальше, к прокрутке.
+static func _pass_mouse(node: Node) -> void:
+	for child in node.get_children():
+		if child is Control and (child as Control).mouse_filter == Control.MOUSE_FILTER_STOP:
+			(child as Control).mouse_filter = Control.MOUSE_FILTER_PASS
+		_pass_mouse(child)

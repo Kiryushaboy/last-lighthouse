@@ -54,9 +54,10 @@ text = "Ракушки: 0"
 horizontal_alignment = 1
 
 [node name="Scroll" type="ScrollContainer" parent="Card/Box"]
-custom_minimum_size = Vector2(0, 760)
+custom_minimum_size = Vector2(0, 700)
 layout_mode = 2
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
 
 [node name="Rows" type="VBoxContainer" parent="Card/Box/Scroll"]
 layout_mode = 2
