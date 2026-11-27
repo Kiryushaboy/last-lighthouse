@@ -8,7 +8,7 @@ signal health_changed(hp: int, max_hp: int)
 
 const GLOW := preload("res://art/fx/glow.tres")
 const BULLET_SCENE := preload("res://scenes/bullet.tscn")
-const TEXTURE := preload("res://art/sprites/player.svg")
+var texture: Texture2D = preload("res://art/sprites/player.svg")  ## рисунок героя, задаёт Heroes.apply
 
 # Характеристики. Улучшения меняют их во время забега.
 @export var speed := 260.0
@@ -164,8 +164,9 @@ func _shoot_at(target: Node2D) -> void:
 	_aim_hold = 0.5
 	var spread := deg_to_rad(12.0)
 	for i in projectiles:
-		# Несколько снарядов расходятся веером вокруг направления на цель.
-		var offset := (i - (projectiles - 1) / 2.0) * spread
+		# Первый гарпун всегда точно в цель, остальные по очереди слева и справа от него.
+		var side := 1.0 if i % 2 == 1 else -1.0
+		var offset := side * ((i + 1) / 2) * spread
 		var bullet := BULLET_SCENE.instantiate() as Bullet
 		bullet.direction = base_dir.rotated(offset)
 		bullet.damage = damage * (2 if randf() < crit_chance else 1)
@@ -243,9 +244,14 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, 40.0, Color(0.4, 0.9, 1.0, 0.1))
 		draw_arc(Vector2.ZERO, 40.0 + sin(t * 4.0) * 1.5, 0.0, TAU, 40, Color(0.5, 0.95, 1.0, 0.8), 3.0)
 	elif _shield_recharge > 0.0:
-		# Щит заряжается: тонкая дуга показывает прогресс.
+		# Щит заряжается: тёмная дорожка и яркая толстая дуга прогресса, ближе к концу пульсирует.
 		var k := 1.0 - _shield_timer / _shield_recharge
-		draw_arc(Vector2.ZERO, 40.0, -PI / 2.0, -PI / 2.0 + TAU * k, 40, Color(0.5, 0.95, 1.0, 0.3), 2.0)
+		var t2 := Time.get_ticks_msec() / 1000.0
+		var a := 0.85 if k < 0.8 else 0.7 + 0.3 * sin(t2 * 12.0)
+		draw_arc(Vector2.ZERO, 46.0, 0.0, TAU, 48, Color(0.0, 0.0, 0.0, 0.45), 8.0)
+		draw_arc(Vector2.ZERO, 46.0, 0.0, TAU, 48, Color(0.5, 0.95, 1.0, 0.15), 6.0)
+		draw_arc(Vector2.ZERO, 46.0, -PI / 2.0, -PI / 2.0 + TAU * k, 48, Color(0.5, 0.95, 1.0, a), 6.0)
+		draw_circle(Vector2.UP.rotated(TAU * k) * 46.0, 5.0, Color(0.8, 1.0, 1.0, a))
 	var moving := velocity.length() > 10.0
 	var bob := absf(sin(_walk)) * 4.0 if moving else 0.0
 	var sq := 1.0 + _recoil * 0.08
@@ -258,5 +264,5 @@ func _draw() -> void:
 ## Сам смотритель — на дочернем узле с золотым неоновым контуром. Мигает, пока неуязвим.
 func _draw_sprite() -> void:
 	var blink := _invulnerable > 0.0 and int(_invulnerable * 20.0) % 2 == 0
-	var size := TEXTURE.get_size() * 0.6
-	_body.draw_texture_rect(TEXTURE, Rect2(-size / 2.0, size), false, Color(tint, 0.35 if blink else 1.0))
+	var size := texture.get_size() * 0.6
+	_body.draw_texture_rect(texture, Rect2(-size / 2.0, size), false, Color(tint, 0.35 if blink else 1.0))

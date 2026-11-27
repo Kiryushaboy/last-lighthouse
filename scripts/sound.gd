@@ -42,6 +42,8 @@ func _ready() -> void:
 	Settings.changed.connect(_apply_settings)
 	# Щелчок и пружинка на любой кнопке в игре, без подключения в каждом меню.
 	get_tree().node_added.connect(_on_node_added)
+	# Первая сцена (меню) попадает в дерево раньше, чем этот _ready: её кнопки подключаем вручную.
+	_hook_existing.call_deferred(get_tree().root)
 
 
 func play(sound_name: String, volume_db := 0.0) -> void:
@@ -90,7 +92,14 @@ func _apply_settings() -> void:
 		_music.stop()
 
 
+func _hook_existing(node: Node) -> void:
+	_on_node_added(node)
+	for child in node.get_children():
+		_hook_existing(child)
+
+
 func _on_node_added(node: Node) -> void:
-	if node is BaseButton:
+	if node is BaseButton and not node.has_meta("sound_hooked"):
+		node.set_meta("sound_hooked", true)
 		(node as BaseButton).pressed.connect(play.bind("click", -6.0))
 		UiFx.add_press_feedback(node as BaseButton)

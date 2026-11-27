@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Фонарщица сверху, смотрит вправо: плащ с капюшоном, длинная коса, шест с огненным фонарём. -->
+  <defs>
+    <linearGradient id="cloak" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff8a3d"/>
+      <stop offset="1" stop-color="#a8381a"/>
+    </linearGradient>
+    <radialGradient id="flame" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff3c0"/>
+      <stop offset="0.35" stop-color="#ffb347"/>
+      <stop offset="0.7" stop-color="#ff5a1f" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#ff3a10" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- коса за спиной -->
+  <path d="M38 64 Q22 70 14 88" stroke="#6b3a1e" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <circle cx="14" cy="90" r="5" fill="#ffcf4a"/>
+  <!-- шест с фонарём -->
+  <rect x="62" y="72" width="46" height="5" rx="2" fill="#5a3b22"/>
+  <circle cx="110" cy="74" r="18" fill="url(#flame)"/>
+  <rect x="104" y="68" width="12" height="12" rx="3" fill="#ffe08a" stroke="#7a3a1a" stroke-width="2"/>
+  <!-- плащ, расширяется книзу -->
+  <path d="M54 22 Q86 30 82 64 Q86 98 54 106 Q22 98 26 64 Q22 30 54 22 Z" fill="url(#cloak)"/>
+  <path d="M54 22 Q86 30 82 64 Q86 98 54 106 Q22 98 26 64 Q22 30 54 22 Z" fill="none" stroke="#ffc07a" stroke-width="3" opacity="0.85"/>
+  <!-- руки -->
+  <circle cx="72" cy="76" r="7" fill="#f2c9a0"/>
+  <circle cx="70" cy="48" r="7" fill="#f2c9a0"/>
+  <!-- капюшон и лицо под ним -->
+  <circle cx="54" cy="64" r="17" fill="#c4481f"/>
+  <path d="M60 52 Q74 64 60 76 Z" fill="#f2c9a0"/>
+  <path d="M44 54 a14 14 0 0 1 12 -6" stroke="#ffd9a8" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.9"/>
+</svg>

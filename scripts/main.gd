@@ -225,6 +225,7 @@ func _update_events() -> void:
 func _count_hits(hp: int, _max_hp: int) -> void:
 	if hp < _last_hp:
 		hits_taken += 1
+		_update_task()
 	_last_hp = hp
 
 
@@ -241,7 +242,7 @@ func _update_task() -> void:
 		var b := int(SaveData.best_time)
 		hud.set_record("Рекорд: %d:%02d · врагов %d" % [b / 60, b % 60, SaveData.best_kills], kills)
 		return
-	hud.set_task(Nights.task_text(night.task), _task_progress(), night.task[1])
+	hud.set_star_tasks(hits_taken, Nights.MAX_HITS_FOR_STAR, Nights.task_text(night.task), _task_progress(), night.task[1])
 
 
 func _on_spawn_timer() -> void:
@@ -289,6 +290,31 @@ func _spawn_boss() -> void:
 	hud.show_boss(boss.hp, boss.max_hp)
 	Sound.play_music("boss")
 	Sound.play("warning")
+	_boss_intro()
+
+
+## Появление босса: игра замирает, камера летит к спруту, надпись, затем камера возвращается.
+func _boss_intro() -> void:
+	joystick.reset()
+	get_tree().paused = true
+	Settings.vibrate(350, 0.9)
+	Fx.flash(Color(0.5, 0.2, 0.8, 0.45), 0.6)
+	hud.show_boss_banner("Спрут!", "Поднимается из глубин")
+	var to_boss := boss.global_position - player.global_position
+	var tw := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tw.tween_property(camera, "offset", to_boss, 0.7).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	tw.parallel().tween_property(camera, "zoom", Vector2(1.25, 1.25), 0.7).set_trans(Tween.TRANS_CUBIC)
+	tw.tween_callback(Fx.ring.bind(boss.global_position, Color(0.7, 0.45, 1.0), 220.0, 0.6, 10.0))
+	tw.tween_callback(Sound.play.bind("slam"))
+	tw.tween_interval(1.3)
+	tw.tween_property(camera, "offset", Vector2.ZERO, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	tw.parallel().tween_property(camera, "zoom", Vector2.ONE, 0.5).set_trans(Tween.TRANS_CUBIC)
+	tw.tween_callback(_end_boss_intro)
+
+
+func _end_boss_intro() -> void:
+	if not _over and not upgrade_menu.visible and not pause_menu.visible:
+		get_tree().paused = false
 
 
 func _on_boss_killed(_at: Vector2, _xp: int) -> void:
@@ -383,6 +409,7 @@ func _offer_upgrade() -> void:
 	joystick.reset()
 	get_tree().paused = true
 	Sound.play("levelup")
+	Settings.vibrate(30, 0.4)
 	Fx.flash(Color(1, 0.85, 0.4, 0.5), 0.5)
 	Fx.ring(player.global_position, Color(1, 0.85, 0.4), 260.0, 0.6, 10.0)
 	Fx.burst(player.global_position, Color(1, 0.85, 0.4), 24, 380.0, 6.0)

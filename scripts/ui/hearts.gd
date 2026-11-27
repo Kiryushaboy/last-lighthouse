@@ -1,6 +1,6 @@
 class_name Hearts
 extends Control
-## Жизни сердечками. Потерянное сердце лопается, оставшиеся бьются, когда жизней мало.
+## Жизни: сердце и число. При ударе сердце вздрагивает, при малом запасе колотится.
 
 var hp := 5
 var max_hp := 5
@@ -24,24 +24,29 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	# Все сердца в один ряд; если их много, они становятся мельче.
-	var step := minf(40.0, (size.x - 8.0) / maxf(max_hp, 1))
-	var r := step * 0.38
-	for i in max_hp:
-		var at := Vector2(r + 4 + i * step, 21.0)
-		var full := i < hp
-		var s := 1.0
-		if full and hp <= 2:
-			s = 1.0 + 0.12 * maxf(0.0, sin(_t * 8.0))  # сердце колотится
-		if i == _lost_index and _hit_t < 0.35:
-			var k := _hit_t / 0.35
-			s = 1.0 + k * 0.8
-			_heart(at, r * s, Color(1, 0.3, 0.35, 1.0 - k))
-			continue
-		_heart(at + Vector2(2, 3), r * s, Color(0, 0, 0, 0.4))
-		_heart(at, r * s, Color(1, 0.3, 0.38) if full else Color(1, 1, 1, 0.15))
-		if full:
-			_heart(at + Vector2(-r * 0.3, -r * 0.3), r * 0.3 * s, Color(1, 1, 1, 0.5))
+	# Одно сердце и рядом число оставшихся жизней.
+	var at := Vector2(24, 22)
+	var r := 20.0
+	var s := 1.0
+	if hp <= 2 and hp > 0:
+		s = 1.0 + 0.14 * maxf(0.0, sin(_t * 8.0))  # сердце колотится, когда жизней мало
+	if _hit_t < 0.35:
+		s *= 1.0 + 0.5 * (1.0 - _hit_t / 0.35)  # вздрагивает от удара
+	var col := Color(1, 0.3, 0.38) if hp > 0 else Color(1, 1, 1, 0.2)
+	if _hit_t < 0.2:
+		col = Color(1, 1, 1)
+	_heart(at + Vector2(2, 3), r * s, Color(0, 0, 0, 0.4))
+	_heart(at, r * s, col)
+	_heart(at + Vector2(-r * 0.3, -r * 0.3), r * 0.3 * s, Color(1, 1, 1, 0.5))
+	var font := get_theme_font("font", "Label")
+	var text := str(hp)
+	var fs := 38
+	var pos := Vector2(52, 36)
+	draw_string_outline(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, 8, Color(0, 0, 0, 0.6))
+	var num_col := Color(1, 1, 1) if hp > 2 else Color(1, 0.45, 0.45)
+	if _hit_t < 0.35:
+		num_col = num_col.lerp(Color(1, 0.3, 0.35), 1.0 - _hit_t / 0.35)
+	draw_string(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, num_col)
 
 
 func _heart(at: Vector2, r: float, col: Color) -> void:

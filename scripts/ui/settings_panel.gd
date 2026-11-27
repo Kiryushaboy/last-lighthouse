@@ -1,6 +1,6 @@
 class_name SettingsPanel
 extends VBoxContainer
-## Настройки: чувствительность, звук, музыка. Один и тот же блок в паузе и в главном меню.
+## Настройки: чувствительность, звук, музыка, вибрация. Один и тот же блок в паузе и в главном меню.
 
 const TRACK := preload("res://ui/slider_track.tres")
 const FILL := preload("res://ui/slider_fill.tres")
@@ -39,6 +39,7 @@ func _ready() -> void:
 
 	_sound = _toggle("Звуки", Settings.sound_on, Settings.set_sound)
 	_music = _toggle("Музыка", Settings.music_on, Settings.set_music)
+	_toggle("Вибрация", Settings.vibration_on, Settings.set_vibration)
 	_update_label()
 
 
