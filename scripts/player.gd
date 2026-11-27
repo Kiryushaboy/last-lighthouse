@@ -7,6 +7,7 @@ signal died
 signal health_changed(hp: int, max_hp: int)
 
 const BULLET_SCENE := preload("res://scenes/bullet.tscn")
+const TEXTURE := preload("res://art/sprites/player.svg")
 
 # Характеристики. Улучшения меняют их во время забега.
 @export var speed := 260.0
@@ -112,6 +113,6 @@ func _shoot_at(target: Node2D) -> void:
 func _draw() -> void:
 	# Серый прототип: герой — просто круг. Мигает, пока неуязвим.
 	var blink := _invulnerable > 0.0 and int(_invulnerable * 20.0) % 2 == 0
-	var color := Color(1.0, 0.85, 0.4, 0.35 if blink else 1.0)
-	draw_circle(Vector2.ZERO, 18.0, color)
+	var size := TEXTURE.get_size() * 0.5
+	draw_texture_rect(TEXTURE, Rect2(-size / 2.0, size), false, Color(1, 1, 1, 0.35 if blink else 1.0))
 	draw_arc(Vector2.ZERO, pickup_radius, 0.0, TAU, 48, Color(1, 1, 1, 0.06), 2.0)

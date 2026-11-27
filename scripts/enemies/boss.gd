@@ -83,6 +83,18 @@ func _update_slam(delta: float) -> void:
 		_slam_pos = target.global_position
 
 
+func _draw_texture() -> void:
+	var k := 1.0
+	if _barrage_warning >= 0.0:
+		k = 0.85 + 0.15 * sin(_barrage_warning * 30.0)
+	var size := texture.get_size() * 0.5 * texture_scale * k
+	var tint := Color(0.8, 0.6, 1.0) if _barrage_warning >= 0.0 else Color.WHITE
+	draw_texture_rect(texture, Rect2(-size / 2.0, size), false, tint)
+	if _flash > 0.0:
+		draw_circle(Vector2.ZERO, radius, Color(1, 1, 1, 0.4))
+	_draw_slam_warning()
+
+
 func _draw_body(c: Color) -> void:
 	# Во время подготовки залпа спрут сжимается и мигает.
 	var r := radius
@@ -96,7 +108,11 @@ func _draw_body(c: Color) -> void:
 	draw_circle(Vector2(-18, -10), 8.0, Color.BLACK)
 	draw_circle(Vector2(18, -10), 8.0, Color.BLACK)
 
-	# Предупреждение об ударе щупальцем рисуем в точке на полу.
+	_draw_slam_warning()
+
+
+## Предупреждение об ударе щупальцем рисуем в точке на полу.
+func _draw_slam_warning() -> void:
 	if _slam_warning >= 0.0:
 		var local := to_local(_slam_pos)
 		var k := _slam_warning / SLAM_WARN

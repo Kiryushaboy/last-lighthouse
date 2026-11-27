@@ -5,6 +5,9 @@ extends Node2D
 
 signal collected(value: int)
 
+const GEM := preload("res://art/sprites/gem.svg")
+const SHELL := preload("res://art/sprites/seashell.svg")
+
 var value := 1
 var is_shell := false  ## ракушка для мастерской вместо опыта
 var player: Player
@@ -26,11 +29,6 @@ func _physics_process(delta: float) -> void:
 
 
 func _draw() -> void:
-	if is_shell:
-		draw_circle(Vector2.ZERO, 10.0, Color(1.0, 0.75, 0.8))
-		draw_arc(Vector2.ZERO, 6.0, 0.0, TAU, 16, Color(0.8, 0.45, 0.55), 2.0)
-		return
-	draw_colored_polygon(
-		PackedVector2Array([Vector2(0, -9), Vector2(7, 0), Vector2(0, 9), Vector2(-7, 0)]),
-		Color(0.4, 1.0, 0.6)
-	)
+	var tex: Texture2D = SHELL if is_shell else GEM
+	var size := tex.get_size() * 0.5
+	draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
