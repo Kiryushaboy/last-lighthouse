@@ -40,6 +40,6 @@ func _process(_delta: float) -> bool:
 
 	if main._over:
 		print("КОНЕЦ: %s на %d с, уровень %d" % [
-			"победа" if main.time_left <= 0.0 else "поражение", int(t), main.level])
+			"победа" if main.won else "поражение", int(t), main.level])
 		return true
-	return frames > 60 * 320
+	return frames > 60 * 420

@@ -16,7 +16,7 @@ func _ready() -> void:
 
 func set_time(seconds_left: float) -> void:
 	var s := int(ceil(maxf(seconds_left, 0.0)))
-	_time.text = "%d:%02d" % [s / 60, s % 60]
+	_time.text = "%d:%02d" % [s / 60, s % 60] if s > 0 else "Рассвет близко"
 
 
 func set_health(hp: int, max_hp: int) -> void:
@@ -27,3 +27,15 @@ func set_xp(xp: int, xp_to_next: int, level: int) -> void:
 	_xp_bar.max_value = xp_to_next
 	_xp_bar.value = xp
 	_level.text = "Ур. %d" % level
+
+
+func show_boss(hp: int, max_hp: int) -> void:
+	$Root/BossLabel.show()
+	$Root/BossBar.show()
+	set_boss_health(hp, max_hp)
+
+
+func set_boss_health(hp: int, max_hp: int) -> void:
+	var bar: ProgressBar = $Root/BossBar
+	bar.max_value = max_hp
+	bar.value = hp
