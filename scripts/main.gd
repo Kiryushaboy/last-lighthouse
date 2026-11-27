@@ -36,6 +36,14 @@ var night: Dictionary
 var run_time := 300.0  ## сколько длится ночь
 var boss_at := -1.0  ## когда приходит спрут; -1 — в эту ночь его нет
 var time_left := 300.0
+var _regen_t := 0.0
+var elapsed := 0.0  ## сколько секунд идёт ночь
+var endless := false
+var _next_event := Nights.EVENT_EVERY
+var _event_end := -1.0
+var _event := ""
+var _fog_layer: CanvasLayer
+var _base_turn := 25.0
 var kills := 0
 var beam_kills := 0
 var hits_taken := 0
@@ -63,7 +71,11 @@ func _ready() -> void:
 	run_time = night.time
 	time_left = run_time
 	boss_at = night.get("boss_at", -1.0)
-	_apply_modifier(night.get("modifier", ""))
+	endless = night.get("endless", false)
+	if endless:
+		boss_at = Nights.BOSS_EVERY - 60.0
+	_base_turn = beam.turn_speed_deg
+	_set_modifier(night.get("modifier", ""), true)
 	player.arena_rect = ARENA
 	player.bullet_container = $World/Bullets
 	camera.limit_left = int(ARENA.position.x)
@@ -92,21 +104,30 @@ func _ready() -> void:
 	hud.set_xp(xp, xp_to_next, level)
 	hud.set_time(time_left)
 	_last_hp = player.hp
-	hud.show_night_banner("Ночь %d · %s" % [night_index + 1, night.title],
-			Nights.MODIFIER_TEXT.get(night.get("modifier", ""), ""), Nights.task_text(night.task))
+	if endless:
+		hud.show_night_banner("Бесконечная ночь", "Каждые 2 минуты событие, каждые 5 — спрут",
+				"продержитесь как можно дольше")
+	else:
+		hud.show_night_banner("Ночь %d · %s" % [night_index + 1, night.title],
+				Nights.MODIFIER_TEXT.get(night.get("modifier", ""), ""), Nights.task_text(night.task))
 	_update_task()
 
 
 func _process(delta: float) -> void:
 	if _over:
 		return
-	time_left = maxf(time_left - delta, 0.0)
-	hud.set_time(time_left)
+	elapsed += delta
+	_update_regen(delta)
+	time_left = maxf(run_time - elapsed, 0.0)
+	# В бесконечной ночи таймер идёт вперёд: сколько продержались.
+	hud.set_time(elapsed if endless else time_left, endless)
 	player.joystick_vector = joystick.vector
-	if boss_at >= 0.0 and boss == null and run_time - time_left >= boss_at:
+	if endless:
+		_update_events()
+	if boss_at >= 0.0 and boss == null and elapsed >= boss_at:
 		_spawn_boss()
 	# Без спрута рассвет наступает, когда кончилось время.
-	if boss_at < 0.0 and time_left <= 0.0:
+	if not endless and boss_at < 0.0 and time_left <= 0.0:
 		_finish(true)
 	# Рассвет наступает, только когда спрут побеждён. До тех пор таймер стоит на 0:00.
 
@@ -119,12 +140,17 @@ func _notification(what: int) -> void:
 
 ## Вечные бонусы из мастерской действуют с первой секунды забега.
 func _apply_workshop() -> void:
+	Heroes.apply(Heroes.current(), player)
 	player.max_hp += SaveData.level_of("hp")
 	player.hp = player.max_hp
 	player.crit_chance = 0.08 * SaveData.level_of("crit")
 	player.speed *= 1.0 + 0.05 * SaveData.level_of("speed")
+	player.pickup_radius *= 1.0 + 0.15 * SaveData.level_of("pull")
+	if SaveData.level_of("bubble") > 0:
+		upgrades_taken["shield"] = 1
+		Upgrades.apply("shield", player, 1)
 	for i in SaveData.level_of("start"):
-		var choice := Upgrades.pick_choices(upgrades_taken, 1)
+		var choice := Upgrades.pick_choices(upgrades_taken, 1, player.weapon)
 		if choice.is_empty():
 			break
 		upgrades_taken[choice[0].id] = upgrades_taken.get(choice[0].id, 0) + 1
@@ -149,31 +175,51 @@ func _close_pause() -> void:
 
 # --- Враги -------------------------------------------------------------
 
-## Особое условие ночи (туман, шторм, рой, тёмные воды).
-func _apply_modifier(mod: String) -> void:
+## Особое условие ночи (туман, шторм, рой, тёмные воды). on=false снимает его —
+## так бесконечная ночь включает и выключает события.
+func _set_modifier(mod: String, on: bool) -> void:
 	match mod:
 		"fog":
-			var layer := CanvasLayer.new()
-			layer.layer = 1
-			var rect := ColorRect.new()
-			rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-			rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			var m := ShaderMaterial.new()
-			m.shader = FOG_SHADER
-			rect.material = m
-			layer.add_child(rect)
-			add_child(layer)
-			move_child(layer, 0)  # под интерфейсом
+			if _fog_layer == null:
+				_fog_layer = CanvasLayer.new()
+				_fog_layer.layer = 1
+				var rect := ColorRect.new()
+				rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+				rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				var m := ShaderMaterial.new()
+				m.shader = FOG_SHADER
+				rect.material = m
+				_fog_layer.add_child(rect)
+				add_child(_fog_layer)
+				move_child(_fog_layer, 0)  # под интерфейсом
+				rect.modulate.a = 0.0
+			var r := _fog_layer.get_child(0) as ColorRect
+			create_tween().tween_property(r, "modulate:a", 1.0 if on else 0.0, 1.5)
 		"storm":
-			beam.turn_speed_deg *= 2.0
+			beam.turn_speed_deg = _base_turn * (2.0 if on else 1.0)
 			var water := $World/Arena.get_child(0) as Polygon2D
 			if water:
-				(water.material as ShaderMaterial).set_shader_parameter("foam", Color(0.6, 0.95, 1.0))
+				(water.material as ShaderMaterial).set_shader_parameter("foam",
+						Color(0.6, 0.95, 1.0) if on else Color(0.3, 0.9, 1.0))
 		"swarm":
-			_spawn_mult = 1.6
-			_hp_mult = 0.5
+			_spawn_mult = 1.6 if on else 1.0
+			_hp_mult = 0.5 if on else 1.0
 		"dark":
-			beam.width_mult = 0.5
+			beam.width_mult = 0.5 if on else 1.0
+
+
+## Бесконечная ночь: каждые 2 минуты на 45 секунд случайное событие.
+func _update_events() -> void:
+	if _event != "" and elapsed >= _event_end:
+		_set_modifier(_event, false)
+		_event = ""
+	if elapsed >= _next_event:
+		_next_event += Nights.EVENT_EVERY
+		_event = ["fog", "storm", "swarm", "dark"].pick_random()
+		_event_end = elapsed + Nights.EVENT_LENGTH
+		_set_modifier(_event, true)
+		Sound.play("warning", -6.0)
+		hud.show_night_banner("Событие!", Nights.MODIFIER_TEXT[_event], "продержитесь %d секунд" % int(Nights.EVENT_LENGTH))
 
 
 func _count_hits(hp: int, _max_hp: int) -> void:
@@ -191,11 +237,14 @@ func _task_progress() -> int:
 
 
 func _update_task() -> void:
+	if endless:
+		var b := int(SaveData.best_time)
+		hud.set_record("Рекорд: %d:%02d · врагов %d" % [b / 60, b % 60, SaveData.best_kills], kills)
+		return
 	hud.set_task(Nights.task_text(night.task), _task_progress(), night.task[1])
 
 
 func _on_spawn_timer() -> void:
-	var elapsed := run_time - time_left
 	# Чем дольше идёт ночь, тем больше врагов за раз и тем чаще они приходят.
 	# Когда пришёл босс, мелочи вдвое меньше, чтобы было видно его атаки.
 	var count := int((1.0 + elapsed / 60.0) * night.spawn * _spawn_mult)
@@ -230,6 +279,8 @@ func _spawn_boss() -> void:
 	boss.target = player
 	boss.beam = beam
 	boss.projectile_container = enemy_projectiles
+	if endless:
+		boss.max_hp = int(boss.max_hp * (1.0 + elapsed / 400.0))  # каждый следующий спрут крепче
 	boss.killed.connect(_on_boss_killed)
 	boss.health_changed.connect(hud.set_boss_health)
 	enemies.add_child(boss)
@@ -242,7 +293,27 @@ func _spawn_boss() -> void:
 
 func _on_boss_killed(_at: Vector2, _xp: int) -> void:
 	_add_shells(30)
+	if endless:
+		# Спрут повержен, но ночь продолжается: следующий придёт через 5 минут, крепче.
+		boss = null
+		boss_at = elapsed + Nights.BOSS_EVERY
+		hud.hide_boss()
+		Sound.play_music("battle")
+		return
 	_finish(true)
+
+
+## «Второе дыхание» из мастерской: раз в N секунд лечит одно сердце.
+func _update_regen(delta: float) -> void:
+	var lvl := SaveData.level_of("regen")
+	if lvl == 0 or player.hp >= player.max_hp:
+		_regen_t = 0.0
+		return
+	_regen_t += delta
+	if _regen_t >= float(SaveData.REGEN_EVERY[lvl]):
+		_regen_t = 0.0
+		player.heal(1)
+		Fx.ring(player.global_position, Color(1.0, 0.4, 0.5))
 
 
 func _add_shells(amount: int) -> void:
@@ -304,7 +375,7 @@ func _add_xp(amount: int) -> void:
 
 
 func _offer_upgrade() -> void:
-	var choices := Upgrades.pick_choices(upgrades_taken, 3)
+	var choices := Upgrades.pick_choices(upgrades_taken, 3, player.weapon)
 	if choices.is_empty():
 		_pending_levels = 0
 		return
@@ -344,20 +415,29 @@ func _finish(victory: bool) -> void:
 	# Звёзды: пережить ночь, потерять не больше 2 сердец, выполнить задание.
 	var star_flags := [victory, victory and hits_taken <= Nights.MAX_HITS_FOR_STAR,
 			victory and _task_progress() >= night.task[1]]
-	stars_got = star_flags.count(true)
-	var new_stars := SaveData.record_stars(night_index, stars_got)
-	var star_bonus := new_stars * Nights.star_reward(night_index)
+	var star_bonus := 0
+	var records := [false, false]
+	if endless:
+		star_flags = [false, false, false]
+		records = SaveData.record_endless(elapsed, kills)
+	else:
+		stars_got = star_flags.count(true)
+		var new_stars := SaveData.record_stars(night_index, stars_got)
+		star_bonus = new_stars * Nights.star_reward(night_index)
 	# Бонус за выживание: ракушка за каждые 20 секунд ночи, плюс награда за новые звёзды.
-	shells_this_run += int((run_time - time_left) / 20.0) + star_bonus
+	shells_this_run += int(elapsed / 20.0) + star_bonus
+	# «Удачливый ныряльщик»: +10% за уровень.
+	shells_this_run = int(round(shells_this_run * (1.0 + 0.1 * SaveData.level_of("luck"))))
 	SaveData.add_shells(shells_this_run)
 	Sound.play("win" if victory else "lose")
 	Fx.reset()
 	end_screen.show_result({
 		"won": victory, "night": night_index, "title": night.title, "level": level,
-		"survived": run_time - time_left, "shells": shells_this_run, "star_bonus": star_bonus,
+		"survived": elapsed, "shells": shells_this_run, "star_bonus": star_bonus,
 		"stars": star_flags, "hits": hits_taken, "task": Nights.task_text(night.task),
 		"task_progress": _task_progress(), "task_goal": night.task[1],
-		"has_next": night_index + 1 < Nights.count(),
+		"has_next": not endless and night_index + 1 < Nights.count(),
+		"endless": endless, "kills": kills, "records": records,
 	})
 
 

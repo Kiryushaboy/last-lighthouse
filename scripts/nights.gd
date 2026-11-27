@@ -4,6 +4,15 @@ extends RefCounted
 ## Ночь = запись в LIST. Звёзды: ★ пережить, ★★ потерять не больше 2 сердец, ★★★ задание ночи.
 
 const MAX_HITS_FOR_STAR := 2
+const ENDLESS := 99  ## номер «Бесконечной ночи» в SaveData.current_night
+
+## Бесконечная ночь: награда за кампанию. Времени нет, каждые 2 минуты событие, каждые 5 — спрут.
+const ENDLESS_NIGHT := {"title": "Бесконечная ночь", "time": 0, "endless": true,
+	"enemies": [["crab", 0, 1.0], ["jellyfish", 30, 0.5], ["squid", 90, 0.3], ["shell", 150, 0.2]],
+	"hp": 1.0, "speed": 1.0, "spawn": 1.0, "task": ["kills", 0]}
+const EVENT_EVERY := 120.0
+const EVENT_LENGTH := 45.0
+const BOSS_EVERY := 300.0
 
 ## Враги: тип, с какой секунды, вес (как часто). Множители: hp, speed, spawn (сколько врагов).
 ## modifier: "" | "fog" (туман, видно недалеко) | "storm" (луч крутится быстрее, волны)
@@ -49,7 +58,14 @@ static func count() -> int:
 
 
 static func get_night(i: int) -> Dictionary:
+	if i == ENDLESS:
+		return ENDLESS_NIGHT
 	return LIST[clampi(i, 0, LIST.size() - 1)]
+
+
+## Бесконечная ночь открывается, когда пройдена последняя ночь кампании.
+static func endless_unlocked() -> bool:
+	return SaveData.stars_of(LIST.size() - 1) > 0
 
 
 static func task_text(task: Array) -> String:
@@ -67,4 +83,6 @@ static func star_reward(i: int) -> int:
 
 ## Ночь открыта, если предыдущая пройдена хотя бы на одну звезду.
 static func is_unlocked(i: int) -> bool:
+	if i == ENDLESS:
+		return endless_unlocked()
 	return i == 0 or SaveData.stars_of(i - 1) > 0

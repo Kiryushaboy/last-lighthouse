@@ -20,6 +20,7 @@ func _ready() -> void:
 		_list.add_child(card)
 		if focus == null and Nights.is_unlocked(i) and SaveData.stars_of(i) < 3:
 			focus = card
+	_list.add_child(_make_endless_card())
 	UiFx.stagger(_list.get_children(), 0.04, 0.05)
 	if focus:
 		await get_tree().process_frame
@@ -95,6 +96,37 @@ func _make_card(i: int) -> Control:
 		row.add_child(sv)
 	card.pressed.connect(_start.bind(i))
 	return holder
+
+
+## Бесконечная ночь в конце карты: награда за кампанию, показывает рекорд.
+func _make_endless_card() -> Control:
+	var unlocked := Nights.endless_unlocked()
+	var card := Button.new()
+	card.custom_minimum_size = Vector2(0, 160)
+	card.focus_mode = Control.FOCUS_NONE
+	card.disabled = not unlocked
+	if unlocked:
+		card.theme_type_variation = &"PrimaryButton"
+	var box := VBoxContainer.new()
+	box.set_anchors_preset(Control.PRESET_FULL_RECT)
+	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(box)
+	var dark := Color(0.2, 0.1, 0.02)
+	var t := _label("∞  Бесконечная ночь", 34, dark if unlocked else Color(1, 1, 1, 0.35))
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(t)
+	var sub := ""
+	if unlocked:
+		var b := int(SaveData.best_time)
+		sub = "Рекорд: %d:%02d · врагов %d" % [b / 60, b % 60, SaveData.best_kills] if b > 0 else "Сколько продержитесь?"
+	else:
+		sub = "Откроется после 12-й ночи"
+	var s := _label(sub, 22, dark if unlocked else Color(1, 1, 1, 0.35))
+	s.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(s)
+	card.pressed.connect(_start.bind(Nights.ENDLESS))
+	return card
 
 
 func _label(t: String, font_size: int, color: Color) -> Label:

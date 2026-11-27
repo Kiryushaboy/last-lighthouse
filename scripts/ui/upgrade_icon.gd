@@ -5,6 +5,7 @@ extends Control
 const HARPOON := preload("res://art/sprites/harpoon.svg")
 const LIGHTHOUSE := preload("res://art/sprites/lighthouse.svg")
 const GLOW := preload("res://art/fx/glow.tres")
+const SHELL := preload("res://art/sprites/seashell.svg")
 
 const COLORS := {
 	"damage": Color(1.0, 0.45, 0.35), "fire_rate": Color(1.0, 0.75, 0.3), "multishot": Color(1.0, 0.85, 0.4),
@@ -12,6 +13,8 @@ const COLORS := {
 	"magnet": Color(0.75, 0.6, 1.0), "beam": Color(1.0, 0.9, 0.55), "shield": Color(0.4, 0.9, 1.0),
 	# Бонусы мастерской.
 	"hp": Color(1.0, 0.4, 0.5), "crit": Color(1.0, 0.55, 0.3), "start": Color(0.85, 0.6, 1.0),
+	"bubble": Color(0.4, 0.9, 1.0), "regen": Color(0.5, 1.0, 0.6), "pull": Color(0.75, 0.6, 1.0),
+	"luck": Color(1.0, 0.75, 0.8),
 }
 
 var id := ""
@@ -68,11 +71,11 @@ func _draw() -> void:
 			draw_polyline(PackedVector2Array([c + Vector2(14, -18), c + Vector2(32, 0), c + Vector2(14, 18)]), col, 7.0)
 		"max_hp":
 			_heart(c + Vector2(0, 2), 26.0 * pulse, col)
-		"magnet":
+		"magnet", "pull":
 			draw_arc(c + Vector2(0, -4), 20.0, 0.0, PI, 24, col, 12.0)
 			draw_rect(Rect2(c + Vector2(-26, -16), Vector2(12, 14)), Color(0.85, 0.85, 0.9))
 			draw_rect(Rect2(c + Vector2(14, -16), Vector2(12, 14)), Color(0.85, 0.85, 0.9))
-		"shield":
+		"shield", "bubble":
 			draw_circle(c, 28.0, Color(col, 0.18))
 			draw_arc(c, 28.0, 0.0, TAU, 40, col, 5.0)
 			draw_arc(c + Vector2(-8, -8), 14.0, PI * 1.05, PI * 1.5, 10, Color(1, 1, 1, 0.8), 4.0)
@@ -93,6 +96,12 @@ func _draw() -> void:
 			draw_rect(Rect2(c + Vector2(-4, -18), Vector2(8, 42)), Color(1, 0.85, 0.4))
 			draw_arc(c + Vector2(-9, -24), 8.0, 0.0, TAU, 12, Color(1, 0.85, 0.4), 4.0)
 			draw_arc(c + Vector2(9, -24), 8.0, 0.0, TAU, 12, Color(1, 0.85, 0.4), 4.0)
+		"regen":
+			_heart(c + Vector2(0, 4), 22.0, Color(1.0, 0.4, 0.5))
+			draw_arc(c, 34.0, -PI / 2.0 + _t * 2.0, -PI / 2.0 + _t * 2.0 + PI * 1.4, 24, col, 5.0)
+		"luck":
+			draw_texture_rect(SHELL, Rect2(c - Vector2(26, 26) * pulse, Vector2(52, 52) * pulse), false)
+			draw_string(ThemeDB.fallback_font, c + Vector2(8, 30), "+", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, Color.WHITE)
 		"beam":
 			var cone := PackedVector2Array([c + Vector2(0, 8), c + Vector2(-34, -30), c + Vector2(34, -30)])
 			draw_colored_polygon(cone, Color(col, 0.35))

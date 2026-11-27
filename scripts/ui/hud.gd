@@ -16,9 +16,12 @@ func _ready() -> void:
 	$Root/PauseButton.pressed.connect(pause_pressed.emit)
 
 
-func set_time(seconds_left: float) -> void:
-	var s := int(ceil(maxf(seconds_left, 0.0)))
-	var text := "%d:%02d" % [s / 60, s % 60] if s > 0 else "Рассвет близко"
+func set_time(seconds: float, counting_up := false) -> void:
+	var s := int(seconds) if counting_up else int(ceil(maxf(seconds, 0.0)))
+	var text := "%d:%02d" % [s / 60, s % 60] if (s > 0 or counting_up) else "Рассвет близко"
+	if counting_up:
+		_time.text = text
+		return
 	if text != _time.text:
 		_time.text = text
 		# Последние 10 секунд таймер вздрагивает и желтеет — рассвет близко.
@@ -86,3 +89,13 @@ func show_night_banner(title: String, modifier: String, task: String) -> void:
 	tw.tween_interval(2.6)
 	tw.tween_property(banner, "modulate:a", 0.0, 0.6)
 	tw.tween_callback(banner.hide)
+
+
+## Бесконечная ночь: в углу рекорд и счётчик врагов этой ночи.
+func set_record(record_text: String, kills: int) -> void:
+	$Root/TaskLabel.text = "Врагов: %d   %s" % [kills, record_text]
+
+
+func hide_boss() -> void:
+	$Root/BossLabel.hide()
+	$Root/BossBar.hide()

@@ -7,7 +7,7 @@ signal closed
 const SHELL := preload("res://art/sprites/seashell.svg")
 
 @onready var _shells: Label = $Card/Box/Shells
-@onready var _rows: VBoxContainer = $Card/Box/Rows
+@onready var _rows: VBoxContainer = $Card/Box/Scroll/Rows
 @onready var _back: Button = $Card/Box/Back
 
 
@@ -111,6 +111,20 @@ func _change_text(id: String, lvl: int, maxed: bool) -> String:
 			return ("Скорость: %s" % now) if maxed else "Скорость: %s → %s" % [now, next]
 		"start":
 			return ("Улучшений сразу: %d" % lvl) if maxed else "Улучшений сразу: %d → %d" % [lvl, lvl + 1]
+		"bubble":
+			return "Щит уже на старте" if maxed else "Щит с первой секунды"
+		"regen":
+			if maxed:
+				return "Сердце раз в %d с" % SaveData.REGEN_EVERY[lvl]
+			if lvl == 0:
+				return "Сердце раз в %d с" % SaveData.REGEN_EVERY[1]
+			return "Сердце раз в %d → %d с" % [SaveData.REGEN_EVERY[lvl], SaveData.REGEN_EVERY[lvl + 1]]
+		"pull":
+			now = "+%d%%" % (lvl * 15); next = "+%d%%" % ((lvl + 1) * 15)
+			return ("Радиус сбора: %s" % now) if maxed else "Радиус сбора: %s → %s" % [now, next]
+		"luck":
+			now = "+%d%%" % (lvl * 10); next = "+%d%%" % ((lvl + 1) * 10)
+			return ("Ракушек: %s" % now) if maxed else "Ракушек: %s → %s" % [now, next]
 	return ""
 
 
@@ -139,3 +153,4 @@ func _on_visibility_changed() -> void:
 	if visible:
 		UiFx.pop_in($Card, $Dim)
 		UiFx.stagger($Card/Box.get_children())
+		$Card/Box/Scroll.scroll_vertical = 0

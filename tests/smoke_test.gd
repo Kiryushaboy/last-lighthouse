@@ -11,6 +11,14 @@ func _initialize() -> void:
 	# Какую ночь кампании играть: NIGHT=4 godot ... (по умолчанию последняя, самая трудная).
 	var night_env := OS.get_environment("NIGHT")
 	root.get_node("SaveData").current_night = int(night_env) - 1 if night_env != "" else 11
+	# Каким героем играть: HERO=mechanic godot ...
+	var hero_env := OS.get_environment("HERO")
+	if hero_env != "":
+		# Сохранение грузится в _ready автозагрузки уже после _initialize, поэтому пишем в файл.
+		var sd := root.get_node("SaveData")
+		sd._ready()
+		sd.hero = hero_env
+		sd._save()
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 

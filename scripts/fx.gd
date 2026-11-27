@@ -82,3 +82,9 @@ func ring(pos: Vector2, color: Color, radius := 60.0, duration := 0.35, width :=
 func text(pos: Vector2, value: String, color := Color.WHITE, big := false) -> void:
 	if is_instance_valid(layer):
 		layer.float_text(pos, value, color, big)
+
+
+## Молния: ломаная линия через точки, гаснет за долю секунды.
+func bolt(points: PackedVector2Array, color: Color) -> void:
+	if is_instance_valid(layer):
+		layer.bolt(points, color)
