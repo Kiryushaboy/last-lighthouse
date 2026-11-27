@@ -5,6 +5,7 @@ extends Node2D
 
 @export var length := 1400.0
 @export var half_width_deg := 15.0  ## половина ширины луча в градусах
+var width_mult := 1.0  ## тёмные воды сужают луч
 @export var turn_speed_deg := 25.0  ## градусов в секунду, полный оборот ~14 с
 
 const SLOW_FACTOR := 0.6
@@ -28,12 +29,12 @@ func contains(world_point: Vector2) -> bool:
 	var local := world_point - global_position
 	if local.length() > length:
 		return false
-	return absf(angle_difference(rotation, local.angle())) <= deg_to_rad(half_width_deg)
+	return absf(angle_difference(rotation, local.angle())) <= deg_to_rad(half_width_deg * width_mult)
 
 
 func _draw() -> void:
 	# Свет складывается с тем, что под ним (материал ADD), поэтому выглядит как настоящий луч.
-	var half := deg_to_rad(half_width_deg)
+	var half := deg_to_rad(half_width_deg * width_mult)
 	_draw_cone(half, Color(1.0, 0.85, 0.5), 0.16)
 	_draw_cone(half * 0.45, Color(1.0, 0.95, 0.75), 0.14)
 	# Пылинки, медленно плывущие в свете.

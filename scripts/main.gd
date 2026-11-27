@@ -1,19 +1,18 @@
 extends Node2D
 ## Главная сцена: таймер ночи, появление врагов, опыт, уровни, конец забега.
 
-## Какие враги приходят ночью: с какой секунды и как часто (вес).
-const ENEMY_TYPES := [
-	{"scene": preload("res://scenes/enemies/crab.tscn"), "from": 0.0, "weight": 1.0},
-	{"scene": preload("res://scenes/enemies/jellyfish.tscn"), "from": 60.0, "weight": 0.45},
-	{"scene": preload("res://scenes/enemies/squid.tscn"), "from": 120.0, "weight": 0.2},
-	{"scene": preload("res://scenes/enemies/shell.tscn"), "from": 180.0, "weight": 0.12},
-]
+## Сцены врагов по имени; какие и когда приходят — решает ночь кампании (scripts/nights.gd).
+const ENEMY_SCENES := {
+	"crab": preload("res://scenes/enemies/crab.tscn"),
+	"jellyfish": preload("res://scenes/enemies/jellyfish.tscn"),
+	"squid": preload("res://scenes/enemies/squid.tscn"),
+	"shell": preload("res://scenes/enemies/shell.tscn"),
+}
 const GEM_SCENE := preload("res://scenes/xp_gem.tscn")
 const BOSS_SCENE := preload("res://scenes/enemies/boss.tscn")
 const MENU_SCENE := "res://scenes/menu.tscn"
-const BOSS_AT := 270.0  ## на 4:30 из тумана выходит спрут
-
-const RUN_TIME := 300.0  ## 5 минут до рассвета
+const MAP_SCENE := "res://scenes/map.tscn"
+const FOG_SHADER := preload("res://shaders/fog.gdshader")
 const ARENA := Rect2(-900, -900, 1800, 1800)
 const MAX_ENEMIES := 150
 const SPAWN_DISTANCE := 800.0  ## чуть дальше края экрана
@@ -32,7 +31,15 @@ const SPAWN_DISTANCE := 800.0  ## чуть дальше края экрана
 @onready var pause_menu: PauseMenu = $PauseMenu
 @onready var workshop: Workshop = $Workshop
 
-var time_left := RUN_TIME
+var night_index := 0
+var night: Dictionary
+var run_time := 300.0  ## сколько длится ночь
+var boss_at := -1.0  ## когда приходит спрут; -1 — в эту ночь его нет
+var time_left := 300.0
+var kills := 0
+var beam_kills := 0
+var hits_taken := 0
+var stars_got := 0
 var level := 1
 var xp := 0
 var xp_to_next := 5
@@ -43,11 +50,20 @@ var _over := false
 var won := false
 var shells_this_run := 0
 var boss: Boss
+var _last_hp := 0
+var _spawn_mult := 1.0
+var _hp_mult := 1.0
 
 
 func _ready() -> void:
 	Fx.reset()
 	Sound.play_music("battle")
+	night_index = SaveData.current_night
+	night = Nights.get_night(night_index)
+	run_time = night.time
+	time_left = run_time
+	boss_at = night.get("boss_at", -1.0)
+	_apply_modifier(night.get("modifier", ""))
 	player.arena_rect = ARENA
 	player.bullet_container = $World/Bullets
 	camera.limit_left = int(ARENA.position.x)
@@ -58,6 +74,7 @@ func _ready() -> void:
 	_apply_workshop()
 	player.died.connect(_on_player_died)
 	player.health_changed.connect(hud.set_health)
+	player.health_changed.connect(_count_hits)
 	spawn_timer.timeout.connect(_on_spawn_timer)
 	upgrade_menu.chosen.connect(_on_upgrade_chosen)
 	end_screen.restart_pressed.connect(_restart)
@@ -68,11 +85,16 @@ func _ready() -> void:
 	pause_menu.resume_pressed.connect(_close_pause)
 	pause_menu.restart_pressed.connect(_restart)
 	pause_menu.menu_pressed.connect(_to_menu)
-	end_screen.menu_pressed.connect(_to_menu)
+	end_screen.menu_pressed.connect(_to_map)
+	end_screen.next_pressed.connect(_next_night)
 
 	hud.set_health(player.hp, player.max_hp)
 	hud.set_xp(xp, xp_to_next, level)
 	hud.set_time(time_left)
+	_last_hp = player.hp
+	hud.show_night_banner("Ночь %d · %s" % [night_index + 1, night.title],
+			Nights.MODIFIER_TEXT.get(night.get("modifier", ""), ""), Nights.task_text(night.task))
+	_update_task()
 
 
 func _process(delta: float) -> void:
@@ -81,8 +103,11 @@ func _process(delta: float) -> void:
 	time_left = maxf(time_left - delta, 0.0)
 	hud.set_time(time_left)
 	player.joystick_vector = joystick.vector
-	if boss == null and RUN_TIME - time_left >= BOSS_AT:
+	if boss_at >= 0.0 and boss == null and run_time - time_left >= boss_at:
 		_spawn_boss()
+	# Без спрута рассвет наступает, когда кончилось время.
+	if boss_at < 0.0 and time_left <= 0.0:
+		_finish(true)
 	# Рассвет наступает, только когда спрут побеждён. До тех пор таймер стоит на 0:00.
 
 
@@ -124,11 +149,56 @@ func _close_pause() -> void:
 
 # --- Враги -------------------------------------------------------------
 
+## Особое условие ночи (туман, шторм, рой, тёмные воды).
+func _apply_modifier(mod: String) -> void:
+	match mod:
+		"fog":
+			var layer := CanvasLayer.new()
+			layer.layer = 1
+			var rect := ColorRect.new()
+			rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+			rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			var m := ShaderMaterial.new()
+			m.shader = FOG_SHADER
+			rect.material = m
+			layer.add_child(rect)
+			add_child(layer)
+			move_child(layer, 0)  # под интерфейсом
+		"storm":
+			beam.turn_speed_deg *= 2.0
+			var water := $World/Arena.get_child(0) as Polygon2D
+			if water:
+				(water.material as ShaderMaterial).set_shader_parameter("foam", Color(0.6, 0.95, 1.0))
+		"swarm":
+			_spawn_mult = 1.6
+			_hp_mult = 0.5
+		"dark":
+			beam.width_mult = 0.5
+
+
+func _count_hits(hp: int, _max_hp: int) -> void:
+	if hp < _last_hp:
+		hits_taken += 1
+	_last_hp = hp
+
+
+func _task_progress() -> int:
+	match night.task[0]:
+		"kills": return kills
+		"beam_kills": return beam_kills
+		"shells": return shells_this_run
+	return 0
+
+
+func _update_task() -> void:
+	hud.set_task(Nights.task_text(night.task), _task_progress(), night.task[1])
+
+
 func _on_spawn_timer() -> void:
-	var elapsed := RUN_TIME - time_left
+	var elapsed := run_time - time_left
 	# Чем дольше идёт ночь, тем больше врагов за раз и тем чаще они приходят.
 	# Когда пришёл босс, мелочи вдвое меньше, чтобы было видно его атаки.
-	var count := 1 + int(elapsed / 60.0)
+	var count := int((1.0 + elapsed / 60.0) * night.spawn * _spawn_mult)
 	if is_instance_valid(boss):
 		count = maxi(1, count / 2)
 	for i in count:
@@ -144,7 +214,8 @@ func _spawn_enemy(elapsed: float) -> void:
 	enemy.beam = beam
 	# Каждые полторы минуты враги крепче и чуть быстрее.
 	enemy.max_hp += int(elapsed / 90.0) * maxi(1, enemy.max_hp / 2)
-	enemy.speed *= 1.0 + minf(elapsed / 300.0, 1.0) * 0.5
+	enemy.max_hp = maxi(1, roundi(enemy.max_hp * night.hp * _hp_mult))
+	enemy.speed *= (1.0 + minf(elapsed / 300.0, 1.0) * 0.5) * night.speed
 	if enemy is Squid:
 		(enemy as Squid).projectile_container = enemy_projectiles
 	enemy.killed.connect(_on_enemy_killed.bind(enemy.shell_chance))
@@ -177,23 +248,29 @@ func _on_boss_killed(_at: Vector2, _xp: int) -> void:
 func _add_shells(amount: int) -> void:
 	shells_this_run += amount
 	hud.set_shells(shells_this_run)
+	_update_task()
 
 
 ## Случайный тип врага с учётом весов среди уже открывшихся к этой секунде.
 func _pick_enemy_type(elapsed: float) -> PackedScene:
-	var open := ENEMY_TYPES.filter(func(t): return elapsed >= t.from)
+	# Записи ночи: [тип, с какой секунды, вес].
+	var open: Array = night.enemies.filter(func(t): return elapsed >= t[1])
 	var total := 0.0
 	for t in open:
-		total += t.weight
+		total += t[2]
 	var roll := randf() * total
 	for t in open:
-		roll -= t.weight
+		roll -= t[2]
 		if roll <= 0.0:
-			return t.scene
-	return open[0].scene
+			return ENEMY_SCENES[t[0]]
+	return ENEMY_SCENES[open[0][0]]
 
 
 func _on_enemy_killed(at: Vector2, xp_value: int, shell_chance: float) -> void:
+	kills += 1
+	if beam.contains(at):
+		beam_kills += 1
+	_update_task()
 	# Враг погиб во время расчёта физики, поэтому предметы создаём чуть позже.
 	_spawn_gem.call_deferred(at, xp_value)
 	if randf() < shell_chance:
@@ -264,18 +341,41 @@ func _finish(victory: bool) -> void:
 	joystick.reset()
 	upgrade_menu.hide()
 	get_tree().paused = true
-	# Бонус за выживание: ракушка за каждые 20 секунд ночи.
-	shells_this_run += int((RUN_TIME - time_left) / 20.0)
+	# Звёзды: пережить ночь, потерять не больше 2 сердец, выполнить задание.
+	var star_flags := [victory, victory and hits_taken <= Nights.MAX_HITS_FOR_STAR,
+			victory and _task_progress() >= night.task[1]]
+	stars_got = star_flags.count(true)
+	var new_stars := SaveData.record_stars(night_index, stars_got)
+	var star_bonus := new_stars * Nights.star_reward(night_index)
+	# Бонус за выживание: ракушка за каждые 20 секунд ночи, плюс награда за новые звёзды.
+	shells_this_run += int((run_time - time_left) / 20.0) + star_bonus
 	SaveData.add_shells(shells_this_run)
 	Sound.play("win" if victory else "lose")
 	Fx.reset()
-	end_screen.show_result(victory, level, RUN_TIME - time_left, shells_this_run)
+	end_screen.show_result({
+		"won": victory, "night": night_index, "title": night.title, "level": level,
+		"survived": run_time - time_left, "shells": shells_this_run, "star_bonus": star_bonus,
+		"stars": star_flags, "hits": hits_taken, "task": Nights.task_text(night.task),
+		"task_progress": _task_progress(), "task_goal": night.task[1],
+		"has_next": night_index + 1 < Nights.count(),
+	})
 
 
 func _restart() -> void:
 	Fx.reset()
 	get_tree().paused = false
 	get_tree().reload_current_scene()
+
+
+func _next_night() -> void:
+	SaveData.current_night = mini(night_index + 1, Nights.count() - 1)
+	_restart()
+
+
+func _to_map() -> void:
+	Fx.reset()
+	get_tree().paused = false
+	get_tree().change_scene_to_file(MAP_SCENE)
 
 
 func _to_menu() -> void:

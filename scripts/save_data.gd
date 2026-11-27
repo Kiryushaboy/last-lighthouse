@@ -16,6 +16,8 @@ const PERKS := [
 
 var shells := 0
 var levels := {}  ## id бонуса -> купленный уровень
+var stars := {}  ## номер ночи -> лучший результат в звёздах (0..3)
+var current_night := 0  ## какую ночь сейчас играем (не сохраняется)
 
 
 func _ready() -> void:
@@ -23,6 +25,7 @@ func _ready() -> void:
 	if cfg.load(PATH) == OK:
 		shells = cfg.get_value("progress", "shells", 0)
 		levels = cfg.get_value("progress", "levels", {})
+		stars = cfg.get_value("progress", "stars", {})
 
 
 func level_of(id: String) -> int:
@@ -53,6 +56,26 @@ func buy(id: String) -> bool:
 	return true
 
 
+func stars_of(night: int) -> int:
+	return stars.get(night, 0)
+
+
+func total_stars() -> int:
+	var t := 0
+	for k in stars:
+		t += stars[k]
+	return t
+
+
+## Записать результат ночи. Возвращает, сколько звёзд получено впервые (за них награда).
+func record_stars(night: int, got: int) -> int:
+	var before := stars_of(night)
+	if got > before:
+		stars[night] = got
+		_save()
+	return maxi(got - before, 0)
+
+
 func add_shells(amount: int) -> void:
 	shells += amount
 	_save()
@@ -62,5 +85,6 @@ func _save() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("progress", "shells", shells)
 	cfg.set_value("progress", "levels", levels)
+	cfg.set_value("progress", "stars", stars)
 	cfg.save(PATH)
 	changed.emit()

@@ -8,6 +8,9 @@ var frames := 0
 
 
 func _initialize() -> void:
+	# Какую ночь кампании играть: NIGHT=4 godot ... (по умолчанию последняя, самая трудная).
+	var night_env := OS.get_environment("NIGHT")
+	root.get_node("SaveData").current_night = int(night_env) - 1 if night_env != "" else 11
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 

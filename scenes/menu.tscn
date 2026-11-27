@@ -91,7 +91,7 @@ theme_type_variation = &"PrimaryButton"
 custom_minimum_size = Vector2(0, 130)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "Начать ночь"
+text = "Играть"
 
 [node name="Workshop" type="Button" parent="UI/Root/Box"]
 custom_minimum_size = Vector2(0, 100)
