@@ -5,7 +5,6 @@ extends CanvasLayer
 signal closed
 
 const SHELL := preload("res://art/sprites/seashell.svg")
-const HERO_TEXTURE := preload("res://art/sprites/player.svg")
 const GLOW := preload("res://art/fx/glow.tres")
 const WEAPON_TEXT := {"harpoon": "Оружие: гарпуны", "lightning": "Оружие: цепная молния", "aura": "Оружие: огненный круг"}
 
@@ -69,7 +68,7 @@ func _make_row(h: Dictionary) -> Control:
 	glow.modulate = Color(neon, 0.45 if owned else 0.15)
 	portrait.add_child(glow)
 	var sprite := TextureRect.new()
-	sprite.texture = HERO_TEXTURE
+	sprite.texture = load(h.sprite)
 	sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	sprite.set_anchors_preset(Control.PRESET_FULL_RECT)

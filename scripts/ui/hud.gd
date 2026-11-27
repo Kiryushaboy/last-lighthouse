@@ -67,13 +67,51 @@ func set_shells(count: int) -> void:
 
 
 ## Задание ночи в углу: «Победить 70 врагов: 23/70», галочка, когда готово.
-func set_task(text: String, progress: int, goal: int) -> void:
-	var label: Label = $Root/TaskLabel
-	var done := progress >= goal
-	var new_text := ("✓ " if done else "") + "%s: %d/%d" % [text, mini(progress, goal), goal]
-	if done and not label.text.begins_with("✓"):
-		UiFx.bump(label, 1.3)
-	label.text = new_text
+## Три звезды ночи — три строки: дожить, не терять много сердец, выполнить задание.
+## Звезда горит золотом, когда условие выполнено, и гаснет, если его уже не выполнить.
+func set_star_tasks(hits: int, max_hits: int, task: String, progress: int, goal: int) -> void:
+	if _star_rows.is_empty():
+		_build_star_rows()
+	_set_star_row(0, "Дожить до рассвета", 0)
+	var hits_state := 0 if hits <= max_hits else -1
+	_set_star_row(1, "Потерять не больше %d сердец: %d/%d" % [max_hits, mini(hits, max_hits + 1), max_hits], hits_state)
+	_set_star_row(2, "%s: %d/%d" % [task, mini(progress, goal), goal], 1 if progress >= goal else 0)
+
+
+var _star_rows: Array[Label] = []
+
+
+func _build_star_rows() -> void:
+	var box := VBoxContainer.new()
+	box.position = $Root/TaskLabel.position
+	box.add_theme_constant_override("separation", 2)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	$Root.add_child(box)
+	$Root/TaskLabel.hide()
+	for i in 3:
+		var l := Label.new()
+		l.add_theme_font_size_override("font_size", 21)
+		l.add_theme_constant_override("outline_size", 6)
+		l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
+		l.set_meta("state", 0)
+		box.add_child(l)
+		_star_rows.append(l)
+
+
+## state: 1 — выполнено, 0 — в процессе, -1 — провалено.
+func _set_star_row(i: int, text: String, state: int) -> void:
+	var l := _star_rows[i]
+	l.text = "★ " + text
+	var col := Color(1, 1, 1, 0.8)
+	if state == 1:
+		col = Color(1.0, 0.85, 0.35)
+	elif state == -1:
+		col = Color(1, 1, 1, 0.3)
+	l.add_theme_color_override("font_color", col)
+	if state != int(l.get_meta("state")):
+		l.set_meta("state", state)
+		if state == 1:
+			UiFx.bump(l, 1.3)
 
 
 ## Заставка в начале ночи: название, особое условие, задание. Сама исчезает.
@@ -90,6 +128,25 @@ func show_night_banner(title: String, modifier: String, task: String) -> void:
 	tw.tween_interval(2.6)
 	tw.tween_property(banner, "modulate:a", 0.0, 0.6)
 	tw.tween_callback(banner.hide)
+
+
+## Крупная надпись при появлении босса. Работает и пока игра на паузе.
+func show_boss_banner(title: String, subtitle: String) -> void:
+	var banner: Control = $Root/Banner
+	$Root/Banner/Title.text = title
+	$Root/Banner/Modifier.text = subtitle
+	$Root/Banner/Modifier.visible = true
+	$Root/Banner/Task.text = ""
+	banner.show()
+	banner.modulate.a = 0.0
+	banner.pivot_offset = banner.size / 2.0
+	banner.scale = Vector2(1.4, 1.4)
+	var tw := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS).set_parallel()
+	tw.tween_property(banner, "modulate:a", 1.0, 0.25)
+	tw.tween_property(banner, "scale", Vector2.ONE, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.chain().tween_interval(1.6)
+	tw.chain().tween_property(banner, "modulate:a", 0.0, 0.4)
+	tw.chain().tween_callback(banner.hide)
 
 
 ## Бесконечная ночь: в углу рекорд и счётчик врагов этой ночи.
