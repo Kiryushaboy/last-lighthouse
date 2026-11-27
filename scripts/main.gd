@@ -9,6 +9,8 @@ const ENEMY_TYPES := [
 	{"scene": preload("res://scenes/enemies/shell.tscn"), "from": 180.0, "weight": 0.12},
 ]
 const GEM_SCENE := preload("res://scenes/xp_gem.tscn")
+const BOSS_SCENE := preload("res://scenes/enemies/boss.tscn")
+const BOSS_AT := 270.0  ## на 4:30 из тумана выходит спрут
 
 const RUN_TIME := 300.0  ## 5 минут до рассвета
 const ARENA := Rect2(-900, -900, 1800, 1800)
@@ -36,6 +38,8 @@ var upgrades_taken := {}  ## id улучшения -> сколько раз вз
 
 var _pending_levels := 0
 var _over := false
+var won := false
+var boss: Boss
 
 
 func _ready() -> void:
@@ -64,11 +68,12 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if _over:
 		return
-	time_left -= delta
+	time_left = maxf(time_left - delta, 0.0)
 	hud.set_time(time_left)
 	player.joystick_vector = joystick.vector
-	if time_left <= 0.0:
-		_finish(true)
+	if boss == null and RUN_TIME - time_left >= BOSS_AT:
+		_spawn_boss()
+	# Рассвет наступает, только когда спрут побеждён. До тех пор таймер стоит на 0:00.
 
 
 func _notification(what: int) -> void:
@@ -96,8 +101,11 @@ func _close_pause() -> void:
 
 func _on_spawn_timer() -> void:
 	var elapsed := RUN_TIME - time_left
-	# Чем дольше идёт ночь, тем больше крабов за раз и тем чаще они приходят.
+	# Чем дольше идёт ночь, тем больше врагов за раз и тем чаще они приходят.
+	# Когда пришёл босс, мелочи вдвое меньше, чтобы было видно его атаки.
 	var count := 1 + int(elapsed / 60.0)
+	if is_instance_valid(boss):
+		count = maxi(1, count / 2)
 	for i in count:
 		if enemies.get_child_count() >= MAX_ENEMIES:
 			break
@@ -119,6 +127,23 @@ func _spawn_enemy(elapsed: float) -> void:
 	var angle := randf() * TAU
 	var pos := player.global_position + Vector2.RIGHT.rotated(angle) * SPAWN_DISTANCE
 	enemy.global_position = pos.clamp(ARENA.position, ARENA.end)
+
+
+func _spawn_boss() -> void:
+	boss = BOSS_SCENE.instantiate() as Boss
+	boss.target = player
+	boss.beam = beam
+	boss.projectile_container = enemy_projectiles
+	boss.killed.connect(_on_boss_killed)
+	boss.health_changed.connect(hud.set_boss_health)
+	enemies.add_child(boss)
+	var pos := player.global_position + Vector2.UP * SPAWN_DISTANCE * 0.8
+	boss.global_position = pos.clamp(ARENA.position, ARENA.end)
+	hud.show_boss(boss.hp, boss.max_hp)
+
+
+func _on_boss_killed(_at: Vector2, _xp: int) -> void:
+	_finish(true)
 
 
 ## Случайный тип врага с учётом весов среди уже открывшихся к этой секунде.
@@ -191,14 +216,15 @@ func _on_player_died() -> void:
 	_finish(false)
 
 
-func _finish(won: bool) -> void:
+func _finish(victory: bool) -> void:
 	if _over:
 		return
 	_over = true
+	won = victory
 	joystick.reset()
 	upgrade_menu.hide()
 	get_tree().paused = true
-	end_screen.show_result(won, level, RUN_TIME - maxf(time_left, 0.0))
+	end_screen.show_result(victory, level, RUN_TIME - time_left)
 
 
 func _restart() -> void:

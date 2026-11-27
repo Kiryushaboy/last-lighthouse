@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/boss.gd" id="1_script"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 56.0
+
+[node name="Boss" type="Area2D"]
+z_index = 1
+collision_layer = 2
+script = ExtResource("1_script")
+speed = 55.0
+max_hp = 220
+contact_damage = 2
+xp_value = 0
+color = Color(0.8, 0.25, 0.45, 1)
+radius = 56.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_body")
