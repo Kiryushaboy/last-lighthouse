@@ -13,7 +13,7 @@ const COLORS := {
 	"magnet": Color(0.75, 0.6, 1.0), "beam": Color(1.0, 0.9, 0.55), "shield": Color(0.4, 0.9, 1.0),
 	# Бонусы мастерской.
 	"hp": Color(1.0, 0.4, 0.5), "crit": Color(1.0, 0.55, 0.3), "start": Color(0.85, 0.6, 1.0),
-	"bubble": Color(0.4, 0.9, 1.0), "regen": Color(0.5, 1.0, 0.6), "pull": Color(0.75, 0.6, 1.0),
+	"power": Color(1.0, 0.45, 0.35), "bubble": Color(0.4, 0.9, 1.0), "regen": Color(0.5, 1.0, 0.6), "pull": Color(0.75, 0.6, 1.0),
 	"luck": Color(1.0, 0.75, 0.8),
 }
 
@@ -52,7 +52,7 @@ func _draw() -> void:
 	draw_circle(c, 46.0, Color(0.03, 0.06, 0.12, 0.9))
 	draw_arc(c, 46.0, 0.0, TAU, 48, Color(col, 0.9), 3.0)
 	match id:
-		"damage":
+		"damage", "power":
 			_harpoon(c, -PI / 4.0, 2.2)
 		"fire_rate":
 			_harpoon(c + Vector2(-8, 10), -PI / 4.0, 1.6)

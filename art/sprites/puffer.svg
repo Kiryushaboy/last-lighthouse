@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+  <!-- Рыба-ёж: круглая, в шипах, после гибели разлетается чернилами. -->
+  <g stroke="#b8791f" stroke-width="4" stroke-linecap="round">
+    <path d="M40 8 L40 18"/><path d="M40 62 L40 72"/><path d="M8 40 L18 40"/><path d="M62 40 L72 40"/>
+    <path d="M17 17 L24 24"/><path d="M63 17 L56 24"/><path d="M17 63 L24 56"/><path d="M63 63 L56 56"/>
+  </g>
+  <circle cx="40" cy="40" r="24" fill="#f2b33d"/>
+  <path d="M18 46 Q40 66 62 46 Q52 62 40 63 Q28 62 18 46 Z" fill="#fff0c8"/>
+  <circle cx="40" cy="40" r="24" fill="none" stroke="#b8791f" stroke-width="3"/>
+  <circle cx="30" cy="34" r="7" fill="#fff"/><circle cx="50" cy="34" r="7" fill="#fff"/>
+  <circle cx="31" cy="35" r="3.5" fill="#1b1b2a"/><circle cx="49" cy="35" r="3.5" fill="#1b1b2a"/>
+  <ellipse cx="40" cy="49" rx="5" ry="3.5" fill="#8a3a1a"/>
+</svg>

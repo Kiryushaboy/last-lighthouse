@@ -7,14 +7,11 @@ config_version=5
 
 config/name="Последний маяк"
 config/description="Арена на выживание: продержитесь 5 минут до рассвета."
-run/main_scene="res://scenes/menu.tscn"
+run/main_scene="res://scenes/splash.tscn"
 config/icon="res://icon.svg"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 boot_splash/bg_color=Color(0.0275, 0.1255, 0.2275, 1)
-boot_splash/show_image=true
-boot_splash/image="res://art/splash.png"
-boot_splash/stretch_mode=4
-boot_splash/minimum_display_time=1200
+boot_splash/show_image=false
 
 [autoload]
 

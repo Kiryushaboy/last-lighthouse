@@ -7,10 +7,14 @@ const VARIANTS := {
 	"shoot": [1, 2, 3], "hit": [0, 1, 2], "death": [0, 1, 2], "xp": [1, 2, 3], "shell": [1],
 	"levelup": [1], "hurt": [0, 1], "warning": [1], "slam": [1], "win": [1], "lose": [1], "click": [1],
 }
-const MUSIC := {"menu": "res://audio/music/menu.ogg", "battle": "res://audio/music/battle.ogg",
-		"boss": "res://audio/music/boss.ogg"}
-## Громкость треков выровнена на слух по замерам: меню тише остальных в исходнике.
-const MUSIC_DB := {"menu": -4.0, "battle": -11.0, "boss": -10.0}
+const MUSIC := {"menu": "res://audio/music/menu.ogg", "map": "res://audio/music/map.ogg",
+		"battle": "res://audio/music/battle.ogg", "boss": "res://audio/music/boss.ogg", "boss2": "res://audio/music/boss2.ogg",
+		"chapter1": "res://audio/music/chapter1.ogg", "chapter2": "res://audio/music/chapter2.ogg",
+		"chapter3": "res://audio/music/chapter3.ogg", "chapter4": "res://audio/music/chapter4.ogg",
+		"chapter5": "res://audio/music/chapter5.ogg"}
+## Громкость треков выровнена по замерам средней громкости (ffmpeg volumedetect), цель около -21,5 дБ.
+const MUSIC_DB := {"menu": -4.0, "map": -8.5, "battle": -11.0, "boss": -10.0, "boss2": -13.0,
+		"chapter1": 5.5, "chapter2": 4.5, "chapter3": -5.5, "chapter4": -5.0, "chapter5": 6.0}
 const POOL_SIZE := 14
 ## Поправка громкости каждого звука (дБ), чтобы паки звучали ровно.
 const TRIM := {"win": -6.0, "lose": -6.0, "warning": -5.0, "shell": -4.0, "slam": 4.0, "click": 2.0}

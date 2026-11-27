@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <!-- Морской змей: кольца тела, гребень и клыкастая голова. -->
+  <path d="M160 60 Q270 70 250 150 Q230 220 130 200 Q50 190 70 250 Q90 300 190 286" fill="none" stroke="#12503c" stroke-width="66" stroke-linecap="round"/>
+  <path d="M160 60 Q270 70 250 150 Q230 220 130 200 Q50 190 70 250 Q90 300 190 286" fill="none" stroke="#2fb88a" stroke-width="50" stroke-linecap="round"/>
+  <path d="M160 60 Q270 70 250 150 Q230 220 130 200 Q50 190 70 250 Q90 300 190 286" fill="none" stroke="#8ff0c8" stroke-width="10" stroke-dasharray="6 26" stroke-linecap="round"/>
+  <path d="M96 40 L120 10 L132 40 L156 6 L164 42 L190 14 L196 52 Z" fill="#ff7a5a" stroke="#12503c" stroke-width="6" stroke-linejoin="round"/>
+  <ellipse cx="140" cy="76" rx="62" ry="46" fill="#2fb88a" stroke="#12503c" stroke-width="9"/>
+  <path d="M92 92 Q140 124 188 92" fill="#0c2a22" stroke="#12503c" stroke-width="6"/>
+  <path d="M106 96 L114 114 L122 98" fill="#fff"/><path d="M158 98 L166 114 L174 96" fill="#fff"/>
+  <circle cx="116" cy="64" r="13" fill="#fff36b"/><circle cx="164" cy="64" r="13" fill="#fff36b"/>
+  <ellipse cx="116" cy="64" rx="4" ry="10" fill="#12222a"/><ellipse cx="164" cy="64" rx="4" ry="10" fill="#12222a"/>
+</svg>

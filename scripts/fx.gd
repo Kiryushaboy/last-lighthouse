@@ -39,8 +39,8 @@ func _process(delta: float) -> void:
 func shake(amount: float) -> void:
 	trauma = minf(trauma + amount, 1.0)
 	# Сильные толчки отдаются вибрацией телефона; мелкие (смерть каждого краба) — нет.
-	if amount >= 0.15:
-		Settings.vibrate(int(40.0 + amount * 220.0), 0.3 + amount * 0.7)
+	if amount >= 0.12:
+		Settings.vibrate(int(70.0 + amount * 260.0), 0.55 + amount * 0.45)
 
 
 ## Короткий стоп-кадр: мир почти замирает на долю секунды — удар ощущается весомее.

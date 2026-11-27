@@ -7,9 +7,12 @@ const GLOW := preload("res://art/fx/glow.tres")
 const WATER_SHADER := preload("res://shaders/water.gdshader")
 
 var _rocks: Array[Vector3] = []  ## x, y, радиус
+var theme: Dictionary  ## цвета главы (Nights.CHAPTERS[].theme)
 
 
 func _ready() -> void:
+	theme = Nights.theme_of(SaveData.current_night)
+	RenderingServer.set_default_clear_color(theme.bg)
 	# Море — отдельный прямоугольник под всем остальным, рисуется шейдером.
 	var water := Polygon2D.new()
 	water.polygon = PackedVector2Array([RECT.position, Vector2(RECT.end.x, RECT.position.y),
@@ -19,6 +22,9 @@ func _ready() -> void:
 	mat.shader = WATER_SHADER
 	mat.set_shader_parameter("arena_half", RECT.size / 2.0)
 	mat.set_shader_parameter("island_radius", ISLAND_RADIUS)
+	mat.set_shader_parameter("deep", theme.deep)
+	mat.set_shader_parameter("shallow", theme.shallow)
+	mat.set_shader_parameter("foam", theme.foam)
 	water.material = mat
 	add_child(water)
 	# Камни на острове: одни и те же каждую ночь.
@@ -38,16 +44,16 @@ func _draw() -> void:
 	var t := Time.get_ticks_msec() / 1000.0
 	# Мокрый песок, сухой песок, лёгкая тень по краю.
 	# Ночной остров: тёмный камень с бирюзовой светящейся кромкой.
-	draw_circle(Vector2.ZERO, ISLAND_RADIUS, Color(0.09, 0.11, 0.17))
-	draw_circle(Vector2(0, -8), ISLAND_RADIUS - 24.0, Color(0.12, 0.14, 0.21))
+	draw_circle(Vector2.ZERO, ISLAND_RADIUS, theme.island)
+	draw_circle(Vector2(0, -8), ISLAND_RADIUS - 24.0, theme.island_top)
 	var rim := 0.75 + 0.25 * sin(t * 1.5)
-	draw_arc(Vector2.ZERO, ISLAND_RADIUS, 0.0, TAU, 96, Color(0.3, 0.9, 1.0, 0.85 * rim), 4.0)
-	draw_arc(Vector2.ZERO, ISLAND_RADIUS + 6.0, 0.0, TAU, 96, Color(0.3, 0.9, 1.0, 0.2 * rim), 10.0)
+	draw_arc(Vector2.ZERO, ISLAND_RADIUS, 0.0, TAU, 96, Color(theme.rim, 0.85 * rim), 4.0)
+	draw_arc(Vector2.ZERO, ISLAND_RADIUS + 6.0, 0.0, TAU, 96, Color(theme.rim, 0.2 * rim), 10.0)
 	# Тёплый свет маяка на камнях вокруг башни.
 	draw_texture_rect(GLOW, Rect2(-ISLAND_RADIUS, -ISLAND_RADIUS, ISLAND_RADIUS * 2, ISLAND_RADIUS * 2), false, Color(1.0, 0.75, 0.4, 0.12))
 	for r in _rocks:
-		draw_circle(Vector2(r.x, r.y), r.z, Color(0.17, 0.2, 0.29))
-		draw_arc(Vector2(r.x, r.y), r.z, PI * 1.0, PI * 1.6, 10, Color(0.4, 0.85, 1.0, 0.35), 2.0)
+		draw_circle(Vector2(r.x, r.y), r.z, theme.rock)
+		draw_arc(Vector2(r.x, r.y), r.z, PI * 1.0, PI * 1.6, 10, Color(theme.rim, 0.35), 2.0)
 	# Тень маяка и сам маяк.
 	# Маяк сверху: тёмная башня, золотые неоновые кольца, яркий фонарь.
 	var pulse := 0.8 + 0.2 * sin(t * 2.0)

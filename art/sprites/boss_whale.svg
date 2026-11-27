@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <!-- Ледяной кит: огромная спина в льдинах, хвост и фонтан. -->
+  <path d="M160 286 L110 316 L160 300 L210 316 Z" fill="#4f7fa3" stroke="#2c5270" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M70 180 L24 210 L80 214 Z" fill="#4f7fa3" stroke="#2c5270" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M250 180 L296 210 L240 214 Z" fill="#4f7fa3" stroke="#2c5270" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M160 34 Q256 50 250 170 Q244 262 160 292 Q76 262 70 170 Q64 50 160 34 Z" fill="#6fa5cc"/>
+  <path d="M160 52 Q226 66 222 160 Q218 220 160 244 Q102 220 98 160 Q94 66 160 52 Z" fill="#a9d4ee" opacity="0.75"/>
+  <path d="M160 34 Q256 50 250 170 Q244 262 160 292 Q76 262 70 170 Q64 50 160 34 Z" fill="none" stroke="#2c5270" stroke-width="9"/>
+  <path d="M120 150 L140 118 L162 150 Z" fill="#f2fbff" stroke="#9fd0ea" stroke-width="4"/>
+  <path d="M170 210 L192 172 L214 210 Z" fill="#f2fbff" stroke="#9fd0ea" stroke-width="4"/>
+  <path d="M112 226 L126 204 L142 226 Z" fill="#f2fbff" stroke="#9fd0ea" stroke-width="4"/>
+  <circle cx="160" cy="92" r="9" fill="#2c5270"/>
+  <path d="M160 86 Q150 60 138 54 M160 86 Q170 60 182 54 M160 86 L160 48" stroke="#e8f8ff" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <circle cx="104" cy="104" r="9" fill="#12222a"/><circle cx="216" cy="104" r="9" fill="#12222a"/>
+  <circle cx="102" cy="101" r="3" fill="#fff"/><circle cx="214" cy="101" r="3" fill="#fff"/>
+</svg>

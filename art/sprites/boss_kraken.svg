@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <!-- Кракен из бездны: тёмная мантия, много щупалец, один светящийся глаз. -->
+  <defs><radialGradient id="eye" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0" stop-color="#ffffff"/><stop offset="0.35" stop-color="#ffd25a"/><stop offset="1" stop-color="#ff7a1f"/>
+  </radialGradient></defs>
+  <g stroke="#3a1a66" stroke-width="24" stroke-linecap="round" fill="none">
+    <path d="M110 220 Q60 250 30 220"/><path d="M130 240 Q100 300 50 296"/><path d="M160 248 Q160 300 130 316"/>
+    <path d="M190 240 Q220 300 270 296"/><path d="M210 220 Q260 250 290 220"/><path d="M100 190 Q40 180 20 140"/><path d="M220 190 Q280 180 300 140"/>
+  </g>
+  <g stroke="#8a4dff" stroke-width="10" stroke-linecap="round" fill="none" opacity="0.8">
+    <path d="M110 220 Q60 250 30 220"/><path d="M130 240 Q100 300 50 296"/><path d="M160 248 Q160 300 130 316"/>
+    <path d="M190 240 Q220 300 270 296"/><path d="M210 220 Q260 250 290 220"/><path d="M100 190 Q40 180 20 140"/><path d="M220 190 Q280 180 300 140"/>
+  </g>
+  <path d="M160 16 Q250 40 244 150 Q240 230 160 250 Q80 230 76 150 Q70 40 160 16 Z" fill="#2a1250"/>
+  <path d="M160 34 Q222 54 218 140 Q214 196 160 212 Q106 196 102 140 Q98 54 160 34 Z" fill="#48208a" opacity="0.8"/>
+  <path d="M160 16 Q250 40 244 150 Q240 230 160 250 Q80 230 76 150 Q70 40 160 16 Z" fill="none" stroke="#b98cff" stroke-width="8"/>
+  <ellipse cx="160" cy="140" rx="46" ry="38" fill="#12091f"/>
+  <circle cx="160" cy="140" r="30" fill="url(#eye)"/>
+  <ellipse cx="160" cy="140" rx="8" ry="24" fill="#12091f"/>
+  <path d="M106 96 L142 112" stroke="#12091f" stroke-width="10" stroke-linecap="round"/><path d="M214 96 L178 112" stroke="#12091f" stroke-width="10" stroke-linecap="round"/>
+</svg>

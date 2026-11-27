@@ -19,5 +19,14 @@
 - Rubik — Hubert & Fischer, Google Fonts. `ui/fonts/OFL-Rubik.txt`
 - Russo One — Jovanny Lemonad, Google Fonts. `ui/fonts/OFL-RussoOne.txt`
 
+## Музыка глав (CC0, OpenGameArt)
+- `audio/music/chapter1.ogg` — Exploration Theme, CleytonKauffman. https://opengameart.org/content/exploration-theme
+- `audio/music/chapter2.ogg` — Nautilus, poinl. https://opengameart.org/content/nautilus
+- `audio/music/chapter3.ogg` — QaziJamJam (orchestral battle theme), Emma_MA. https://opengameart.org/content/qazijamjam-orchestral-battle-theme
+- `audio/music/chapter4.ogg` — Icy Realm (Seven and Eight), cynicmusic. https://opengameart.org/content/icy-realm-seven-and-eight
+- `audio/music/chapter5.ogg` — The Abyss (Ambience of a Fallen Age), Umplix. https://opengameart.org/content/ambience-of-a-fallen-age
+- `audio/music/boss2.ogg` — Boss Battle Music, SubspaceAudio / Juhani Junkala. https://opengameart.org/content/boss-battle-music
+- `audio/music/map.ogg` — To The Wind, Bobjt. https://opengameart.org/content/to-the-wind
+
 ## Своё
 Спрайты в `art/sprites/` (SVG), шейдеры моря, луча и неонового контура, все эффекты — нарисованы кодом для этой игры.
