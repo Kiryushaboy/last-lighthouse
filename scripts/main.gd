@@ -10,6 +10,7 @@ const ENEMY_TYPES := [
 ]
 const GEM_SCENE := preload("res://scenes/xp_gem.tscn")
 const BOSS_SCENE := preload("res://scenes/enemies/boss.tscn")
+const MENU_SCENE := "res://scenes/menu.tscn"
 const BOSS_AT := 270.0  ## на 4:30 из тумана выходит спрут
 
 const RUN_TIME := 300.0  ## 5 минут до рассвета
@@ -64,6 +65,8 @@ func _ready() -> void:
 	pause_menu.open_requested.connect(_open_pause)
 	pause_menu.resume_pressed.connect(_close_pause)
 	pause_menu.restart_pressed.connect(_restart)
+	pause_menu.menu_pressed.connect(_to_menu)
+	end_screen.menu_pressed.connect(_to_menu)
 
 	hud.set_health(player.hp, player.max_hp)
 	hud.set_xp(xp, xp_to_next, level)
@@ -159,6 +162,7 @@ func _spawn_boss() -> void:
 	var pos := player.global_position + Vector2.UP * SPAWN_DISTANCE * 0.8
 	boss.global_position = pos.clamp(ARENA.position, ARENA.end)
 	hud.show_boss(boss.hp, boss.max_hp)
+	Sound.play("warning")
 
 
 func _on_boss_killed(_at: Vector2, _xp: int) -> void:
@@ -226,6 +230,7 @@ func _offer_upgrade() -> void:
 	_pending_levels -= 1
 	joystick.reset()
 	get_tree().paused = true
+	Sound.play("levelup")
 	upgrade_menu.show_choices(choices)
 
 
@@ -255,9 +260,15 @@ func _finish(victory: bool) -> void:
 	# Бонус за выживание: ракушка за каждые 20 секунд ночи.
 	shells_this_run += int((RUN_TIME - time_left) / 20.0)
 	SaveData.add_shells(shells_this_run)
+	Sound.play("win" if victory else "lose")
 	end_screen.show_result(victory, level, RUN_TIME - time_left, shells_this_run)
 
 
 func _restart() -> void:
 	get_tree().paused = false
 	get_tree().reload_current_scene()
+
+
+func _to_menu() -> void:
+	get_tree().paused = false
+	get_tree().change_scene_to_file(MENU_SCENE)

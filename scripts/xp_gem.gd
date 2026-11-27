@@ -24,6 +24,7 @@ func _physics_process(delta: float) -> void:
 	if _magnet:
 		global_position = global_position.move_toward(player.global_position, 650.0 * delta)
 		if dist < 22.0:
+			Sound.play("shell" if is_shell else "xp", -4.0 if is_shell else -12.0)
 			collected.emit(value)
 			queue_free()
 

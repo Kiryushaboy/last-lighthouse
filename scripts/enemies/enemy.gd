@@ -59,9 +59,11 @@ func hit(amount: int) -> void:
 	if in_beam():
 		dmg *= Beam.DAMAGE_FACTOR
 	hp -= dmg
+	Sound.play("hit", -10.0)
 	_flash = 0.08
 	if hp <= 0:
 		_dead = true
+		Sound.play("death", -6.0)
 		killed.emit(global_position, xp_value)
 		queue_free()
 

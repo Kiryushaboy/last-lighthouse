@@ -73,6 +73,7 @@ func _update_slam(delta: float) -> void:
 		_slam_warning += delta
 		if _slam_warning >= SLAM_WARN:
 			_slam_warning = -1.0
+			Sound.play("slam")
 			if target.global_position.distance_to(_slam_pos) <= SLAM_RADIUS:
 				(target as Player).take_damage(SLAM_DAMAGE)
 		return
@@ -81,6 +82,7 @@ func _update_slam(delta: float) -> void:
 		_slam_timer = SLAM_EVERY
 		_slam_warning = 0.0
 		_slam_pos = target.global_position
+		Sound.play("warning", -4.0)
 
 
 func _draw_texture() -> void:

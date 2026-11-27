@@ -62,6 +62,7 @@ func take_damage(amount: int) -> void:
 		return
 	hp -= amount
 	_invulnerable = 0.7
+	Sound.play("hurt")
 	health_changed.emit(hp, max_hp)
 	if hp <= 0:
 		died.emit()
@@ -97,6 +98,7 @@ func _nearest_enemy() -> Node2D:
 
 
 func _shoot_at(target: Node2D) -> void:
+	Sound.play("shoot", -10.0)
 	var base_dir := global_position.direction_to(target.global_position)
 	var spread := deg_to_rad(12.0)
 	for i in projectiles:

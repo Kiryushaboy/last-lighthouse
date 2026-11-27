@@ -1,0 +1,146 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/menu.gd" id="1_menu"]
+[ext_resource type="Script" path="res://scripts/arena.gd" id="2_arena"]
+[ext_resource type="Script" path="res://scripts/beam.gd" id="3_beam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/workshop.tscn" id="4_ws"]
+[ext_resource type="Script" path="res://scripts/ui/settings_panel.gd" id="5_settings"]
+
+[node name="Menu" type="Node2D"]
+script = ExtResource("1_menu")
+
+[node name="Arena" type="Node2D" parent="."]
+z_index = -10
+script = ExtResource("2_arena")
+
+[node name="Beam" type="Node2D" parent="."]
+z_index = -5
+script = ExtResource("3_beam")
+turn_speed_deg = 18.0
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 120)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Root" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="UI/Root"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 90.0
+offset_bottom = 300.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.6, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.05, 0.12, 1)
+theme_override_constants/outline_size = 16
+theme_override_font_sizes/font_size = 76
+text = "Последний
+маяк"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="UI/Root"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 320.0
+offset_bottom = 370.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.75)
+theme_override_colors/font_outline_color = Color(0.02, 0.05, 0.12, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 28
+text = "Продержитесь до рассвета"
+horizontal_alignment = 1
+
+[node name="Box" type="VBoxContainer" parent="UI/Root"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -500.0
+offset_right = 260.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 24
+alignment = 2
+
+[node name="Shells" type="Label" parent="UI/Root/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.75, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.05, 0.12, 1)
+theme_override_constants/outline_size = 10
+text = "Ракушки: 0"
+horizontal_alignment = 1
+
+[node name="Play" type="Button" parent="UI/Root/Box"]
+custom_minimum_size = Vector2(0, 130)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Начать ночь"
+
+[node name="Workshop" type="Button" parent="UI/Root/Box"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "Мастерская"
+
+[node name="Settings" type="Button" parent="UI/Root/Box"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "Настройки"
+
+[node name="Workshop" parent="." instance=ExtResource("4_ws")]
+
+[node name="SettingsLayer" type="CanvasLayer" parent="."]
+layer = 15
+visible = false
+
+[node name="Dim" type="ColorRect" parent="SettingsLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="Box" type="VBoxContainer" parent="SettingsLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -360.0
+offset_right = 300.0
+offset_bottom = 360.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="Title" type="Label" parent="SettingsLayer/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 52
+text = "Настройки"
+horizontal_alignment = 1
+
+[node name="Panel" type="VBoxContainer" parent="SettingsLayer/Box"]
+layout_mode = 2
+script = ExtResource("5_settings")
+
+[node name="Back" type="Button" parent="SettingsLayer/Box"]
+custom_minimum_size = Vector2(0, 110)
+layout_mode = 2
+text = "Назад"
