@@ -18,6 +18,8 @@ var shells := 0
 var levels := {}  ## id бонуса -> купленный уровень
 var stars := {}  ## номер ночи -> лучший результат в звёздах (0..3)
 var current_night := 0  ## какую ночь сейчас играем (не сохраняется)
+var best_time := 0.0  ## рекорд бесконечной ночи: секунд
+var best_kills := 0  ## рекорд бесконечной ночи: врагов
 
 
 func _ready() -> void:
@@ -26,6 +28,8 @@ func _ready() -> void:
 		shells = cfg.get_value("progress", "shells", 0)
 		levels = cfg.get_value("progress", "levels", {})
 		stars = cfg.get_value("progress", "stars", {})
+		best_time = cfg.get_value("endless", "best_time", 0.0)
+		best_kills = cfg.get_value("endless", "best_kills", 0)
 
 
 func level_of(id: String) -> int:
@@ -76,6 +80,15 @@ func record_stars(night: int, got: int) -> int:
 	return maxi(got - before, 0)
 
 
+## Записать результат бесконечной ночи. Возвращает [новый рекорд времени?, новый рекорд врагов?].
+func record_endless(time: float, kills: int) -> Array:
+	var r := [time > best_time, kills > best_kills]
+	best_time = maxf(best_time, time)
+	best_kills = maxi(best_kills, kills)
+	_save()
+	return r
+
+
 func add_shells(amount: int) -> void:
 	shells += amount
 	_save()
@@ -86,5 +99,7 @@ func _save() -> void:
 	cfg.set_value("progress", "shells", shells)
 	cfg.set_value("progress", "levels", levels)
 	cfg.set_value("progress", "stars", stars)
+	cfg.set_value("endless", "best_time", best_time)
+	cfg.set_value("endless", "best_kills", best_kills)
 	cfg.save(PATH)
 	changed.emit()

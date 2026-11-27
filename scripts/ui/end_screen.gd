@@ -26,6 +26,10 @@ func _ready() -> void:
 
 func show_result(r: Dictionary) -> void:
 	var won: bool = r.won
+	if r.endless:
+		_show_endless(r)
+		return
+	$Card/Box/Stars.show()
 	_title.text = "Рассвет! Маяк устоял" if won else "Маяк погас"
 	_title.add_theme_color_override("font_color", Color(1, 0.85, 0.45) if won else Color(1, 0.5, 0.5))
 	$Card/Box/Night.text = "Ночь %d · %s" % [r.night + 1, r.title]
@@ -58,6 +62,38 @@ func show_result(r: Dictionary) -> void:
 	tw.tween_method(func(v: float): _shells.text = "Ракушек за ночь: %d (всего %d)%s" % [int(v), SaveData.shells - shells + int(v), bonus],
 			0.0, float(shells), clampf(shells * 0.03, 0.3, 1.2))
 	tw.tween_callback(func(): UiFx.bump(_shells, 1.2))
+
+
+## Итог бесконечной ночи: счётчики и рекорды вместо звёзд.
+func _show_endless(r: Dictionary) -> void:
+	var new_record: bool = r.records[0] or r.records[1]
+	_title.text = "Новый рекорд!" if new_record else "Маяк погас"
+	_title.add_theme_color_override("font_color", Color(1, 0.85, 0.45) if new_record else Color(1, 0.5, 0.5))
+	$Card/Box/Night.text = "Бесконечная ночь"
+	$Card/Box/Stars.hide()
+	var checks: VBoxContainer = $Card/Box/Checks
+	for c in checks.get_children():
+		c.queue_free()
+	var s := int(r.survived)
+	var b := int(SaveData.best_time)
+	var lines := [
+		["Продержались %d:%02d (рекорд %d:%02d)" % [s / 60, s % 60, b / 60, b % 60], r.records[0]],
+		["Побеждено врагов: %d (рекорд %d)" % [r.kills, SaveData.best_kills], r.records[1]],
+	]
+	for line in lines:
+		var l := Label.new()
+		l.text = ("★  " if line[1] else "") + line[0]
+		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		l.add_theme_font_size_override("font_size", 26)
+		l.add_theme_color_override("font_color", Color(1, 0.85, 0.4) if line[1] else Color(1, 1, 1, 0.8))
+		checks.add_child(l)
+	_stats.text = "Уровень %d" % r.level
+	_next.visible = false
+	show()
+	var shells: int = r.shells
+	_shells.text = "Ракушек за ночь: %d (всего %d)" % [shells, SaveData.shells]
+	if new_record:
+		UiFx.bump(_title, 1.3)
 
 
 ## Окно появляется с анимацией каждый раз, когда его показывают.
