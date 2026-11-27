@@ -17,6 +17,6 @@ func _draw() -> void:
 		draw_line(Vector2(RECT.position.x, y), Vector2(RECT.end.x, y), line, 2.0)
 		y += CELL
 	draw_rect(RECT, Color(0.5, 0.7, 0.9, 0.5), false, 6.0)
-	# Маяк. Позже здесь будет вращающийся луч.
+	# Маяк в центре. Луч рисует Beam.
 	draw_circle(Vector2.ZERO, 40.0, Color(0.85, 0.85, 0.8))
 	draw_circle(Vector2.ZERO, 18.0, Color(1.0, 0.9, 0.5))

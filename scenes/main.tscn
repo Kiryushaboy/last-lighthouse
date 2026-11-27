@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/arena.gd" id="2_arena"]
+[ext_resource type="Script" path="res://scripts/beam.gd" id="9_beam"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="3_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/joystick.tscn" id="5_joystick"]
@@ -18,6 +19,10 @@ script = ExtResource("1_main")
 z_index = -10
 script = ExtResource("2_arena")
 
+[node name="Beam" type="Node2D" parent="World"]
+z_index = -5
+script = ExtResource("9_beam")
+
 [node name="Gems" type="Node2D" parent="World"]
 
 [node name="Enemies" type="Node2D" parent="World"]
@@ -25,6 +30,8 @@ script = ExtResource("2_arena")
 [node name="Player" parent="World" instance=ExtResource("3_player")]
 
 [node name="Bullets" type="Node2D" parent="World"]
+
+[node name="EnemyProjectiles" type="Node2D" parent="World"]
 
 [node name="SpawnTimer" type="Timer" parent="."]
 wait_time = 1.4

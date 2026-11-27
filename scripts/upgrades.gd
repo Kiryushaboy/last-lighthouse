@@ -13,6 +13,7 @@ const LIST := [
 	{"id": "speed", "title": "Лёгкие сапоги", "desc": "+15% к скорости"},
 	{"id": "max_hp", "title": "Крепкий смотритель", "desc": "+1 жизнь и лечение"},
 	{"id": "magnet", "title": "Магнит", "desc": "Опыт притягивается издалека"},
+	{"id": "beam", "title": "Линза Френеля", "desc": "Луч маяка шире на треть"},
 ]
 
 
@@ -33,6 +34,10 @@ static func apply(id: String, player: Player) -> void:
 			player.heal(1)
 		"magnet":
 			player.pickup_radius *= 1.6
+		"beam":
+			var beam := player.get_tree().get_first_node_in_group("beam") as Beam
+			if beam:
+				beam.half_width_deg *= 1.33
 		_:
 			push_warning("Неизвестное улучшение: %s" % id)
 

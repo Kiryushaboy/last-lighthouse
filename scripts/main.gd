@@ -1,7 +1,13 @@
 extends Node2D
 ## Главная сцена: таймер ночи, появление врагов, опыт, уровни, конец забега.
 
-const CRAB_SCENE := preload("res://scenes/crab.tscn")
+## Какие враги приходят ночью: с какой секунды и как часто (вес).
+const ENEMY_TYPES := [
+	{"scene": preload("res://scenes/enemies/crab.tscn"), "from": 0.0, "weight": 1.0},
+	{"scene": preload("res://scenes/enemies/jellyfish.tscn"), "from": 60.0, "weight": 0.45},
+	{"scene": preload("res://scenes/enemies/squid.tscn"), "from": 120.0, "weight": 0.2},
+	{"scene": preload("res://scenes/enemies/shell.tscn"), "from": 180.0, "weight": 0.12},
+]
 const GEM_SCENE := preload("res://scenes/xp_gem.tscn")
 
 const RUN_TIME := 300.0  ## 5 минут до рассвета
@@ -13,6 +19,8 @@ const SPAWN_DISTANCE := 800.0  ## чуть дальше края экрана
 @onready var camera: Camera2D = $World/Player/Camera2D
 @onready var enemies: Node2D = $World/Enemies
 @onready var gems: Node2D = $World/Gems
+@onready var beam: Beam = $World/Beam
+@onready var enemy_projectiles: Node2D = $World/EnemyProjectiles
 @onready var spawn_timer: Timer = $SpawnTimer
 @onready var hud: Hud = $HUD
 @onready var joystick: TouchJoystick = $Controls/Joystick
@@ -93,20 +101,38 @@ func _on_spawn_timer() -> void:
 	for i in count:
 		if enemies.get_child_count() >= MAX_ENEMIES:
 			break
-		_spawn_crab(elapsed)
+		_spawn_enemy(elapsed)
 	spawn_timer.wait_time = maxf(0.5, 1.4 - elapsed / 330.0)
 
 
-func _spawn_crab(elapsed: float) -> void:
-	var crab := CRAB_SCENE.instantiate() as Crab
-	crab.target = player
-	crab.max_hp = 2 + int(elapsed / 90.0)
-	crab.speed = minf(90.0 + elapsed * 0.2, 150.0)
-	crab.killed.connect(_on_enemy_killed)
-	enemies.add_child(crab)
+func _spawn_enemy(elapsed: float) -> void:
+	var enemy := _pick_enemy_type(elapsed).instantiate() as Enemy
+	enemy.target = player
+	enemy.beam = beam
+	# Каждые полторы минуты враги крепче и чуть быстрее.
+	enemy.max_hp += int(elapsed / 90.0) * maxi(1, enemy.max_hp / 2)
+	enemy.speed *= 1.0 + minf(elapsed / 300.0, 1.0) * 0.5
+	if enemy is Squid:
+		(enemy as Squid).projectile_container = enemy_projectiles
+	enemy.killed.connect(_on_enemy_killed)
+	enemies.add_child(enemy)
 	var angle := randf() * TAU
 	var pos := player.global_position + Vector2.RIGHT.rotated(angle) * SPAWN_DISTANCE
-	crab.global_position = pos.clamp(ARENA.position, ARENA.end)
+	enemy.global_position = pos.clamp(ARENA.position, ARENA.end)
+
+
+## Случайный тип врага с учётом весов среди уже открывшихся к этой секунде.
+func _pick_enemy_type(elapsed: float) -> PackedScene:
+	var open := ENEMY_TYPES.filter(func(t): return elapsed >= t.from)
+	var total := 0.0
+	for t in open:
+		total += t.weight
+	var roll := randf() * total
+	for t in open:
+		roll -= t.weight
+		if roll <= 0.0:
+			return t.scene
+	return open[0].scene
 
 
 func _on_enemy_killed(at: Vector2, xp_value: int) -> void:
