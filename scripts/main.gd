@@ -29,6 +29,7 @@ const SPAWN_DISTANCE := 800.0  ## чуть дальше края экрана
 @onready var upgrade_menu: UpgradeMenu = $UpgradeMenu
 @onready var end_screen: EndScreen = $EndScreen
 @onready var pause_menu: PauseMenu = $PauseMenu
+@onready var workshop: Workshop = $Workshop
 
 var time_left := RUN_TIME
 var level := 1
@@ -39,6 +40,7 @@ var upgrades_taken := {}  ## id улучшения -> сколько раз вз
 var _pending_levels := 0
 var _over := false
 var won := false
+var shells_this_run := 0
 var boss: Boss
 
 
@@ -50,11 +52,14 @@ func _ready() -> void:
 	camera.limit_right = int(ARENA.end.x)
 	camera.limit_bottom = int(ARENA.end.y)
 
+	_apply_workshop()
 	player.died.connect(_on_player_died)
 	player.health_changed.connect(hud.set_health)
 	spawn_timer.timeout.connect(_on_spawn_timer)
 	upgrade_menu.chosen.connect(_on_upgrade_chosen)
 	end_screen.restart_pressed.connect(_restart)
+	end_screen.workshop_pressed.connect(func(): end_screen.hide(); workshop.open())
+	workshop.closed.connect(end_screen.show)
 	hud.pause_pressed.connect(_open_pause)
 	pause_menu.open_requested.connect(_open_pause)
 	pause_menu.resume_pressed.connect(_close_pause)
@@ -80,6 +85,20 @@ func _notification(what: int) -> void:
 	# Свернули приложение на телефоне: открываем паузу, чтобы не погибнуть без нас.
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
 		_open_pause()
+
+
+## Вечные бонусы из мастерской действуют с первой секунды забега.
+func _apply_workshop() -> void:
+	player.max_hp += SaveData.level_of("hp")
+	player.hp = player.max_hp
+	player.crit_chance = 0.08 * SaveData.level_of("crit")
+	player.speed *= 1.0 + 0.05 * SaveData.level_of("speed")
+	for i in SaveData.level_of("start"):
+		var choice := Upgrades.pick_choices(upgrades_taken, 1)
+		if choice.is_empty():
+			break
+		upgrades_taken[choice[0].id] = upgrades_taken.get(choice[0].id, 0) + 1
+		Upgrades.apply(choice[0].id, player)
 
 
 # --- Пауза -------------------------------------------------------------
@@ -122,7 +141,7 @@ func _spawn_enemy(elapsed: float) -> void:
 	enemy.speed *= 1.0 + minf(elapsed / 300.0, 1.0) * 0.5
 	if enemy is Squid:
 		(enemy as Squid).projectile_container = enemy_projectiles
-	enemy.killed.connect(_on_enemy_killed)
+	enemy.killed.connect(_on_enemy_killed.bind(enemy.shell_chance))
 	enemies.add_child(enemy)
 	var angle := randf() * TAU
 	var pos := player.global_position + Vector2.RIGHT.rotated(angle) * SPAWN_DISTANCE
@@ -143,7 +162,13 @@ func _spawn_boss() -> void:
 
 
 func _on_boss_killed(_at: Vector2, _xp: int) -> void:
+	_add_shells(30)
 	_finish(true)
+
+
+func _add_shells(amount: int) -> void:
+	shells_this_run += amount
+	hud.set_shells(shells_this_run)
 
 
 ## Случайный тип врага с учётом весов среди уже открывшихся к этой секунде.
@@ -160,16 +185,19 @@ func _pick_enemy_type(elapsed: float) -> PackedScene:
 	return open[0].scene
 
 
-func _on_enemy_killed(at: Vector2, xp_value: int) -> void:
-	# Враг погиб во время расчёта физики, поэтому кристалл создаём чуть позже.
+func _on_enemy_killed(at: Vector2, xp_value: int, shell_chance: float) -> void:
+	# Враг погиб во время расчёта физики, поэтому предметы создаём чуть позже.
 	_spawn_gem.call_deferred(at, xp_value)
+	if randf() < shell_chance:
+		_spawn_gem.call_deferred(at + Vector2(14, 0), 1, true)
 
 
-func _spawn_gem(at: Vector2, value: int) -> void:
+func _spawn_gem(at: Vector2, value: int, is_shell := false) -> void:
 	var gem := GEM_SCENE.instantiate() as XpGem
 	gem.value = value
+	gem.is_shell = is_shell
 	gem.player = player
-	gem.collected.connect(_add_xp)
+	gem.collected.connect(_add_shells if is_shell else _add_xp)
 	gems.add_child(gem)
 	gem.global_position = at
 
@@ -224,7 +252,10 @@ func _finish(victory: bool) -> void:
 	joystick.reset()
 	upgrade_menu.hide()
 	get_tree().paused = true
-	end_screen.show_result(victory, level, RUN_TIME - time_left)
+	# Бонус за выживание: ракушка за каждые 20 секунд ночи.
+	shells_this_run += int((RUN_TIME - time_left) / 20.0)
+	SaveData.add_shells(shells_this_run)
+	end_screen.show_result(victory, level, RUN_TIME - time_left, shells_this_run)
 
 
 func _restart() -> void:

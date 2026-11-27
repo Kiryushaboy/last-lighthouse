@@ -39,3 +39,7 @@ func set_boss_health(hp: int, max_hp: int) -> void:
 	var bar: ProgressBar = $Root/BossBar
 	bar.max_value = max_hp
 	bar.value = hp
+
+
+func set_shells(count: int) -> void:
+	$Root/ShellsLabel.text = "Ракушки: %d" % count

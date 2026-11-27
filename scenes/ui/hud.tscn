@@ -69,6 +69,16 @@ offset_right = 280.0
 offset_bottom = 124.0
 text = "Жизни: 5/5"
 
+[node name="ShellsLabel" type="Label" parent="Root"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 128.0
+offset_right = 280.0
+offset_bottom = 168.0
+theme_override_colors/font_color = Color(1, 0.75, 0.8, 1)
+theme_override_font_sizes/font_size = 26
+text = "Ракушки: 0"
+
 [node name="LevelLabel" type="Label" parent="Root"]
 layout_mode = 1
 anchors_preset = 1

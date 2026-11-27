@@ -8,6 +8,7 @@ radius = 26.0
 [node name="Shell" type="Area2D"]
 collision_layer = 2
 script = ExtResource("1_script")
+shell_chance = 0.5
 speed = 55.0
 max_hp = 12
 contact_damage = 2
