@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bia8rflkdirh2"
-path="res://.godot/imported/smoke_02.png-c0d9eceabb28073a2561828139358bb1.ctex"
+uid="uid://dte6udhassus"
+path="res://.godot/imported/icon_fg_432.png-5e1f37f435ae6c4166c74b6e11d79a0c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/fx/particles/smoke_02.png"
-dest_files=["res://.godot/imported/smoke_02.png-c0d9eceabb28073a2561828139358bb1.ctex"]
+source_file="res://art/icon/icon_fg_432.png"
+dest_files=["res://.godot/imported/icon_fg_432.png-5e1f37f435ae6c4166c74b6e11d79a0c.ctex"]
 
 [params]
 

@@ -1,11 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#0f1420"/>
-  <polygon points="256,150 470,90 470,210" fill="#ffe680" opacity="0.35"/>
-  <polygon points="256,150 42,90 42,210" fill="#ffe680" opacity="0.2"/>
-  <polygon points="206,420 226,190 286,190 306,420" fill="#d9d9cc"/>
-  <rect x="216" y="260" width="80" height="34" fill="#d9504a"/>
-  <rect x="210" y="340" width="92" height="34" fill="#d9504a"/>
-  <rect x="222" y="130" width="68" height="60" rx="10" fill="#ffe680"/>
-  <polygon points="214,130 256,92 298,130" fill="#d9504a"/>
-  <rect x="120" y="420" width="272" height="26" rx="13" fill="#3a5a7a"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="432" viewBox="0 0 432 432">
+<clipPath id="r"><rect width="432" height="432" rx="96"/></clipPath><g clip-path="url(#r)">
+  <!-- Задний слой: ночное небо и море. -->
+  <defs>
+    <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1838"/>
+      <stop offset="0.7" stop-color="#06263f"/>
+      <stop offset="1" stop-color="#021220"/>
+    </linearGradient>
+  </defs>
+  <rect width="432" height="432" fill="url(#sky2)"/>
+  <circle cx="90" cy="80" r="3" fill="#cfe9ff"/>
+  <circle cx="330" cy="60" r="2.5" fill="#cfe9ff"/>
+  <circle cx="360" cy="140" r="2" fill="#cfe9ff" opacity="0.7"/>
+  <circle cx="60" cy="170" r="2" fill="#cfe9ff" opacity="0.7"/>
+  <circle cx="280" cy="40" r="1.8" fill="#cfe9ff" opacity="0.8"/>
+<g transform="translate(216 216) scale(1.25) translate(-216 -216)">
+  <!-- Передний слой адаптивной иконки: маяк с лучами. Всё важное — в центральных 66%. -->
+  <defs>
+    <linearGradient id="beamL" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#ffe9a0" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#ffd25a" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="beamR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffe9a0" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#ffd25a" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.3" stop-color="#fff0b0"/>
+      <stop offset="1" stop-color="#ffc040" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <polygon points="216,150 40,105 40,215" fill="url(#beamL)"/>
+  <polygon points="216,150 392,115 392,205" fill="url(#beamR)"/>
+  <circle cx="216" cy="150" r="70" fill="url(#lamp)"/>
+  <!-- башня -->
+  <polygon points="190,180 242,180 256,330 176,330" fill="#eef3ff"/>
+  <polygon points="186,215 246,215 249,245 183,245" fill="#ff4f6d"/>
+  <polygon points="180,275 252,275 255,305 177,305" fill="#ff4f6d"/>
+  <polygon points="190,180 242,180 256,330 176,330" fill="none" stroke="#7fe3ff" stroke-width="5" stroke-linejoin="round"/>
+  <!-- фонарная комната -->
+  <rect x="184" y="132" width="64" height="48" rx="8" fill="#1a2440" stroke="#ffd25a" stroke-width="5"/>
+  <rect x="198" y="140" width="36" height="32" rx="5" fill="#fff4c4"/>
+  <path d="M178 132 L216 102 L254 132 Z" fill="#ff4f6d" stroke="#ffd25a" stroke-width="4" stroke-linejoin="round"/>
+  <!-- волны у подножия -->
+  <path d="M120 338 q24 -16 48 0 t48 0 t48 0 t48 0" stroke="#4fe0ff" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M144 360 q24 -14 48 0 t48 0 t48 0" stroke="#4fe0ff" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.6"/>
+</g></g></svg>

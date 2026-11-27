@@ -6,9 +6,6 @@
 Паки «Impact Sounds», «Interface Sounds», «Digital Audio», «UI Audio» с https://kenney.nl/assets.
 Лицензия CC0 1.0: `audio/sfx/License-Kenney.txt`. Указывать автора не обязательно, но мы указываем.
 
-## Частицы — Kenney «Particle Pack» (CC0)
-Несколько текстур в `art/fx/particles/`, уменьшены до 128 px. Лицензия: `art/fx/particles/License-Kenney.txt`.
-
 ## Музыка — OpenGameArt.org (CC0)
 | Файл | Трек | Автор | Страница |
 |---|---|---|---|

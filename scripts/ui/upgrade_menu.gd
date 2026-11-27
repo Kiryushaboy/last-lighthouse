@@ -11,12 +11,12 @@ signal chosen(id: String)
 var _picking := false
 
 
-func show_choices(choices: Array, taken := {}) -> void:
+func show_choices(choices: Array, taken := {}, player: Player = null) -> void:
 	_picking = false
 	for child in _choices.get_children():
 		child.queue_free()
 	for i in choices.size():
-		_choices.add_child(_make_card(choices[i], taken.get(choices[i].id, 0), i))
+		_choices.add_child(_make_card(choices[i], taken.get(choices[i].id, 0), player))
 	show()
 	_dim.modulate.a = 0.0
 	create_tween().set_ignore_time_scale().tween_property(_dim, "modulate:a", 1.0, 0.2)
@@ -25,9 +25,9 @@ func show_choices(choices: Array, taken := {}) -> void:
 	UiFx.stagger([_title] + cards, 0.09, 0.0)
 
 
-func _make_card(upgrade: Dictionary, level: int, index: int) -> Button:
+func _make_card(upgrade: Dictionary, level: int, player: Player) -> Button:
 	var card := Button.new()
-	card.custom_minimum_size = Vector2(0, 170)
+	card.custom_minimum_size = Vector2(0, 200)
 	card.focus_mode = Control.FOCUS_NONE
 	var row := HBoxContainer.new()
 	row.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -53,29 +53,30 @@ func _make_card(upgrade: Dictionary, level: int, index: int) -> Button:
 	title.add_theme_color_override("font_color", UpgradeIcon.color_of(upgrade.id).lightened(0.3))
 	text.add_child(title)
 
-	var desc := Label.new()
-	desc.text = upgrade.desc
-	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	desc.add_theme_font_size_override("font_size", 26)
-	desc.add_theme_color_override("font_color", Color(1, 1, 1, 0.8))
-	text.add_child(desc)
+	# Что делает вообще — и что именно изменится сейчас, в цифрах.
+	var what := Label.new()
+	what.text = upgrade.what
+	what.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	what.add_theme_font_size_override("font_size", 23)
+	what.add_theme_color_override("font_color", Color(1, 1, 1, 0.7))
+	text.add_child(what)
+
+	var change := Label.new()
+	change.text = Upgrades.describe(upgrade.id, level, player)
+	change.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	change.add_theme_font_size_override("font_size", 27)
+	change.add_theme_color_override("font_color", Color(0.55, 1.0, 0.8))
+	text.add_child(change)
 
 	# Уровень улучшения: закрашенные точки — сколько уже взято, светится новая.
 	var pips := Label.new()
 	var s := ""
 	for i in Upgrades.MAX_LEVEL:
 		s += "●" if i <= level else "○"
-	pips.text = s + ("  НОВОЕ" if level == 0 else "")
+	pips.text = s + ("  НОВОЕ" if level == 0 else "  уровень %d из %d" % [level + 1, Upgrades.MAX_LEVEL])
 	pips.add_theme_font_size_override("font_size", 22)
 	pips.add_theme_color_override("font_color", Color(1, 0.85, 0.4))
 	text.add_child(pips)
-
-	var key := Label.new()
-	key.text = str(index + 1)
-	key.add_theme_font_size_override("font_size", 22)
-	key.add_theme_color_override("font_color", Color(1, 1, 1, 0.3))
-	key.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	row.add_child(key)
 
 	card.pressed.connect(_pick.bind(upgrade.id, card))
 	return card
