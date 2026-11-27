@@ -15,6 +15,7 @@ const GAME_SCENE := "res://scenes/map.tscn"  ## «Начать ночь» вед
 
 
 func _ready() -> void:
+	SafeArea.apply(_ui)
 	get_tree().paused = false
 	Sound.play_music("menu")
 	_play.pressed.connect(func(): get_tree().change_scene_to_file(GAME_SCENE))

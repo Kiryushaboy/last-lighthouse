@@ -13,6 +13,7 @@ var _xp_tween: Tween
 
 
 func _ready() -> void:
+	SafeArea.apply($Root)
 	$Root/PauseButton.pressed.connect(pause_pressed.emit)
 
 

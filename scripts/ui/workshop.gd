@@ -32,6 +32,7 @@ func _rebuild() -> void:
 		child.queue_free()
 	for p in SaveData.PERKS:
 		_rows.add_child(_make_row(p))
+	UiFx.touch_scroll($Card/Box/Scroll)
 
 
 ## Строка бонуса: значок, название, что даст следующий уровень, точки уровней и кнопка цены.
@@ -129,6 +130,8 @@ func _change_text(id: String, lvl: int, maxed: bool) -> String:
 
 
 func _buy(id: String) -> void:
+	if not UiFx.tap_ok($Card/Box/Scroll):
+		return
 	if not SaveData.buy(id):
 		return
 	Sound.play("levelup", -4.0)

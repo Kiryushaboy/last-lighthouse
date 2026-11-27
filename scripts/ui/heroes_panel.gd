@@ -35,6 +35,7 @@ func _rebuild() -> void:
 		child.queue_free()
 	for h in Heroes.LIST:
 		_rows.add_child(_make_row(h))
+	UiFx.touch_scroll($Card/Box/Scroll)
 
 
 func _make_row(h: Dictionary) -> Control:
@@ -117,6 +118,8 @@ func _label(t: String, font_size: int, color: Color) -> Label:
 
 
 func _choose(id: String) -> void:
+	if not UiFx.tap_ok($Card/Box/Scroll):
+		return
 	var bought: bool = not id in SaveData.heroes
 	if not SaveData.choose_hero(id, Heroes.get_hero(id).cost):
 		return
