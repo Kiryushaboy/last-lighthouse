@@ -60,3 +60,4 @@ func _apply_settings() -> void:
 func _on_node_added(node: Node) -> void:
 	if node is BaseButton:
 		(node as BaseButton).pressed.connect(play.bind("click", -6.0))
+		UiFx.add_press_feedback(node as BaseButton)

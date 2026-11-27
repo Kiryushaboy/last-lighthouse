@@ -10,7 +10,7 @@ const GAME_SCENE := "res://scenes/main.tscn"
 @onready var _settings_btn: Button = $UI/Root/Box/Settings
 @onready var _workshop: Workshop = $Workshop
 @onready var _settings: CanvasLayer = $SettingsLayer
-@onready var _settings_back: Button = $SettingsLayer/Box/Back
+@onready var _settings_back: Button = $SettingsLayer/Card/Box/Back
 
 
 func _ready() -> void:
@@ -20,7 +20,9 @@ func _ready() -> void:
 	_workshop.closed.connect(_show_menu)
 	_settings_btn.pressed.connect(func(): _ui.hide(); _settings.show())
 	_settings_back.pressed.connect(func(): _settings.hide(); _show_menu())
+	_settings.visibility_changed.connect(_on_settings_visibility)
 	_show_menu()
+	UiFx.stagger([$UI/Root/Title, $UI/Root/Subtitle] + $UI/Root/Box.get_children(), 0.08, 0.1)
 
 
 func _show_menu() -> void:
@@ -36,3 +38,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif _workshop.visible:
 			_workshop.hide()
 			_workshop.closed.emit()
+
+
+func _on_settings_visibility() -> void:
+	if _settings.visible:
+		UiFx.pop_in($SettingsLayer/Card, $SettingsLayer/Dim)
+
+
+func _process(_delta: float) -> void:
+	# Название мягко покачивается, как на волнах.
+	var t := Time.get_ticks_msec() / 1000.0
+	$UI/Root/Title.rotation = sin(t * 0.8) * 0.015
+	$UI/Root/Title.pivot_offset = $UI/Root/Title.size / 2.0

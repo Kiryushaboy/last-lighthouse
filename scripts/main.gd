@@ -46,6 +46,7 @@ var boss: Boss
 
 
 func _ready() -> void:
+	Fx.reset()
 	player.arena_rect = ARENA
 	player.bullet_container = $World/Bullets
 	camera.limit_left = int(ARENA.position.x)
@@ -231,7 +232,10 @@ func _offer_upgrade() -> void:
 	joystick.reset()
 	get_tree().paused = true
 	Sound.play("levelup")
-	upgrade_menu.show_choices(choices)
+	Fx.flash(Color(1, 0.85, 0.4, 0.5), 0.5)
+	Fx.ring(player.global_position, Color(1, 0.85, 0.4), 260.0, 0.6, 10.0)
+	Fx.burst(player.global_position, Color(1, 0.85, 0.4), 24, 380.0, 6.0)
+	upgrade_menu.show_choices(choices, upgrades_taken)
 
 
 func _on_upgrade_chosen(id: String) -> void:
@@ -261,14 +265,17 @@ func _finish(victory: bool) -> void:
 	shells_this_run += int((RUN_TIME - time_left) / 20.0)
 	SaveData.add_shells(shells_this_run)
 	Sound.play("win" if victory else "lose")
+	Fx.reset()
 	end_screen.show_result(victory, level, RUN_TIME - time_left, shells_this_run)
 
 
 func _restart() -> void:
+	Fx.reset()
 	get_tree().paused = false
 	get_tree().reload_current_scene()
 
 
 func _to_menu() -> void:
+	Fx.reset()
 	get_tree().paused = false
 	get_tree().change_scene_to_file(MENU_SCENE)

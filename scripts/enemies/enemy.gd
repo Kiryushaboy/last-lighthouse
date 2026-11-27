@@ -22,17 +22,25 @@ var hp := 0
 
 var _flash := 0.0
 var _dead := false
+var _squash := 0.0  ## 0..1, сплющивание после попадания
+var _age := 0.0  ## для появления из воды
+var _knock := Vector2.ZERO  ## отбрасывание от попадания
 
 
 func _ready() -> void:
 	hp = max_hp
 	add_to_group("enemies")
+	Fx.ring.call_deferred(global_position, Color(0.7, 0.9, 1.0, 0.7), radius * 2.2, 0.5, 4.0)  # всплеск
 
 
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(target):
 		return
+	_age += delta
 	_move(delta, speed * (Beam.SLOW_FACTOR if in_beam() else 1.0))
+	global_position += _knock * delta
+	_knock = _knock.move_toward(Vector2.ZERO, 900.0 * delta)
+	_squash = maxf(_squash - delta * 6.0, 0.0)
 
 	for body in get_overlapping_bodies():
 		if body is Player:
@@ -61,29 +69,52 @@ func hit(amount: int) -> void:
 	hp -= dmg
 	Sound.play("hit", -10.0)
 	_flash = 0.08
+	_squash = 1.0
+	if is_instance_valid(target):
+		_knock = target.global_position.direction_to(global_position) * 160.0 / sqrt(maxf(radius / 16.0, 1.0))
+	Fx.text(global_position, str(dmg), Color(1, 0.85, 0.3) if dmg > amount else Color.WHITE, dmg > amount)
+	Fx.burst(global_position, color, 3, 180.0, 4.0)
 	if hp <= 0:
 		_dead = true
 		Sound.play("death", -6.0)
+		_on_death_fx()
 		killed.emit(global_position, xp_value)
 		queue_free()
 
 
+## Эффект гибели: брызги цвета врага и расходящееся кольцо. Босс переопределяет.
+func _on_death_fx() -> void:
+	Fx.burst(global_position, color, 14, 320.0, 6.0)
+	Fx.ring(global_position, color.lightened(0.3), radius * 3.0, 0.4, 6.0)
+	Fx.shake(0.08)
+
+
 func _draw() -> void:
+	# Появление: вырастает из воды за 0.25 с с лёгким перехлёстом.
+	var grow := clampf(_age / 0.25, 0.0, 1.0)
+	var pop := 1.0 + sin(grow * PI) * 0.15
+	var sq := 1.0 + _squash * 0.25
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2(sq, 1.0 / sq) * grow * pop)
+	# Тень под врагом даёт объём.
+	draw_set_transform(Vector2(radius * 0.25, radius * 0.4), 0.0, Vector2(1.0, 0.6) * grow)
+	draw_circle(Vector2.ZERO, radius * 0.95, Color(0, 0, 0, 0.28))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2(sq, 1.0 / sq) * grow * pop)
 	if texture:
 		_draw_texture()
 	else:
 		_draw_body(Color.WHITE if _flash > 0.0 else color)
+	draw_set_transform(Vector2.ZERO)
 	if in_beam():
-		draw_arc(Vector2.ZERO, radius + 4.0, 0.0, TAU, 24, Color(1, 0.9, 0.5, 0.8), 2.0)
+		var t := Time.get_ticks_msec() / 200.0
+		draw_arc(Vector2.ZERO, radius + 5.0 + sin(t) * 1.5, 0.0, TAU, 28, Color(1, 0.9, 0.5, 0.7), 2.5)
 
 
 func _draw_body(c: Color) -> void:
 	draw_circle(Vector2.ZERO, radius, c)
 
 
-## Картинка по центру; при попадании поверх неё короткая белая вспышка.
+## Картинка по центру; при попадании картинка на миг вспыхивает белым.
 func _draw_texture() -> void:
 	var size := texture.get_size() * 0.5 * texture_scale
-	draw_texture_rect(texture, Rect2(-size / 2.0, size), false)
-	if _flash > 0.0:
-		draw_circle(Vector2.ZERO, radius, Color(1, 1, 1, 0.6))
+	var mod := Color(4, 4, 4) if _flash > 0.0 else Color.WHITE
+	draw_texture_rect(texture, Rect2(-size / 2.0, size), false, mod)

@@ -7,12 +7,13 @@ signal restart_pressed
 signal menu_pressed
 signal open_requested  ## нажали Esc, когда меню закрыто; решает Main
 
-@onready var _resume: Button = $Box/Resume
-@onready var _restart: Button = $Box/Restart
-@onready var _to_menu: Button = $Box/ToMenu
+@onready var _resume: Button = $Card/Box/Resume
+@onready var _restart: Button = $Card/Box/Restart
+@onready var _to_menu: Button = $Card/Box/ToMenu
 
 
 func _ready() -> void:
+	visibility_changed.connect(_on_visibility_changed)
 	_resume.pressed.connect(resume_pressed.emit)
 	_restart.pressed.connect(restart_pressed.emit)
 	_to_menu.pressed.connect(menu_pressed.emit)
@@ -25,3 +26,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			open_requested.emit()
 		get_viewport().set_input_as_handled()
+
+
+## Окно появляется с анимацией каждый раз, когда его показывают.
+func _on_visibility_changed() -> void:
+	if visible:
+		UiFx.pop_in($Card, $Dim)
+		UiFx.stagger($Card/Box.get_children())
