@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/arena.gd" id="2_arena"]
 [ext_resource type="Script" path="res://scripts/beam.gd" id="9_beam"]
+[ext_resource type="PackedScene" path="res://scenes/ui/workshop.tscn" id="10_ws"]
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="3_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/joystick.tscn" id="5_joystick"]
@@ -48,3 +49,5 @@ autostart = true
 [node name="EndScreen" parent="." instance=ExtResource("7_end")]
 
 [node name="PauseMenu" parent="." instance=ExtResource("8_pause")]
+
+[node name="Workshop" parent="." instance=ExtResource("10_ws")]

@@ -17,6 +17,7 @@ const BULLET_SCENE := preload("res://scenes/bullet.tscn")
 @export var pierce := 0  ## сколько врагов снаряд пробивает насквозь
 @export var pickup_radius := 90.0  ## с какого расстояния притягивается опыт
 @export var shoot_range := 520.0
+@export var crit_chance := 0.0  ## шанс двойного урона, из мастерской
 
 var hp := 0
 var joystick_vector := Vector2.ZERO  ## задаёт Main из виртуального джойстика
@@ -102,7 +103,7 @@ func _shoot_at(target: Node2D) -> void:
 		var offset := (i - (projectiles - 1) / 2.0) * spread
 		var bullet := BULLET_SCENE.instantiate() as Bullet
 		bullet.direction = base_dir.rotated(offset)
-		bullet.damage = damage
+		bullet.damage = damage * (2 if randf() < crit_chance else 1)
 		bullet.pierce = pierce
 		bullet_container.add_child(bullet)
 		bullet.global_position = global_position

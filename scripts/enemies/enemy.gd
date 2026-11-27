@@ -9,6 +9,7 @@ signal killed(at: Vector2, xp_value: int)
 @export var max_hp := 2
 @export var contact_damage := 1
 @export var xp_value := 1
+@export var shell_chance := 0.05  ## шанс уронить ракушку
 @export var armor := 0  ## вычитается из каждого попадания, но урон не меньше 1
 @export var color := Color(0.9, 0.35, 0.3)
 @export var radius := 16.0
