@@ -60,3 +60,29 @@ func set_boss_health(hp: int, max_hp: int) -> void:
 func set_shells(count: int) -> void:
 	$Root/ShellsLabel.text = "Ракушки: %d" % count
 	UiFx.bump($Root/ShellsLabel, 1.3)
+
+
+## Задание ночи в углу: «Победить 70 врагов: 23/70», галочка, когда готово.
+func set_task(text: String, progress: int, goal: int) -> void:
+	var label: Label = $Root/TaskLabel
+	var done := progress >= goal
+	var new_text := ("✓ " if done else "") + "%s: %d/%d" % [text, mini(progress, goal), goal]
+	if done and not label.text.begins_with("✓"):
+		UiFx.bump(label, 1.3)
+	label.text = new_text
+
+
+## Заставка в начале ночи: название, особое условие, задание. Сама исчезает.
+func show_night_banner(title: String, modifier: String, task: String) -> void:
+	var banner: Control = $Root/Banner
+	$Root/Banner/Title.text = title
+	$Root/Banner/Modifier.text = modifier
+	$Root/Banner/Modifier.visible = modifier != ""
+	$Root/Banner/Task.text = "Задание: " + task
+	banner.show()
+	banner.modulate.a = 0.0
+	var tw := create_tween()
+	tw.tween_property(banner, "modulate:a", 1.0, 0.4)
+	tw.tween_interval(2.6)
+	tw.tween_property(banner, "modulate:a", 0.0, 0.6)
+	tw.tween_callback(banner.hide)

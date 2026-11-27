@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/end_screen.gd" id="1_end"]
+[ext_resource type="Script" path="res://scripts/ui/stars.gd" id="2_stars"]
 
 [node name="EndScreen" type="CanvasLayer"]
 process_mode = 3
@@ -29,7 +30,7 @@ grow_vertical = 2
 
 [node name="Box" type="VBoxContainer" parent="Card"]
 layout_mode = 2
-theme_override_constants/separation = 32
+theme_override_constants/separation = 16
 alignment = 1
 
 [node name="Title" type="Label" parent="Card/Box"]
@@ -38,6 +39,19 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 52
 text = "Маяк погас"
 horizontal_alignment = 1
+
+[node name="Night" type="Label" parent="Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 1
+
+[node name="Stars" type="Control" parent="Card/Box"]
+layout_mode = 2
+script = ExtResource("2_stars")
+
+[node name="Checks" type="VBoxContainer" parent="Card/Box"]
+layout_mode = 2
 
 [node name="Stats" type="Label" parent="Card/Box"]
 layout_mode = 2
@@ -50,18 +64,23 @@ theme_override_colors/font_color = Color(1, 0.75, 0.8, 1)
 text = "Ракушек за ночь: 0"
 horizontal_alignment = 1
 
-[node name="Restart" type="Button" parent="Card/Box"]
+[node name="Next" type="Button" parent="Card/Box"]
 theme_type_variation = &"PrimaryButton"
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
-text = "Ещё одна ночь"
+text = "Следующая ночь"
+
+[node name="Restart" type="Button" parent="Card/Box"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+text = "Ещё раз"
 
 [node name="Workshop" type="Button" parent="Card/Box"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 90)
 layout_mode = 2
 text = "Мастерская"
 
 [node name="ToMenu" type="Button" parent="Card/Box"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 90)
 layout_mode = 2
-text = "В главное меню"
+text = "Карта маяков"

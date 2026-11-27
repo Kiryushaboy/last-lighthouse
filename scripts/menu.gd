@@ -1,7 +1,7 @@
 extends Node2D
 ## Главное меню: маяк светит на фоне, кнопки «Начать ночь», «Мастерская», «Настройки».
 
-const GAME_SCENE := "res://scenes/main.tscn"
+const GAME_SCENE := "res://scenes/map.tscn"  ## «Начать ночь» ведёт на карту маяков
 
 @onready var _ui: Control = $UI/Root
 @onready var _shells: Label = $UI/Root/Box/Shells
@@ -20,6 +20,7 @@ func _ready() -> void:
 	_workshop_btn.pressed.connect(func(): _ui.hide(); _workshop.open())
 	_workshop.closed.connect(_show_menu)
 	_settings_btn.pressed.connect(func(): _ui.hide(); _settings.show())
+	$UI/Root/Box/Quit.pressed.connect(func(): get_tree().quit())
 	_settings_back.pressed.connect(func(): _settings.hide(); _show_menu())
 	_settings.visibility_changed.connect(_on_settings_visibility)
 	_show_menu()

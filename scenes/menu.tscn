@@ -70,7 +70,7 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -260.0
-offset_top = -500.0
+offset_top = -590.0
 offset_right = 260.0
 offset_bottom = -80.0
 grow_horizontal = 2
@@ -91,7 +91,7 @@ theme_type_variation = &"PrimaryButton"
 custom_minimum_size = Vector2(0, 130)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "Начать ночь"
+text = "Играть"
 
 [node name="Workshop" type="Button" parent="UI/Root/Box"]
 custom_minimum_size = Vector2(0, 100)
@@ -102,6 +102,11 @@ text = "Мастерская"
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 text = "Настройки"
+
+[node name="Quit" type="Button" parent="UI/Root/Box"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+text = "Выйти"
 
 [node name="Workshop" parent="." instance=ExtResource("4_ws")]
 
