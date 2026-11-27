@@ -7,6 +7,10 @@ const ENEMY_SCENES := {
 	"jellyfish": preload("res://scenes/enemies/jellyfish.tscn"),
 	"squid": preload("res://scenes/enemies/squid.tscn"),
 	"shell": preload("res://scenes/enemies/shell.tscn"),
+	"puffer": preload("res://scenes/enemies/puffer.tscn"),
+	"eel": preload("res://scenes/enemies/eel.tscn"),
+	"narwhal": preload("res://scenes/enemies/narwhal.tscn"),
+	"angler": preload("res://scenes/enemies/angler.tscn"),
 }
 const GEM_SCENE := preload("res://scenes/xp_gem.tscn")
 const BOSS_SCENE := preload("res://scenes/enemies/boss.tscn")
@@ -37,6 +41,7 @@ var run_time := 300.0  ## сколько длится ночь
 var boss_at := -1.0  ## когда приходит спрут; -1 — в эту ночь его нет
 var time_left := 300.0
 var _regen_t := 0.0
+var _bosses_met := 0
 var elapsed := 0.0  ## сколько секунд идёт ночь
 var endless := false
 var _next_event := Nights.EVENT_EVERY
@@ -50,7 +55,7 @@ var hits_taken := 0
 var stars_got := 0
 var level := 1
 var xp := 0
-var xp_to_next := 5
+var xp_to_next := xp_needed(1)
 var upgrades_taken := {}  ## id улучшения -> сколько раз взято
 
 var _pending_levels := 0
@@ -65,8 +70,8 @@ var _hp_mult := 1.0
 
 func _ready() -> void:
 	Fx.reset()
-	Sound.play_music("battle")
 	night_index = SaveData.current_night
+	Sound.play_music(Nights.music_of(night_index))
 	night = Nights.get_night(night_index)
 	run_time = night.time
 	time_left = run_time
@@ -145,6 +150,7 @@ func _apply_workshop() -> void:
 	player.hp = player.max_hp
 	player.crit_chance = 0.08 * SaveData.level_of("crit")
 	player.speed *= 1.0 + 0.05 * SaveData.level_of("speed")
+	player.damage += SaveData.level_of("power")
 	player.pickup_radius *= 1.0 + 0.15 * SaveData.level_of("pull")
 	if SaveData.level_of("bubble") > 0:
 		upgrades_taken["shield"] = 1
@@ -188,6 +194,7 @@ func _set_modifier(mod: String, on: bool) -> void:
 				rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 				var m := ShaderMaterial.new()
 				m.shader = FOG_SHADER
+				m.set_shader_parameter("fog_color", Nights.theme_of(night_index).fog)
 				rect.material = m
 				_fog_layer.add_child(rect)
 				add_child(_fog_layer)
@@ -248,28 +255,36 @@ func _update_task() -> void:
 func _on_spawn_timer() -> void:
 	# Чем дольше идёт ночь, тем больше врагов за раз и тем чаще они приходят.
 	# Когда пришёл босс, мелочи вдвое меньше, чтобы было видно его атаки.
-	var count := int((1.0 + elapsed / 60.0) * night.spawn * _spawn_mult)
+	var count := int((1.0 + elapsed / 150.0) * night.spawn * _spawn_mult)
 	if is_instance_valid(boss):
 		count = maxi(1, count / 2)
 	for i in count:
 		if enemies.get_child_count() >= MAX_ENEMIES:
 			break
 		_spawn_enemy(elapsed)
-	spawn_timer.wait_time = maxf(0.5, 1.4 - elapsed / 330.0)
+	spawn_timer.wait_time = maxf(0.6, 1.4 - elapsed / 500.0)
 
 
-func _spawn_enemy(elapsed: float) -> void:
-	var enemy := _pick_enemy_type(elapsed).instantiate() as Enemy
+## enemy_type и at задаёт подмога босса; обычные враги выбираются по ночи и выходят из-за края экрана.
+func _spawn_enemy(elapsed: float, enemy_type := "", at := Vector2.INF) -> void:
+	var scene: PackedScene = ENEMY_SCENES[enemy_type] if enemy_type != "" else _pick_enemy_type(elapsed)
+	var enemy := scene.instantiate() as Enemy
 	enemy.target = player
 	enemy.beam = beam
-	# Каждые полторы минуты враги крепче и чуть быстрее.
-	enemy.max_hp += int(elapsed / 90.0) * maxi(1, enemy.max_hp / 2)
+	# Каждые две минуты враги крепче и чуть быстрее.
+	enemy.max_hp += int(elapsed / 120.0) * maxi(1, enemy.max_hp / 2)
+	# И от ночи к ночи (night.hp растёт с номером ночи).
 	enemy.max_hp = maxi(1, roundi(enemy.max_hp * night.hp * _hp_mult))
 	enemy.speed *= (1.0 + minf(elapsed / 300.0, 1.0) * 0.5) * night.speed
 	if enemy is Squid:
 		(enemy as Squid).projectile_container = enemy_projectiles
+	elif enemy is Puffer:
+		(enemy as Puffer).projectile_container = enemy_projectiles
 	enemy.killed.connect(_on_enemy_killed.bind(enemy.shell_chance))
 	enemies.add_child(enemy)
+	if at != Vector2.INF:
+		enemy.global_position = at
+		return
 	var angle := randf() * TAU
 	var pos := player.global_position + Vector2.RIGHT.rotated(angle) * SPAWN_DISTANCE
 	enemy.global_position = pos.clamp(ARENA.position, ARENA.end)
@@ -277,9 +292,15 @@ func _spawn_enemy(elapsed: float) -> void:
 
 func _spawn_boss() -> void:
 	boss = BOSS_SCENE.instantiate() as Boss
+	# В бесконечной ночи боссы идут по кругу, в кампании — босс главы.
+	var kinds := Boss.KINDS.keys()
+	boss.setup(kinds[_bosses_met % kinds.size()] if endless else Nights.chapter_of(night_index).boss)
+	_bosses_met += 1
+	boss.summon.connect(_on_boss_summon)
 	boss.target = player
 	boss.beam = beam
 	boss.projectile_container = enemy_projectiles
+	boss.max_hp = int(boss.max_hp * night.hp)
 	if endless:
 		boss.max_hp = int(boss.max_hp * (1.0 + elapsed / 400.0))  # каждый следующий спрут крепче
 	boss.killed.connect(_on_boss_killed)
@@ -287,24 +308,35 @@ func _spawn_boss() -> void:
 	enemies.add_child(boss)
 	var pos := player.global_position + Vector2.UP * SPAWN_DISTANCE * 0.8
 	boss.global_position = pos.clamp(ARENA.position, ARENA.end)
-	hud.show_boss(boss.hp, boss.max_hp)
-	Sound.play_music("boss")
+	hud.show_boss(boss.hp, boss.max_hp, boss.title)
+	Sound.play_music(Nights.chapter_of(night_index).boss_music)
 	Sound.play("warning")
 	_boss_intro()
+
+
+## Подмога босса: несколько врагов выныривают рядом с ним.
+func _on_boss_summon(enemy_type: String, count: int) -> void:
+	if not is_instance_valid(boss) or not ENEMY_SCENES.has(enemy_type):
+		return
+	for i in count:
+		if enemies.get_child_count() >= MAX_ENEMIES:
+			break
+		var at := boss.global_position + Vector2.RIGHT.rotated(TAU * i / count) * (boss.radius + 60.0)
+		_spawn_enemy(elapsed, enemy_type, at.clamp(ARENA.position, ARENA.end))
 
 
 ## Появление босса: игра замирает, камера летит к спруту, надпись, затем камера возвращается.
 func _boss_intro() -> void:
 	joystick.reset()
 	get_tree().paused = true
-	Settings.vibrate(350, 0.9)
+	Settings.vibrate(450, 1.0)
 	Fx.flash(Color(0.5, 0.2, 0.8, 0.45), 0.6)
-	hud.show_boss_banner("Спрут!", "Поднимается из глубин")
+	hud.show_boss_banner(boss.title + "!", boss.subtitle)
 	var to_boss := boss.global_position - player.global_position
 	var tw := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	tw.tween_property(camera, "offset", to_boss, 0.7).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	tw.parallel().tween_property(camera, "zoom", Vector2(1.25, 1.25), 0.7).set_trans(Tween.TRANS_CUBIC)
-	tw.tween_callback(Fx.ring.bind(boss.global_position, Color(0.7, 0.45, 1.0), 220.0, 0.6, 10.0))
+	tw.tween_callback(Fx.ring.bind(boss.global_position, boss.color.lightened(0.3), 220.0, 0.6, 10.0))
 	tw.tween_callback(Sound.play.bind("slam"))
 	tw.tween_interval(1.3)
 	tw.tween_property(camera, "offset", Vector2.ZERO, 0.5).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
@@ -324,7 +356,7 @@ func _on_boss_killed(_at: Vector2, _xp: int) -> void:
 		boss = null
 		boss_at = elapsed + Nights.BOSS_EVERY
 		hud.hide_boss()
-		Sound.play_music("battle")
+		Sound.play_music(Nights.music_of(night_index))
 		return
 	_finish(true)
 
@@ -386,6 +418,13 @@ func _spawn_gem(at: Vector2, value: int, is_shell := false) -> void:
 
 # --- Опыт и улучшения --------------------------------------------------
 
+## Сколько опыта нужно до следующего уровня. Кривая подобрана так, чтобы за 5-минутную ночь
+## выходило около 12–15 улучшений: в начале примерно раз в 20 секунд, к концу — раз в минуту.
+static func xp_needed(lvl: int) -> int:
+	var k := lvl - 1
+	return int(5.0 + 4.0 * k + 0.5 * k * k)
+
+
 func _add_xp(amount: int) -> void:
 	if _over:
 		return
@@ -393,7 +432,7 @@ func _add_xp(amount: int) -> void:
 	while xp >= xp_to_next:
 		xp -= xp_to_next
 		level += 1
-		xp_to_next = 5 + (level - 1) * 3
+		xp_to_next = xp_needed(level)
 		_pending_levels += 1
 	hud.set_xp(xp, xp_to_next, level)
 	if _pending_levels > 0 and not upgrade_menu.visible:
@@ -409,7 +448,7 @@ func _offer_upgrade() -> void:
 	joystick.reset()
 	get_tree().paused = true
 	Sound.play("levelup")
-	Settings.vibrate(30, 0.4)
+	Settings.vibrate(60, 0.6)
 	Fx.flash(Color(1, 0.85, 0.4, 0.5), 0.5)
 	Fx.ring(player.global_position, Color(1, 0.85, 0.4), 260.0, 0.6, 10.0)
 	Fx.burst(player.global_position, Color(1, 0.85, 0.4), 24, 380.0, 6.0)

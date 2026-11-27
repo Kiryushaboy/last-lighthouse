@@ -27,7 +27,7 @@ func show_choices(choices: Array, taken := {}, player: Player = null) -> void:
 
 func _make_card(upgrade: Dictionary, level: int, player: Player) -> Button:
 	var card := Button.new()
-	card.custom_minimum_size = Vector2(0, 200)
+	card.custom_minimum_size = Vector2(0, 220)
 	card.focus_mode = Control.FOCUS_NONE
 	var row := HBoxContainer.new()
 	row.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -37,46 +37,53 @@ func _make_card(upgrade: Dictionary, level: int, player: Player) -> Button:
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_child(row)
 
+	# Слева крупный значок, под ним точки уровня. Справа — только название и что изменится.
+	var left := VBoxContainer.new()
+	left.alignment = BoxContainer.ALIGNMENT_CENTER
+	left.add_theme_constant_override("separation", 0)
+	left.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(left)
 	var icon := UpgradeIcon.new()
 	icon.id = upgrade.id
-	row.add_child(icon)
-
-	var text := VBoxContainer.new()
-	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text.alignment = BoxContainer.ALIGNMENT_CENTER
-	text.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_child(text)
-
-	var title := Label.new()
-	title.text = upgrade.title
-	title.add_theme_font_size_override("font_size", 34)
-	title.add_theme_color_override("font_color", UpgradeIcon.color_of(upgrade.id).lightened(0.3))
-	text.add_child(title)
-
-	# Что делает вообще — и что именно изменится сейчас, в цифрах.
-	var what := Label.new()
-	what.text = upgrade.what
-	what.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	what.add_theme_font_size_override("font_size", 23)
-	what.add_theme_color_override("font_color", Color(1, 1, 1, 0.7))
-	text.add_child(what)
-
-	var change := Label.new()
-	change.text = Upgrades.describe(upgrade.id, level, player)
-	change.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	change.add_theme_font_size_override("font_size", 27)
-	change.add_theme_color_override("font_color", Color(0.55, 1.0, 0.8))
-	text.add_child(change)
-
-	# Уровень улучшения: закрашенные точки — сколько уже взято, светится новая.
+	icon.icon_size = 140.0
+	left.add_child(icon)
 	var pips := Label.new()
 	var s := ""
 	for i in Upgrades.MAX_LEVEL:
 		s += "●" if i <= level else "○"
-	pips.text = s + ("  НОВОЕ" if level == 0 else "  уровень %d из %d" % [level + 1, Upgrades.MAX_LEVEL])
-	pips.add_theme_font_size_override("font_size", 22)
+	pips.text = s
+	pips.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	pips.add_theme_font_size_override("font_size", 24)
 	pips.add_theme_color_override("font_color", Color(1, 0.85, 0.4))
-	text.add_child(pips)
+	left.add_child(pips)
+
+	var text := VBoxContainer.new()
+	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	text.alignment = BoxContainer.ALIGNMENT_CENTER
+	text.add_theme_constant_override("separation", 6)
+	text.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(text)
+
+	if level == 0:
+		var badge := Label.new()
+		badge.text = "НОВОЕ"
+		badge.add_theme_font_size_override("font_size", 20)
+		badge.add_theme_color_override("font_color", Color(1, 0.85, 0.4))
+		text.add_child(badge)
+
+	var title := Label.new()
+	title.text = upgrade.title
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title.add_theme_font_size_override("font_size", 38)
+	title.add_theme_color_override("font_color", UpgradeIcon.color_of(upgrade.id).lightened(0.3))
+	text.add_child(title)
+
+	var change := Label.new()
+	change.text = Upgrades.describe(upgrade.id, level, player)
+	change.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	change.add_theme_font_size_override("font_size", 30)
+	change.add_theme_color_override("font_color", Color(0.55, 1.0, 0.8))
+	text.add_child(change)
 
 	card.pressed.connect(_pick.bind(upgrade.id, card))
 	return card

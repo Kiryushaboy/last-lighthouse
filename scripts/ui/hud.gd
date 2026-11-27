@@ -49,7 +49,9 @@ func set_xp(xp: int, xp_to_next: int, level: int) -> void:
 	_xp_tween.tween_property(_xp_bar, "value", float(xp), 0.25).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 
-func show_boss(hp: int, max_hp: int) -> void:
+func show_boss(hp: int, max_hp: int, title := "") -> void:
+	if title != "":
+		$Root/BossLabel.text = title
 	$Root/BossLabel.show()
 	$Root/BossBar.show()
 	set_boss_health(hp, max_hp)

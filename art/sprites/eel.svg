@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+  <!-- Электрический угорь: извилистое тело, жёлтые искры. -->
+  <path d="M40 10 Q62 20 44 34 Q22 46 42 58 Q54 66 44 74" fill="none" stroke="#1f6b4a" stroke-width="17" stroke-linecap="round"/>
+  <path d="M40 10 Q62 20 44 34 Q22 46 42 58 Q54 66 44 74" fill="none" stroke="#3fd68a" stroke-width="11" stroke-linecap="round"/>
+  <path d="M40 12 Q58 20 44 32 Q26 44 42 56" fill="none" stroke="#f5ff7a" stroke-width="3" stroke-dasharray="4 7" stroke-linecap="round"/>
+  <circle cx="40" cy="12" r="10" fill="#3fd68a" stroke="#1f6b4a" stroke-width="3"/>
+  <circle cx="36" cy="10" r="3" fill="#fff"/><circle cx="45" cy="10" r="3" fill="#fff"/>
+  <circle cx="36" cy="10" r="1.5" fill="#12222a"/><circle cx="45" cy="10" r="1.5" fill="#12222a"/>
+  <path d="M16 30 L22 26 L20 32 L26 30" stroke="#f5ff7a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M60 50 L66 46 L64 52 L70 50" stroke="#f5ff7a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>

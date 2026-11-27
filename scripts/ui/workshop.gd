@@ -56,7 +56,7 @@ func _make_row(p: Dictionary) -> Control:
 
 	var icon := UpgradeIcon.new()
 	icon.id = p.id
-	icon.icon_size = 84.0
+	icon.icon_size = 104.0
 	row.add_child(icon)
 
 	var text := VBoxContainer.new()
@@ -104,6 +104,8 @@ func _change_text(id: String, lvl: int, maxed: bool) -> String:
 	match id:
 		"hp":
 			return ("Сердец: %d" % (5 + lvl)) if maxed else "Сердец: %d → %d" % [5 + lvl, 6 + lvl]
+		"power":
+			return ("Урон: +%d" % lvl) if maxed else "Урон: +%d → +%d" % [lvl, lvl + 1]
 		"crit":
 			now = "%d%%" % (lvl * 8); next = "%d%%" % ((lvl + 1) * 8)
 			return ("Двойной урон: %s" % now) if maxed else "Двойной урон: %s → %s" % [now, next]

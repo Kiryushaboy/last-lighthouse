@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <!-- Краб-король: огромный панцирь, клешни и корона. -->
+  <g stroke="#8a2318" stroke-width="18" stroke-linecap="round" fill="none">
+    <path d="M90 190 L36 220"/><path d="M96 222 L48 270"/><path d="M230 190 L284 220"/><path d="M224 222 L272 270"/>
+    <path d="M92 140 L44 96"/><path d="M228 140 L276 96"/>
+  </g>
+  <path d="M44 96 Q8 80 20 40 Q40 60 52 44 Q76 70 44 96 Z" fill="#e2493a" stroke="#8a2318" stroke-width="8"/>
+  <path d="M276 96 Q312 80 300 40 Q280 60 268 44 Q244 70 276 96 Z" fill="#e2493a" stroke="#8a2318" stroke-width="8"/>
+  <ellipse cx="160" cy="180" rx="96" ry="78" fill="#e2493a"/>
+  <ellipse cx="160" cy="162" rx="70" ry="42" fill="#f47a5c" opacity="0.7"/>
+  <ellipse cx="160" cy="180" rx="96" ry="78" fill="none" stroke="#8a2318" stroke-width="9"/>
+  <path d="M112 232 Q160 262 208 232" fill="none" stroke="#8a2318" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="128" cy="168" r="18" fill="#fff"/><circle cx="192" cy="168" r="18" fill="#fff"/>
+  <circle cx="130" cy="172" r="9" fill="#1b1b2a"/><circle cx="190" cy="172" r="9" fill="#1b1b2a"/>
+  <path d="M104 140 L136 152" stroke="#5a140c" stroke-width="9" stroke-linecap="round"/><path d="M216 140 L184 152" stroke="#5a140c" stroke-width="9" stroke-linecap="round"/>
+  <path d="M112 112 L104 62 L134 90 L160 52 L186 90 L216 62 L208 112 Z" fill="#ffd25a" stroke="#b8791f" stroke-width="7" stroke-linejoin="round"/>
+  <circle cx="160" cy="92" r="9" fill="#ff5a6e"/>
+</svg>
