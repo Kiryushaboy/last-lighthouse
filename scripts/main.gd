@@ -36,6 +36,7 @@ var night: Dictionary
 var run_time := 300.0  ## сколько длится ночь
 var boss_at := -1.0  ## когда приходит спрут; -1 — в эту ночь его нет
 var time_left := 300.0
+var _regen_t := 0.0
 var elapsed := 0.0  ## сколько секунд идёт ночь
 var endless := false
 var _next_event := Nights.EVENT_EVERY
@@ -116,6 +117,7 @@ func _process(delta: float) -> void:
 	if _over:
 		return
 	elapsed += delta
+	_update_regen(delta)
 	time_left = maxf(run_time - elapsed, 0.0)
 	# В бесконечной ночи таймер идёт вперёд: сколько продержались.
 	hud.set_time(elapsed if endless else time_left, endless)
@@ -138,12 +140,17 @@ func _notification(what: int) -> void:
 
 ## Вечные бонусы из мастерской действуют с первой секунды забега.
 func _apply_workshop() -> void:
+	Heroes.apply(Heroes.current(), player)
 	player.max_hp += SaveData.level_of("hp")
 	player.hp = player.max_hp
 	player.crit_chance = 0.08 * SaveData.level_of("crit")
 	player.speed *= 1.0 + 0.05 * SaveData.level_of("speed")
+	player.pickup_radius *= 1.0 + 0.15 * SaveData.level_of("pull")
+	if SaveData.level_of("bubble") > 0:
+		upgrades_taken["shield"] = 1
+		Upgrades.apply("shield", player, 1)
 	for i in SaveData.level_of("start"):
-		var choice := Upgrades.pick_choices(upgrades_taken, 1)
+		var choice := Upgrades.pick_choices(upgrades_taken, 1, player.weapon)
 		if choice.is_empty():
 			break
 		upgrades_taken[choice[0].id] = upgrades_taken.get(choice[0].id, 0) + 1
@@ -296,6 +303,19 @@ func _on_boss_killed(_at: Vector2, _xp: int) -> void:
 	_finish(true)
 
 
+## «Второе дыхание» из мастерской: раз в N секунд лечит одно сердце.
+func _update_regen(delta: float) -> void:
+	var lvl := SaveData.level_of("regen")
+	if lvl == 0 or player.hp >= player.max_hp:
+		_regen_t = 0.0
+		return
+	_regen_t += delta
+	if _regen_t >= float(SaveData.REGEN_EVERY[lvl]):
+		_regen_t = 0.0
+		player.heal(1)
+		Fx.ring(player.global_position, Color(1.0, 0.4, 0.5))
+
+
 func _add_shells(amount: int) -> void:
 	shells_this_run += amount
 	hud.set_shells(shells_this_run)
@@ -355,7 +375,7 @@ func _add_xp(amount: int) -> void:
 
 
 func _offer_upgrade() -> void:
-	var choices := Upgrades.pick_choices(upgrades_taken, 3)
+	var choices := Upgrades.pick_choices(upgrades_taken, 3, player.weapon)
 	if choices.is_empty():
 		_pending_levels = 0
 		return
@@ -406,6 +426,8 @@ func _finish(victory: bool) -> void:
 		star_bonus = new_stars * Nights.star_reward(night_index)
 	# Бонус за выживание: ракушка за каждые 20 секунд ночи, плюс награда за новые звёзды.
 	shells_this_run += int(elapsed / 20.0) + star_bonus
+	# «Удачливый ныряльщик»: +10% за уровень.
+	shells_this_run = int(round(shells_this_run * (1.0 + 0.1 * SaveData.level_of("luck"))))
 	SaveData.add_shells(shells_this_run)
 	Sound.play("win" if victory else "lose")
 	Fx.reset()

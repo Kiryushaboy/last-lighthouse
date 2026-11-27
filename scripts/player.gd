@@ -20,6 +20,12 @@ const TEXTURE := preload("res://art/sprites/player.svg")
 @export var pickup_radius := 90.0  ## с какого расстояния притягивается опыт
 @export var shoot_range := 520.0
 @export var crit_chance := 0.0  ## шанс двойного урона, из мастерской
+var weapon := "harpoon"  ## harpoon | lightning | aura — задаёт герой
+var tint := Color.WHITE  ## окраска героя
+var neon := Color(1.0, 0.75, 0.3)  ## цвет неонового контура
+
+const AURA_RADIUS := 120.0
+const CHAIN_RANGE := 200.0
 
 var hp := 0
 var joystick_vector := Vector2.ZERO  ## задаёт Main из виртуального джойстика
@@ -42,7 +48,7 @@ func _ready() -> void:
 	hp = max_hp
 	add_to_group("player")
 	_body = Node2D.new()
-	_body.material = Enemy.neon_material(Color(1.0, 0.75, 0.3), 5.0)
+	_body.material = Enemy.neon_material(neon, 5.0)
 	_body.draw.connect(_draw_sprite)
 	add_child(_body)
 
@@ -71,12 +77,20 @@ func _physics_process(delta: float) -> void:
 		_facing = lerp_angle(_facing, velocity.angle(), minf(1.0, delta * 10.0))
 	_fire_cooldown -= delta
 
-	# 3. Автострельба.
+	# 3. Автострельба: у каждого героя своё оружие.
 	if _fire_cooldown <= 0.0:
-		var target := _nearest_enemy()
-		if target:
-			_shoot_at(target)
-			_fire_cooldown = fire_interval
+		match weapon:
+			"aura":
+				_burn_around()
+				_fire_cooldown = fire_interval
+			_:
+				var target := _nearest_enemy()
+				if target:
+					if weapon == "lightning":
+						_zap(target)
+					else:
+						_shoot_at(target)
+					_fire_cooldown = fire_interval
 
 	queue_redraw()
 
@@ -160,7 +174,67 @@ func _shoot_at(target: Node2D) -> void:
 		bullet.global_position = global_position + base_dir * 28.0  # из ствола ружья
 
 
+## Радиус огненного круга Фонарщицы: «Большой фонарь» (multishot) расширяет его.
+func aura_radius() -> float:
+	return AURA_RADIUS * (1.0 + 0.2 * (projectiles - 1))
+
+
+func _hit_damage() -> int:
+	return damage * (2 if randf() < crit_chance else 1)
+
+
+## Молния Механика: бьёт цель мгновенно и перескакивает на ближайших врагов рядом.
+func _zap(first: Node2D) -> void:
+	Sound.play("shoot", -12.0)
+	_facing = global_position.direction_to(first.global_position).angle()
+	_aim_hold = 0.5
+	var points := PackedVector2Array([global_position])
+	var hit := {}
+	var current: Node2D = first
+	var jumps := 2 + (projectiles - 1)
+	for i in jumps + 1:
+		if current == null:
+			break
+		hit[current] = true
+		points.append(current.global_position)
+		(current as Enemy).hit(_hit_damage())
+		current = _nearest_from(current.global_position, CHAIN_RANGE, hit)
+	Fx.bolt(points, Color(0.6, 0.85, 1.0))
+
+
+func _nearest_from(from: Vector2, max_dist: float, skip: Dictionary) -> Node2D:
+	var best: Node2D = null
+	var best_d := max_dist
+	for e in get_tree().get_nodes_in_group("enemies"):
+		if skip.has(e) or not is_instance_valid(e) or (e as Enemy)._dead:
+			continue
+		var d := from.distance_to((e as Node2D).global_position)
+		if d < best_d:
+			best_d = d
+			best = e
+	return best
+
+
+## Огненный круг Фонарщицы: жжёт всех врагов рядом.
+func _burn_around() -> void:
+	var r := aura_radius()
+	var any := false
+	for e in get_tree().get_nodes_in_group("enemies"):
+		var en := e as Enemy
+		if en and not en._dead and global_position.distance_to(en.global_position) <= r + en.radius:
+			en.hit(_hit_damage())
+			any = true
+	if any:
+		Sound.play("shoot", -16.0)
+	Fx.ring(global_position, Color(1.0, 0.5, 0.2, 0.6), r, 0.3, 5.0)
+
+
 func _draw() -> void:
+	if weapon == "aura":
+		var t := Time.get_ticks_msec() / 1000.0
+		var r := aura_radius()
+		draw_circle(Vector2.ZERO, r, Color(1.0, 0.45, 0.15, 0.08 + 0.03 * sin(t * 6.0)))
+		draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(1.0, 0.55, 0.2, 0.45), 3.0)
 	# Фонарь смотрителя: тёплый круг света под ногами.
 	draw_texture_rect(GLOW, Rect2(-120, -120, 240, 240), false, Color(1.0, 0.8, 0.45, 0.28))
 	draw_arc(Vector2.ZERO, pickup_radius, 0.0, TAU, 48, Color(0.5, 1, 0.8, 0.06), 2.0)
@@ -185,4 +259,4 @@ func _draw() -> void:
 func _draw_sprite() -> void:
 	var blink := _invulnerable > 0.0 and int(_invulnerable * 20.0) % 2 == 0
 	var size := TEXTURE.get_size() * 0.6
-	_body.draw_texture_rect(TEXTURE, Rect2(-size / 2.0, size), false, Color(1, 1, 1, 0.35 if blink else 1.0))
+	_body.draw_texture_rect(TEXTURE, Rect2(-size / 2.0, size), false, Color(tint, 0.35 if blink else 1.0))

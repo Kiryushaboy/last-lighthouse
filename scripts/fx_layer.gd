@@ -8,6 +8,7 @@ const GLOW := preload("res://art/fx/glow.tres")
 
 var _parts: Array[Dictionary] = []  ## {p, v, life, max, color, size}
 var _rings: Array[Dictionary] = []  ## {p, life, max, color, radius, width}
+var _bolts: Array[Dictionary] = []  ## {pts, life, color}
 var _texts: Array[Dictionary] = []  ## {p, life, max, text, color, big}
 var _font: Font
 
@@ -42,6 +43,21 @@ func burst(pos: Vector2, color: Color, count: int, speed: float, size: float) ->
 				"color": color, "size": size * randf_range(0.6, 1.3)})
 
 
+func bolt(points: PackedVector2Array, color: Color) -> void:
+	# Между точками — зигзаг, чтобы было похоже на разряд.
+	var pts := PackedVector2Array()
+	for i in points.size() - 1:
+		var a := points[i]
+		var b := points[i + 1]
+		var n := (b - a).orthogonal().normalized()
+		for k in 6:
+			var t := k / 6.0
+			pts.append(a.lerp(b, t) + n * (randf_range(-14, 14) if k > 0 else 0.0))
+	if points.size() > 0:
+		pts.append(points[points.size() - 1])
+	_bolts.append({"pts": pts, "life": 0.18, "color": color})
+
+
 func ring(pos: Vector2, color: Color, radius: float, duration: float, width: float) -> void:
 	_rings.append({"p": pos, "life": duration, "max": duration, "color": color, "radius": radius, "width": width})
 
@@ -59,6 +75,9 @@ func _process(delta: float) -> void:
 		p.p += p.v * delta
 		p.v *= 1.0 - 4.0 * delta  # быстро тормозят, как брызги
 	_parts = _parts.filter(func(p): return p.life > 0.0)
+	for b in _bolts:
+		b.life -= delta
+	_bolts = _bolts.filter(func(b): return b.life > 0.0)
 	for r in _rings:
 		r.life -= delta
 	_rings = _rings.filter(func(r): return r.life > 0.0)
@@ -79,6 +98,11 @@ func _draw() -> void:
 		# Искра-росчерк вдоль полёта: выглядит как брызги света, а не точки.
 		var tail: Vector2 = p.v * 0.035
 		draw_line(p.p - tail, p.p, Color(c.lightened(0.6), k), s * 0.6)
+	for b in _bolts:
+		var a: float = b.life / 0.18
+		if b.pts.size() > 1:
+			draw_polyline(b.pts, Color(b.color, 0.5 * a), 9.0)
+			draw_polyline(b.pts, Color(1, 1, 1, a), 3.0)
 	for r in _rings:
 		var k: float = 1.0 - r.life / r.max
 		var ease_k := 1.0 - pow(1.0 - k, 3.0)
