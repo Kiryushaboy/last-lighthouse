@@ -24,10 +24,11 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	var r := 15.0
-	var step := 40.0
+	# Все сердца в один ряд; если их много, они становятся мельче.
+	var step := minf(40.0, (size.x - 8.0) / maxf(max_hp, 1))
+	var r := step * 0.38
 	for i in max_hp:
-		var at := Vector2(r + 4 + (i % 6) * step, r + 6 + (i / 6) * step)
+		var at := Vector2(r + 4 + i * step, 21.0)
 		var full := i < hp
 		var s := 1.0
 		if full and hp <= 2:

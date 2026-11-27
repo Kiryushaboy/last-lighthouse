@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dn6gcw1skqvaq"
-path="res://.godot/imported/magic_02.png-63d87db47bb9d8de00b289a0ca8e7c2c.ctex"
+uid="uid://b3k6n1m2nqcj8"
+path="res://.godot/imported/icon_fg.svg-73ff8f523d8cb6c4d073cd9d64599dc8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/fx/particles/magic_02.png"
-dest_files=["res://.godot/imported/magic_02.png-63d87db47bb9d8de00b289a0ca8e7c2c.ctex"]
+source_file="res://art/icon/icon_fg.svg"
+dest_files=["res://.godot/imported/icon_fg.svg-73ff8f523d8cb6c4d073cd9d64599dc8.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

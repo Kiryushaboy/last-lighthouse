@@ -1,45 +1,95 @@
 class_name Upgrades
 extends RefCounted
-## Список улучшений и то, как каждое меняет игрока.
-## Новое улучшение = строка в LIST + ветка в apply().
+## Улучшения забега. У каждого понятное «что делает» и точные числа по уровням,
+## чтобы на карточке было видно: «Урон: 1 → 2».
+## Новое улучшение = запись в LIST + ветка в apply() и describe().
 
 const MAX_LEVEL := 3
 
 const LIST := [
-	{"id": "damage", "title": "Острые гарпуны", "desc": "+1 к урону"},
-	{"id": "fire_rate", "title": "Быстрая перезарядка", "desc": "Стрельба на 20% чаще"},
-	{"id": "multishot", "title": "Веер", "desc": "+1 снаряд за выстрел"},
-	{"id": "pierce", "title": "Пробивание", "desc": "Снаряд пробивает ещё 1 врага"},
-	{"id": "speed", "title": "Лёгкие сапоги", "desc": "+15% к скорости"},
-	{"id": "max_hp", "title": "Крепкий смотритель", "desc": "+1 жизнь и лечение"},
-	{"id": "magnet", "title": "Магнит", "desc": "Опыт притягивается издалека"},
-	{"id": "beam", "title": "Линза Френеля", "desc": "Луч маяка шире на треть"},
+	{"id": "damage", "title": "Острые гарпуны", "what": "Каждый гарпун бьёт сильнее"},
+	{"id": "fire_rate", "title": "Быстрая перезарядка", "what": "Смотритель стреляет чаще"},
+	{"id": "multishot", "title": "Веер", "what": "Несколько гарпунов за выстрел, веером"},
+	{"id": "pierce", "title": "Пробивание", "what": "Гарпун летит сквозь врагов дальше"},
+	{"id": "shield", "title": "Щит", "what": "Пузырь гасит один удар и восстанавливается"},
+	{"id": "speed", "title": "Лёгкие сапоги", "what": "Бегаете быстрее"},
+	{"id": "max_hp", "title": "Крепкий смотритель", "what": "Лишнее сердце и лечение"},
+	{"id": "magnet", "title": "Магнит", "what": "Опыт и ракушки летят к вам издалека"},
+	{"id": "beam", "title": "Линза Френеля", "what": "Луч маяка шире. В луче враги медленнее и получают ×2 урона"},
 ]
 
+## Значения по уровням: индекс = сколько раз взято (0 — без улучшения).
+const DAMAGE := [1, 2, 3, 4]
+const FIRE_INTERVAL := [0.45, 0.36, 0.29, 0.23]
+const PROJECTILES := [1, 2, 3, 4]
+const PIERCE := [0, 1, 2, 3]
+const SHIELD_RECHARGE := [0.0, 12.0, 8.0, 5.0]
+const SPEED_PCT := [100, 115, 130, 145]
+const MAGNET_PCT := [100, 160, 220, 280]
+const BEAM_DEG := [30, 40, 53, 70]  ## полная ширина луча
 
-static func apply(id: String, player: Player) -> void:
+
+static func info(id: String) -> Dictionary:
+	for u in LIST:
+		if u.id == id:
+			return u
+	return {}
+
+
+## Применить следующий уровень. level — каким он стал (1..MAX_LEVEL).
+static func apply(id: String, player: Player, level: int) -> void:
 	match id:
 		"damage":
-			player.damage += 1
+			player.damage = DAMAGE[level]
 		"fire_rate":
-			player.fire_interval *= 0.8
+			player.fire_interval = FIRE_INTERVAL[level]
 		"multishot":
-			player.projectiles += 1
+			player.projectiles = PROJECTILES[level]
 		"pierce":
-			player.pierce += 1
+			player.pierce = PIERCE[level]
+		"shield":
+			player.set_shield(SHIELD_RECHARGE[level])
 		"speed":
-			player.speed *= 1.15
+			player.speed *= float(SPEED_PCT[level]) / SPEED_PCT[level - 1]
 		"max_hp":
 			player.max_hp += 1
 			player.heal(1)
 		"magnet":
-			player.pickup_radius *= 1.6
+			player.pickup_radius *= float(MAGNET_PCT[level]) / MAGNET_PCT[level - 1]
 		"beam":
 			var beam := player.get_tree().get_first_node_in_group("beam") as Beam
 			if beam:
-				beam.half_width_deg *= 1.33
+				beam.half_width_deg = BEAM_DEG[level] / 2.0
 		_:
 			push_warning("Неизвестное улучшение: %s" % id)
+
+
+## Что изменится, если взять улучшение ещё раз: «Урон: 1 → 2».
+static func describe(id: String, level: int, player: Player) -> String:
+	var n := level + 1
+	match id:
+		"damage":
+			return "Урон: %d → %d" % [DAMAGE[level], DAMAGE[n]]
+		"fire_rate":
+			return "Выстрелов в секунду: %.1f → %.1f" % [1.0 / FIRE_INTERVAL[level], 1.0 / FIRE_INTERVAL[n]]
+		"multishot":
+			return "Гарпунов за выстрел: %d → %d" % [PROJECTILES[level], PROJECTILES[n]]
+		"pierce":
+			return "Пробивает врагов: %d → %d" % [PIERCE[level], PIERCE[n]]
+		"shield":
+			if level == 0:
+				return "Восстановление щита: %d с" % SHIELD_RECHARGE[n]
+			return "Восстановление щита: %d с → %d с" % [SHIELD_RECHARGE[level], SHIELD_RECHARGE[n]]
+		"speed":
+			return "Скорость: %d%% → %d%%" % [SPEED_PCT[level], SPEED_PCT[n]]
+		"max_hp":
+			var hp_max := player.max_hp if player else 5
+			return "Сердец: %d → %d, и лечит одно" % [hp_max, hp_max + 1]
+		"magnet":
+			return "Радиус сбора: %d%% → %d%%" % [MAGNET_PCT[level], MAGNET_PCT[n]]
+		"beam":
+			return "Ширина луча: %d° → %d°" % [BEAM_DEG[level], BEAM_DEG[n]]
+	return ""
 
 
 ## Выбирает до count случайных улучшений, которые ещё не взяты MAX_LEVEL раз.

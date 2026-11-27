@@ -103,7 +103,7 @@ func _apply_workshop() -> void:
 		if choice.is_empty():
 			break
 		upgrades_taken[choice[0].id] = upgrades_taken.get(choice[0].id, 0) + 1
-		Upgrades.apply(choice[0].id, player)
+		Upgrades.apply(choice[0].id, player, upgrades_taken[choice[0].id])
 
 
 # --- Пауза -------------------------------------------------------------
@@ -113,6 +113,7 @@ func _open_pause() -> void:
 		return
 	joystick.reset()
 	get_tree().paused = true
+	pause_menu.show_upgrades(upgrades_taken)
 	pause_menu.show()
 
 
@@ -237,12 +238,12 @@ func _offer_upgrade() -> void:
 	Fx.flash(Color(1, 0.85, 0.4, 0.5), 0.5)
 	Fx.ring(player.global_position, Color(1, 0.85, 0.4), 260.0, 0.6, 10.0)
 	Fx.burst(player.global_position, Color(1, 0.85, 0.4), 24, 380.0, 6.0)
-	upgrade_menu.show_choices(choices, upgrades_taken)
+	upgrade_menu.show_choices(choices, upgrades_taken, player)
 
 
 func _on_upgrade_chosen(id: String) -> void:
 	upgrades_taken[id] = upgrades_taken.get(id, 0) + 1
-	Upgrades.apply(id, player)
+	Upgrades.apply(id, player, upgrades_taken[id])
 	hud.set_health(player.hp, player.max_hp)
 	get_tree().paused = false
 	if _pending_levels > 0:

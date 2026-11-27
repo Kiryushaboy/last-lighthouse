@@ -44,6 +44,17 @@ horizontal_alignment = 1
 layout_mode = 2
 script = ExtResource("2_settings")
 
+[node name="TakenTitle" type="Label" parent="Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.65)
+theme_override_font_sizes/font_size = 24
+text = "Улучшения этой ночи"
+horizontal_alignment = 1
+
+[node name="Taken" type="HFlowContainer" parent="Card/Box"]
+layout_mode = 2
+alignment = 1
+
 [node name="Resume" type="Button" parent="Card/Box"]
 theme_type_variation = &"PrimaryButton"
 custom_minimum_size = Vector2(0, 120)

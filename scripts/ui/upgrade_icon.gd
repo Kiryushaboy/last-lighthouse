@@ -9,15 +9,22 @@ const GLOW := preload("res://art/fx/glow.tres")
 const COLORS := {
 	"damage": Color(1.0, 0.45, 0.35), "fire_rate": Color(1.0, 0.75, 0.3), "multishot": Color(1.0, 0.85, 0.4),
 	"pierce": Color(0.6, 0.8, 1.0), "speed": Color(0.45, 1.0, 0.75), "max_hp": Color(1.0, 0.4, 0.5),
-	"magnet": Color(0.75, 0.6, 1.0), "beam": Color(1.0, 0.9, 0.55),
+	"magnet": Color(0.75, 0.6, 1.0), "beam": Color(1.0, 0.9, 0.55), "shield": Color(0.4, 0.9, 1.0),
+	# Бонусы мастерской.
+	"hp": Color(1.0, 0.4, 0.5), "crit": Color(1.0, 0.55, 0.3), "start": Color(0.85, 0.6, 1.0),
 }
 
 var id := ""
 var _t := 0.0
 
 
+var icon_size := 110.0
+var _k := 1.0
+var _off := Vector2.ZERO
+
+
 func _ready() -> void:
-	custom_minimum_size = Vector2(110, 110)
+	custom_minimum_size = Vector2(icon_size, icon_size)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
@@ -31,6 +38,10 @@ static func color_of(upgrade_id: String) -> Color:
 
 
 func _draw() -> void:
+	# Значок нарисован под размер 110; для маленьких просто масштабируем.
+	_k = minf(size.x, size.y) / 110.0
+	_off = size / 2.0 * (1.0 - _k)
+	draw_set_transform(_off, 0.0, Vector2(_k, _k))
 	var c := size / 2.0
 	var col := color_of(id)
 	var pulse := 0.85 + 0.15 * sin(_t * 3.0)
@@ -61,6 +72,27 @@ func _draw() -> void:
 			draw_arc(c + Vector2(0, -4), 20.0, 0.0, PI, 24, col, 12.0)
 			draw_rect(Rect2(c + Vector2(-26, -16), Vector2(12, 14)), Color(0.85, 0.85, 0.9))
 			draw_rect(Rect2(c + Vector2(14, -16), Vector2(12, 14)), Color(0.85, 0.85, 0.9))
+		"shield":
+			draw_circle(c, 28.0, Color(col, 0.18))
+			draw_arc(c, 28.0, 0.0, TAU, 40, col, 5.0)
+			draw_arc(c + Vector2(-8, -8), 14.0, PI * 1.05, PI * 1.5, 10, Color(1, 1, 1, 0.8), 4.0)
+		"hp":
+			_heart(c + Vector2(0, 2), 26.0 * pulse, col)
+			draw_line(c + Vector2(22, -26), c + Vector2(22, -10), Color.WHITE, 5.0)
+			draw_line(c + Vector2(14, -18), c + Vector2(30, -18), Color.WHITE, 5.0)
+		"crit":
+			var pts := PackedVector2Array()
+			for i in 16:
+				var r := 30.0 if i % 2 == 0 else 13.0
+				pts.append(c + Vector2.RIGHT.rotated(TAU * i / 16.0 + _t * 0.5) * r)
+			draw_colored_polygon(pts, col)
+			draw_string(ThemeDB.fallback_font, c + Vector2(-15, 9), "×2", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color(0.15, 0.05, 0.0))
+		"start":
+			draw_rect(Rect2(c + Vector2(-24, -8), Vector2(48, 32)), col)
+			draw_rect(Rect2(c + Vector2(-28, -18), Vector2(56, 12)), col.lightened(0.2))
+			draw_rect(Rect2(c + Vector2(-4, -18), Vector2(8, 42)), Color(1, 0.85, 0.4))
+			draw_arc(c + Vector2(-9, -24), 8.0, 0.0, TAU, 12, Color(1, 0.85, 0.4), 4.0)
+			draw_arc(c + Vector2(9, -24), 8.0, 0.0, TAU, 12, Color(1, 0.85, 0.4), 4.0)
 		"beam":
 			var cone := PackedVector2Array([c + Vector2(0, 8), c + Vector2(-34, -30), c + Vector2(34, -30)])
 			draw_colored_polygon(cone, Color(col, 0.35))
@@ -69,9 +101,9 @@ func _draw() -> void:
 
 func _harpoon(at: Vector2, angle: float, scale_k: float, offset := Vector2.ZERO) -> void:
 	var s := HARPOON.get_size() * 0.5 * scale_k
-	draw_set_transform(at + offset.rotated(angle + PI / 2.0), angle, Vector2.ONE)
+	draw_set_transform(_off + (at + offset.rotated(angle + PI / 2.0)) * _k, angle, Vector2(_k, _k))
 	draw_texture_rect(HARPOON, Rect2(-s / 2.0, s), false)
-	draw_set_transform(Vector2.ZERO)
+	draw_set_transform(_off, 0.0, Vector2(_k, _k))
 
 
 func _heart(at: Vector2, r: float, col: Color) -> void:

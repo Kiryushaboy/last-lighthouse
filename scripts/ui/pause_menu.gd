@@ -33,3 +33,25 @@ func _on_visibility_changed() -> void:
 	if visible:
 		UiFx.pop_in($Card, $Dim)
 		UiFx.stagger($Card/Box.get_children())
+
+
+## Значки взятых улучшений с цифрой уровня — видно, чем вы уже прокачались.
+func show_upgrades(taken: Dictionary) -> void:
+	var box: HFlowContainer = $Card/Box/Taken
+	for c in box.get_children():
+		c.queue_free()
+	$Card/Box/TakenTitle.visible = not taken.is_empty()
+	for u in Upgrades.LIST:
+		var lvl: int = taken.get(u.id, 0)
+		if lvl == 0:
+			continue
+		var icon := UpgradeIcon.new()
+		icon.id = u.id
+		icon.icon_size = 72.0
+		var badge := Label.new()
+		badge.text = str(lvl)
+		badge.add_theme_font_size_override("font_size", 22)
+		badge.add_theme_color_override("font_color", Color(1, 0.85, 0.4))
+		badge.position = Vector2(52, 44)
+		icon.add_child(badge)
+		box.add_child(icon)
