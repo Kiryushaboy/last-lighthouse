@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
+[ext_resource type="Script" path="res://scripts/ui/hearts.gd" id="2_hearts"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_bg"]
 bg_color = Color(1, 1, 1, 0.12)
@@ -42,32 +43,34 @@ anchor_right = 1.0
 offset_left = 24.0
 offset_top = 24.0
 offset_right = -24.0
-offset_bottom = 52.0
+offset_bottom = 56.0
 grow_horizontal = 2
 mouse_filter = 2
-theme_override_styles/background = SubResource("StyleBox_bg")
-theme_override_styles/fill = SubResource("StyleBox_fill")
 max_value = 5.0
+step = 0.01
 show_percentage = false
 
 [node name="TimeLabel" type="Label" parent="Root"]
+theme_type_variation = &"TitleLabel"
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_top = 64.0
 offset_bottom = 132.0
 grow_horizontal = 2
-theme_override_font_sizes/font_size = 56
+theme_override_font_sizes/font_size = 60
+theme_override_constants/outline_size = 12
 text = "5:00"
 horizontal_alignment = 1
 
-[node name="HPLabel" type="Label" parent="Root"]
+[node name="Hearts" type="Control" parent="Root"]
 layout_mode = 0
-offset_left = 24.0
-offset_top = 76.0
+offset_left = 20.0
+offset_top = 72.0
 offset_right = 280.0
 offset_bottom = 124.0
-text = "Жизни: 5/5"
+mouse_filter = 2
+script = ExtResource("2_hearts")
 
 [node name="ShellsLabel" type="Label" parent="Root"]
 layout_mode = 0
@@ -98,9 +101,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -120.0
-offset_top = 140.0
+offset_top = 136.0
 offset_right = -24.0
-offset_bottom = 236.0
+offset_bottom = 224.0
 grow_horizontal = 0
 focus_mode = 0
 text = "II"

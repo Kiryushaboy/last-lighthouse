@@ -6,6 +6,7 @@ extends CharacterBody2D
 signal died
 signal health_changed(hp: int, max_hp: int)
 
+const GLOW := preload("res://art/fx/glow.tres")
 const BULLET_SCENE := preload("res://scenes/bullet.tscn")
 const TEXTURE := preload("res://art/sprites/player.svg")
 
@@ -25,6 +26,9 @@ var joystick_vector := Vector2.ZERO  ## задаёт Main из виртуаль�
 var arena_rect := Rect2(-900, -900, 1800, 1800)
 var bullet_container: Node  ## куда добавлять снаряды, задаёт Main
 
+var _recoil := 0.0
+var _body: Node2D
+var _walk := 0.0
 var _fire_cooldown := 0.0
 var _invulnerable := 0.0  ## после удара пару мгновений неуязвим
 
@@ -32,6 +36,10 @@ var _invulnerable := 0.0  ## после удара пару мгновений �
 func _ready() -> void:
 	hp = max_hp
 	add_to_group("player")
+	_body = Node2D.new()
+	_body.material = Enemy.neon_material(Color(1.0, 0.75, 0.3), 5.0)
+	_body.draw.connect(_draw_sprite)
+	add_child(_body)
 
 
 func _physics_process(delta: float) -> void:
@@ -45,6 +53,8 @@ func _physics_process(delta: float) -> void:
 
 	# 2. Таймеры.
 	_invulnerable = maxf(_invulnerable - delta, 0.0)
+	_recoil = maxf(_recoil - delta * 8.0, 0.0)
+	_walk += velocity.length() * delta * 0.05
 	_fire_cooldown -= delta
 
 	# 3. Автострельба.
@@ -63,6 +73,10 @@ func take_damage(amount: int) -> void:
 	hp -= amount
 	_invulnerable = 0.7
 	Sound.play("hurt")
+	Fx.flash(Color(1, 0.1, 0.15, 0.45), 0.45)
+	Fx.shake(0.4)
+	Fx.hitstop(0.07)
+	Fx.burst(global_position, Color(1, 0.35, 0.3), 12, 260.0, 5.0)
 	health_changed.emit(hp, max_hp)
 	if hp <= 0:
 		died.emit()
@@ -99,6 +113,7 @@ func _nearest_enemy() -> Node2D:
 
 func _shoot_at(target: Node2D) -> void:
 	Sound.play("shoot", -10.0)
+	_recoil = 1.0
 	var base_dir := global_position.direction_to(target.global_position)
 	var spread := deg_to_rad(12.0)
 	for i in projectiles:
@@ -113,8 +128,20 @@ func _shoot_at(target: Node2D) -> void:
 
 
 func _draw() -> void:
-	# Серый прототип: герой — просто круг. Мигает, пока неуязвим.
+	# Фонарь смотрителя: тёплый круг света под ногами.
+	draw_texture_rect(GLOW, Rect2(-120, -120, 240, 240), false, Color(1.0, 0.8, 0.45, 0.28))
+	draw_arc(Vector2.ZERO, pickup_radius, 0.0, TAU, 48, Color(0.5, 1, 0.8, 0.06), 2.0)
+	var moving := velocity.length() > 10.0
+	var bob := absf(sin(_walk)) * 4.0 if moving else 0.0
+	var sq := 1.0 + _recoil * 0.08
+	_body.position = Vector2(0, -bob)
+	_body.rotation = sin(_walk) * 0.08 if moving else 0.0
+	_body.scale = Vector2(sq, 1.0 / sq)
+	_body.queue_redraw()
+
+
+## Сам смотритель — на дочернем узле с золотым неоновым контуром. Мигает, пока неуязвим.
+func _draw_sprite() -> void:
 	var blink := _invulnerable > 0.0 and int(_invulnerable * 20.0) % 2 == 0
-	var size := TEXTURE.get_size() * 0.5
-	draw_texture_rect(TEXTURE, Rect2(-size / 2.0, size), false, Color(1, 1, 1, 0.35 if blink else 1.0))
-	draw_arc(Vector2.ZERO, pickup_radius, 0.0, TAU, 48, Color(1, 1, 1, 0.06), 2.0)
+	var size := TEXTURE.get_size() * 0.62
+	_body.draw_texture_rect(TEXTURE, Rect2(-size / 2.0, size), false, Color(1, 1, 1, 0.35 if blink else 1.0))

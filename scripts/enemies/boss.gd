@@ -59,6 +59,8 @@ func _update_barrage(delta: float) -> void:
 func _fire_barrage() -> void:
 	if not projectile_container:
 		return
+	Fx.ring(global_position, Color(0.7, 0.45, 1.0), radius * 2.5, 0.4, 8.0)
+	Fx.shake(0.2)
 	var offset := randf() * TAU
 	for i in BARRAGE_COUNT:
 		var ink := INK_SCENE.instantiate() as Ink
@@ -74,6 +76,9 @@ func _update_slam(delta: float) -> void:
 		if _slam_warning >= SLAM_WARN:
 			_slam_warning = -1.0
 			Sound.play("slam")
+			Fx.shake(0.55)
+			Fx.ring(_slam_pos, Color(1, 0.4, 0.35), SLAM_RADIUS * 1.3, 0.45, 12.0)
+			Fx.burst(_slam_pos, Color(0.6, 0.85, 1.0), 26, 420.0, 6.0)
 			if target.global_position.distance_to(_slam_pos) <= SLAM_RADIUS:
 				(target as Player).take_damage(SLAM_DAMAGE)
 		return
@@ -91,10 +96,9 @@ func _draw_texture() -> void:
 		k = 0.85 + 0.15 * sin(_barrage_warning * 30.0)
 	var size := texture.get_size() * 0.5 * texture_scale * k
 	var tint := Color(0.8, 0.6, 1.0) if _barrage_warning >= 0.0 else Color.WHITE
-	draw_texture_rect(texture, Rect2(-size / 2.0, size), false, tint)
 	if _flash > 0.0:
-		draw_circle(Vector2.ZERO, radius, Color(1, 1, 1, 0.4))
-	_draw_slam_warning()
+		tint = Color(2.5, 2.5, 2.5)
+	_body.draw_texture_rect(texture, Rect2(-size / 2.0, size), false, tint)
 
 
 func _draw_body(c: Color) -> void:
@@ -110,7 +114,19 @@ func _draw_body(c: Color) -> void:
 	draw_circle(Vector2(-18, -10), 8.0, Color.BLACK)
 	draw_circle(Vector2(18, -10), 8.0, Color.BLACK)
 
+
+func _draw() -> void:
+	super._draw()
 	_draw_slam_warning()
+
+
+func _on_death_fx() -> void:
+	Fx.burst(global_position, Color(0.75, 0.45, 1.0), 60, 520.0, 9.0)
+	Fx.burst(global_position, Color(1.0, 0.85, 0.5), 30, 380.0, 7.0)
+	Fx.ring(global_position, Color(1, 0.9, 0.6), 420.0, 0.8, 14.0)
+	Fx.shake(0.9)
+	Fx.hitstop(0.25)
+	Fx.flash(Color(1, 0.95, 0.8, 0.8), 0.8)
 
 
 ## Предупреждение об ударе щупальцем рисуем в точке на полу.

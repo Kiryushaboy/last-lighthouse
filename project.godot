@@ -16,6 +16,7 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 Settings="*res://scripts/settings.gd"
 SaveData="*res://scripts/save_data.gd"
 Sound="*res://scripts/sound.gd"
+Fx="*res://scripts/fx.gd"
 
 [display]
 

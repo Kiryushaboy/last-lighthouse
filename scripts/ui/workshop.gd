@@ -4,12 +4,13 @@ extends CanvasLayer
 
 signal closed
 
-@onready var _shells: Label = $Box/Shells
-@onready var _rows: VBoxContainer = $Box/Rows
-@onready var _back: Button = $Box/Back
+@onready var _shells: Label = $Card/Box/Shells
+@onready var _rows: VBoxContainer = $Card/Box/Rows
+@onready var _back: Button = $Card/Box/Back
 
 
 func _ready() -> void:
+	visibility_changed.connect(_on_visibility_changed)
 	_back.pressed.connect(_close)
 
 
@@ -44,3 +45,10 @@ func _rebuild() -> void:
 func _buy(id: String) -> void:
 	if SaveData.buy(id):
 		_rebuild()
+
+
+## Окно появляется с анимацией каждый раз, когда его показывают.
+func _on_visibility_changed() -> void:
+	if visible:
+		UiFx.pop_in($Card, $Dim)
+		UiFx.stagger($Card/Box.get_children())

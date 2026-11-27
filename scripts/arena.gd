@@ -1,21 +1,33 @@
 extends Node2D
-## Рисует арену: море, волны, песчаный остров и маяк в центре.
+## Арена: ночное море (шейдер), песчаный остров, маяк со светящимся фонарём, граница в тумане.
 
 const RECT := Rect2(-900, -900, 1800, 1800)
 const ISLAND_RADIUS := 300.0
-const LIGHTHOUSE := preload("res://art/sprites/lighthouse.svg")
+const GLOW := preload("res://art/fx/glow.tres")
+const WATER_SHADER := preload("res://shaders/water.gdshader")
 
-var _waves: Array[Vector2] = []
+var _rocks: Array[Vector3] = []  ## x, y, радиус
 
 
 func _ready() -> void:
-	# Расставляем волны один раз, со своим зерном — каждую ночь одинаково.
+	# Море — отдельный прямоугольник под всем остальным, рисуется шейдером.
+	var water := Polygon2D.new()
+	water.polygon = PackedVector2Array([RECT.position, Vector2(RECT.end.x, RECT.position.y),
+			RECT.end, Vector2(RECT.position.x, RECT.end.y)])
+	water.show_behind_parent = true
+	var mat := ShaderMaterial.new()
+	mat.shader = WATER_SHADER
+	mat.set_shader_parameter("arena_half", RECT.size / 2.0)
+	mat.set_shader_parameter("island_radius", ISLAND_RADIUS)
+	water.material = mat
+	add_child(water)
+	# Камни на острове: одни и те же каждую ночь.
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 42
-	for i in 140:
-		var p := Vector2(rng.randf_range(RECT.position.x, RECT.end.x), rng.randf_range(RECT.position.y, RECT.end.y))
-		if p.length() > ISLAND_RADIUS + 40.0:
-			_waves.append(p)
+	for i in 14:
+		var a := rng.randf() * TAU
+		var dist := rng.randf_range(ISLAND_RADIUS * 0.45, ISLAND_RADIUS * 0.9)
+		_rocks.append(Vector3(cos(a) * dist, sin(a) * dist, rng.randf_range(8.0, 22.0)))
 
 
 func _process(_delta: float) -> void:
@@ -23,15 +35,48 @@ func _process(_delta: float) -> void:
 
 
 func _draw() -> void:
-	draw_rect(RECT, Color(0.07, 0.17, 0.26))
 	var t := Time.get_ticks_msec() / 1000.0
-	for i in _waves.size():
-		var p := _waves[i] + Vector2(sin(t * 0.6 + i) * 10.0, 0)
-		draw_arc(p, 18.0, PI * 1.15, PI * 1.85, 8, Color(0.6, 0.85, 1.0, 0.12), 3.0)
-	# Отмель и песок.
-	draw_circle(Vector2.ZERO, ISLAND_RADIUS + 40.0, Color(0.12, 0.3, 0.38))
-	draw_circle(Vector2.ZERO, ISLAND_RADIUS, Color(0.82, 0.72, 0.5))
-	draw_circle(Vector2.ZERO, ISLAND_RADIUS - 30.0, Color(0.88, 0.79, 0.57))
-	draw_rect(RECT, Color(0.5, 0.7, 0.9, 0.5), false, 6.0)
-	var size := LIGHTHOUSE.get_size() * 0.5
-	draw_texture_rect(LIGHTHOUSE, Rect2(-size / 2.0, size), false)
+	# Мокрый песок, сухой песок, лёгкая тень по краю.
+	# Ночной остров: тёмный камень с бирюзовой светящейся кромкой.
+	draw_circle(Vector2.ZERO, ISLAND_RADIUS, Color(0.09, 0.11, 0.17))
+	draw_circle(Vector2(0, -8), ISLAND_RADIUS - 24.0, Color(0.12, 0.14, 0.21))
+	var rim := 0.75 + 0.25 * sin(t * 1.5)
+	draw_arc(Vector2.ZERO, ISLAND_RADIUS, 0.0, TAU, 96, Color(0.3, 0.9, 1.0, 0.85 * rim), 4.0)
+	draw_arc(Vector2.ZERO, ISLAND_RADIUS + 6.0, 0.0, TAU, 96, Color(0.3, 0.9, 1.0, 0.2 * rim), 10.0)
+	# Тёплый свет маяка на камнях вокруг башни.
+	draw_texture_rect(GLOW, Rect2(-ISLAND_RADIUS, -ISLAND_RADIUS, ISLAND_RADIUS * 2, ISLAND_RADIUS * 2), false, Color(1.0, 0.75, 0.4, 0.12))
+	for r in _rocks:
+		draw_circle(Vector2(r.x, r.y), r.z, Color(0.17, 0.2, 0.29))
+		draw_arc(Vector2(r.x, r.y), r.z, PI * 1.0, PI * 1.6, 10, Color(0.4, 0.85, 1.0, 0.35), 2.0)
+	# Тень маяка и сам маяк.
+	# Маяк сверху: тёмная башня, золотые неоновые кольца, яркий фонарь.
+	var pulse := 0.8 + 0.2 * sin(t * 2.0)
+	draw_circle(Vector2.ZERO, 54.0, Color(0.06, 0.07, 0.11))
+	draw_arc(Vector2.ZERO, 54.0, 0.0, TAU, 48, Color(1.0, 0.78, 0.4, 0.9), 4.0)
+	draw_arc(Vector2.ZERO, 40.0, 0.0, TAU, 48, Color(1.0, 0.78, 0.4, 0.35), 2.0)
+	for i in 8:
+		var a := TAU * i / 8.0 + t * 0.2
+		draw_line(Vector2.RIGHT.rotated(a) * 40.0, Vector2.RIGHT.rotated(a) * 54.0, Color(1.0, 0.78, 0.4, 0.5), 2.0)
+	draw_circle(Vector2.ZERO, 22.0 * pulse, Color(1.0, 0.92, 0.7))
+	var g := 160.0 * pulse
+	draw_texture_rect(GLOW, Rect2(-g, -g, g * 2.0, g * 2.0), false, Color(1.0, 0.85, 0.45, 0.35 * pulse))
+	# Граница арены: светящиеся буйки вместо линии.
+	for i in 36:
+		var k := i / 36.0
+		var p := _perimeter_point(k)
+		var blink := 0.5 + 0.5 * sin(t * 3.0 + i * 1.7)
+		draw_texture_rect(GLOW, Rect2(p - Vector2(22, 22), Vector2(44, 44)), false, Color(1.0, 0.35, 0.3, 0.25 + 0.35 * blink))
+		draw_circle(p, 6.0, Color(1.0, 0.45, 0.35, 0.6 + 0.4 * blink))
+
+
+func _perimeter_point(k: float) -> Vector2:
+	var per := k * 4.0
+	var side := int(per)
+	var f := per - side
+	var a := RECT.position
+	var b := RECT.end
+	match side:
+		0: return Vector2(lerpf(a.x, b.x, f), a.y)
+		1: return Vector2(b.x, lerpf(a.y, b.y, f))
+		2: return Vector2(lerpf(b.x, a.x, f), b.y)
+		_: return Vector2(a.x, lerpf(b.y, a.y, f))
