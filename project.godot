@@ -8,7 +8,12 @@ config_version=5
 config/name="Последний маяк"
 config/description="Арена на выживание: продержитесь 5 минут до рассвета."
 run/main_scene="res://scenes/main.tscn"
+config/icon="res://icon.svg"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[autoload]
+
+Settings="*res://scripts/settings.gd"
 
 [display]
 
@@ -39,3 +44,4 @@ pointing/emulate_touch_from_mouse=true
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 environment/defaults/default_clear_color=Color(0.06, 0.08, 0.12, 1)
+textures/vram_compression/import_etc2_astc=true

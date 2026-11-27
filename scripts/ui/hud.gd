@@ -1,11 +1,17 @@
 class_name Hud
 extends CanvasLayer
-## Интерфейс поверх игры: таймер, опыт, жизни, уровень.
+## Интерфейс поверх игры: таймер, опыт, жизни, уровень, кнопка паузы.
+
+signal pause_pressed
 
 @onready var _time: Label = $Root/TimeLabel
 @onready var _hp: Label = $Root/HPLabel
 @onready var _level: Label = $Root/LevelLabel
 @onready var _xp_bar: ProgressBar = $Root/XPBar
+
+
+func _ready() -> void:
+	$Root/PauseButton.pressed.connect(pause_pressed.emit)
 
 
 func set_time(seconds_left: float) -> void:
