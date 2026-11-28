@@ -59,6 +59,7 @@ func _rebuild() -> void:
 		_button("+1000 ракушек", _add_shells, true)
 		_button("Интро и обучение заново", _reset_tutorial, false)
 		_button("Посмотреть аутро", _play_outro, false)
+		_button("Сбросить покупки и сундук", _reset_shop, false)
 		_button("Выключить и вернуть бонусы", _turn_off, false)
 	else:
 		_hint.text = "Введите код"
@@ -112,6 +113,12 @@ func _reset_tutorial() -> void:
 	Settings.reset_intro()
 	Sound.play("shell")
 	_hint.text = "Интро покажется при следующем запуске игры, обучение — по кнопке «Играть»."
+
+
+func _reset_shop() -> void:
+	SaveData.reset_shop()
+	Sound.play("shell")
+	_hint.text = "Покупки забыты, сундук дня снова доступен."
 
 
 func _play_outro() -> void:

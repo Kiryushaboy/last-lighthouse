@@ -15,6 +15,9 @@ signal next_pressed
 @onready var _to_menu: Button = $Card/Box/ToMenu
 @onready var _next: Button = $Card/Box/Next
 
+var _double: Button  ## «Удвоить ракушки» за рекламу, один раз
+var _run_shells := 0
+
 
 func _ready() -> void:
 	visibility_changed.connect(_on_visibility_changed)
@@ -22,6 +25,34 @@ func _ready() -> void:
 	_workshop.pressed.connect(workshop_pressed.emit)
 	_to_menu.pressed.connect(menu_pressed.emit)
 	_next.pressed.connect(next_pressed.emit)
+	_double = Button.new()
+	_double.focus_mode = Control.FOCUS_NONE
+	_double.custom_minimum_size = Vector2(0, 90)
+	_double.add_theme_color_override("font_color", Color(1, 0.8, 0.86))
+	_double.pressed.connect(_on_double)
+	$Card/Box.add_child(_double)
+	$Card/Box.move_child(_double, _shells.get_index() + 1)
+
+
+## Показать кнопку удвоения, если за ночь что-то собрано.
+func _offer_double(shells: int, allowed: bool) -> void:
+	_run_shells = shells
+	_double.visible = allowed and shells > 0
+	_double.disabled = false
+	_double.text = ("Удвоить ракушки: +%d" if SaveData.no_ads else "▶  Удвоить ракушки за рекламу: +%d") % shells
+
+
+func _on_double() -> void:
+	_double.disabled = true
+	Shop.rewarded("double", func(ok: bool) -> void:
+		if not ok:
+			_double.disabled = false
+			return
+		SaveData.add_shells(_run_shells)
+		_shells.text = "Ракушек за ночь: %d × 2 = %d (всего %d)" % [_run_shells, _run_shells * 2, SaveData.shells]
+		_double.hide()
+		Sound.play("shell")
+		UiFx.bump(_shells, 1.25))
 
 
 func show_result(r: Dictionary) -> void:
@@ -62,6 +93,7 @@ func show_result(r: Dictionary) -> void:
 	show()
 	# Ракушки досчитываются на глазах — приятно смотреть на награду.
 	var shells: int = r.shells
+	_offer_double(shells, not r.get("tutorial", false))
 	var bonus := "" if r.star_bonus == 0 else "\nиз них %d — за новые звёзды" % r.star_bonus
 	if r.get("tutorial", false):
 		bonus = "\nиз них %d — подарок старого смотрителя" % r.star_bonus
@@ -100,6 +132,7 @@ func _show_endless(r: Dictionary) -> void:
 	_fit_title()
 	show()
 	var shells: int = r.shells
+	_offer_double(shells, true)
 	_shells.text = "Ракушек за ночь: %d (всего %d)" % [shells, SaveData.shells]
 	if new_record:
 		UiFx.bump(_title, 1.3)

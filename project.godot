@@ -19,6 +19,7 @@ Settings="*res://scripts/settings.gd"
 SaveData="*res://scripts/save_data.gd"
 Sound="*res://scripts/sound.gd"
 Fx="*res://scripts/fx.gd"
+Shop="*res://scripts/shop.gd"
 
 [display]
 

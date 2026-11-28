@@ -75,6 +75,8 @@ var _hp_mult := 1.0
 var tutorial := false
 var _pace := 1.0  ## во сколько раз быстрее нарастает темп (учебная ночь)
 var _tut: Tutorial  ## обучение первой ночи
+var _revive_offered := false  ## «Второй шанс» предлагается один раз за ночь
+var _reviving := false  ## открыто окно «Второй шанс»
 
 
 func _ready() -> void:
@@ -193,7 +195,7 @@ func _apply_workshop() -> void:
 # --- Пауза -------------------------------------------------------------
 
 func _open_pause() -> void:
-	if _over or upgrade_menu.visible or pause_menu.visible or (_tut and _tut.busy()):
+	if _over or _reviving or upgrade_menu.visible or pause_menu.visible or (_tut and _tut.busy()):
 		return
 	joystick.reset()
 	get_tree().paused = true
@@ -517,7 +519,44 @@ func _on_upgrade_chosen(id: String) -> void:
 # --- Конец забега ------------------------------------------------------
 
 func _on_player_died() -> void:
-	_finish(false)
+	if _over:
+		return
+	# Один раз за ночь можно вернуться в бой за рекламный ролик (в обучении — нет).
+	if tutorial or _revive_offered:
+		_finish(false)
+		return
+	_revive_offered = true
+	_reviving = true
+	joystick.reset()
+	get_tree().paused = true
+	var dlg := UiDialog.new()
+	add_child(dlg)
+	dlg.setup("Второй шанс", "Смотритель ещё может подняться! Вернитесь в бой с половиной сердец.", Color(1, 0.6, 0.6))
+	dlg.add_choice(("Воскреснуть" if SaveData.no_ads else "▶  Воскреснуть за рекламу"), true, func() -> void:
+		Shop.rewarded("revive", _on_revive_ad))
+	dlg.add_choice("Сдаться", false, func() -> void:
+		_reviving = false
+		_finish(false))
+	dlg.open()
+
+
+func _on_revive_ad(ok: bool) -> void:
+	_reviving = false
+	if not ok:
+		_finish(false)
+		return
+	# Встаём с половиной сердец, ненадолго неуязвимы, а ближайших врагов отбрасывает вспышкой.
+	player.hp = 0
+	player.heal(maxi(1, player.max_hp / 2))
+	player._invulnerable = 2.5
+	_last_hp = player.hp
+	for e: Node2D in enemies.get_children():
+		if e.global_position.distance_to(player.global_position) < 420.0 and e.has_method("hit"):
+			e.hit(9999)
+	Fx.ring(player.global_position, Color(1.0, 0.9, 0.5), 420.0, 0.6, 14.0)
+	Fx.flash(Color(1, 0.95, 0.7, 0.6), 0.6)
+	Sound.play("levelup")
+	get_tree().paused = false
 
 
 func _finish(victory: bool) -> void:

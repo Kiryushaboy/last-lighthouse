@@ -32,6 +32,8 @@ var best_time := 0.0  ## рекорд бесконечной ночи: секу�
 var best_kills := 0  ## рекорд бесконечной ночи: врагов
 ## Тестовый режим (секретный код в меню): все ночи и герои открыты, бонусы меняются свободно.
 var test_mode := false
+var no_ads := false  ## куплено «Без рекламы»: награды без роликов
+var chest_day := ""  ## дата последнего сундука дня, ГГГГ-ММ-ДД
 var tutorial_done := false  ## обучение пройдено (или игрок уже играл до его появления)
 var _test_backup := {}  ## бонусы и герой до включения режима, чтобы вернуть при выключении
 const TEST_CODE_HASH := "4021a7b089496e8071def7586497ef50876068d4de9a7b9b53f22ee3348baca7"
@@ -51,6 +53,8 @@ func _ready() -> void:
 		# У тех, кто уже играл, обучение считаем пройденным.
 		tutorial_done = cfg.get_value("progress", "tutorial_done", not stars.is_empty())
 		_test_backup = cfg.get_value("test", "backup", {})
+		no_ads = cfg.get_value("shop", "no_ads", false)
+		chest_day = cfg.get_value("shop", "chest_day", "")
 		_refund_removed_heroes()
 	# Меню и карта сразу показывают главу, на которой игрок остановился.
 	if current_night == 0:
@@ -187,6 +191,29 @@ func choose_hero(id: String, cost: int) -> bool:
 	return true
 
 
+## Герой куплен за деньги в магазине.
+func unlock_hero(id: String) -> void:
+	if not id in heroes:
+		heroes.append(id)
+	_save()
+
+
+func set_no_ads(on: bool) -> void:
+	no_ads = on
+	_save()
+
+
+## Тестовый режим: забыть покупки и сундук, чтобы проверить всё заново.
+func reset_shop() -> void:
+	no_ads = false
+	chest_day = ""
+	for id in ["witch", "siren"]:
+		heroes.erase(id)
+	if not hero in heroes:
+		hero = "keeper"
+	_save()
+
+
 func add_shells(amount: int) -> void:
 	shells += amount
 	_save()
@@ -204,5 +231,7 @@ func _save() -> void:
 	cfg.set_value("test", "on", test_mode)
 	cfg.set_value("progress", "tutorial_done", tutorial_done)
 	cfg.set_value("test", "backup", _test_backup)
+	cfg.set_value("shop", "no_ads", no_ads)
+	cfg.set_value("shop", "chest_day", chest_day)
 	cfg.save(PATH)
 	changed.emit()
