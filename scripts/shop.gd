@@ -119,12 +119,12 @@ func _fake_ad(_reason: String, on_done: Callable) -> void:
 func _fake_purchase(id: String, p: Dictionary, on_done: Callable) -> void:
 	var dlg := UiDialog.new()
 	get_tree().root.add_child(dlg)
-	dlg.setup("Тестовая покупка", "%s за %s.\nЭто проверка: деньги не спишутся, товар выдастся сразу." % [p.title, price_of(id)])
-	dlg.add_choice("Купить", true, func() -> void:
+	dlg.setup(tr("Тестовая покупка"), tr("%s за %s.\nЭто проверка: деньги не спишутся, товар выдастся сразу.") % [tr(p.title), price_of(id)])
+	dlg.add_choice(tr("Купить"), true, func() -> void:
 		_grant(id)
 		if on_done.is_valid():
 			on_done.call(true))
-	dlg.add_choice("Отмена", false, func() -> void:
+	dlg.add_choice(tr("Отмена"), false, func() -> void:
 		if on_done.is_valid():
 			on_done.call(false))
 	dlg.open()

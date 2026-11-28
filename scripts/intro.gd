@@ -18,7 +18,7 @@ func _ready() -> void:
 	add_child(bg)
 
 	_player = VideoStreamPlayer.new()
-	_player.stream = load(VIDEO)
+	_player.stream = load(Lang.localized_path(VIDEO))
 	_player.expand = true
 	_player.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_player.mouse_filter = Control.MOUSE_FILTER_IGNORE

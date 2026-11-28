@@ -140,16 +140,28 @@ def make_beam():
     Image.fromarray(arr.astype(np.uint8), "RGBA").save(OUT + "beam.png", optimize=True)
 
 
-def make_title():
+## Русское название — title.png, английское — title_en.png (игра выбирает по языку).
+TITLES = {
+    "title.png": ([("ПОСЛЕДНИЙ", 196), ("МАЯК", 286)], "Продержитесь до рассвета"),
+    "title_en.png": ([("THE LAST", 196), ("LIGHTHOUSE", 286)], "Hold on until dawn"),
+}
+
+
+def make_title(name="title.png"):
     w, h = 1400 * SS, 760 * SS
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    lines = [("ПОСЛЕДНИЙ", 196), ("МАЯК", 286)]
+    lines, sub = TITLES[name]
     y = 40 * SS
     layers = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     glow_l = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     for text, size in lines:
         f = ImageFont.truetype(FONT, size * SS)
         box = f.getbbox(text)
+        # Длинное слово уменьшаем, чтобы влезло в картинку с полями.
+        while box[2] - box[0] > w - 120 * SS:
+            size -= 4
+            f = ImageFont.truetype(FONT, size * SS)
+            box = f.getbbox(text)
         x = (w - (box[2] - box[0])) / 2 - box[0]
         ImageDraw.Draw(glow_l).text((x, y), text, font=f, fill=(255, 150, 40, 255), stroke_width=10 * SS, stroke_fill=(255, 150, 40, 255))
         dl = ImageDraw.Draw(layers)
@@ -167,18 +179,23 @@ def make_title():
         fb.set_variation_by_axes([500])
     except Exception:
         pass
-    sub = "Продержитесь до рассвета"
     box = fb.getbbox(sub)
     ImageDraw.Draw(layers).text(((w - (box[2] - box[0])) / 2 - box[0], y + 60 * SS), sub, font=fb, fill=(214, 236, 255, 255), stroke_width=6 * SS, stroke_fill=(6, 8, 26, 255))
     glow_l = glow_l.filter(ImageFilter.GaussianBlur(26 * SS))
     a = np.asarray(glow_l).astype(float)
     a[..., 3] *= 0.55
     img = Image.alpha_composite(Image.fromarray(a.astype(np.uint8), "RGBA"), layers)
-    img.resize((w // SS, h // SS), Image.LANCZOS).save(OUT + "title.png", optimize=True)
+    img.resize((w // SS, h // SS), Image.LANCZOS).save(OUT + name, optimize=True)
 
 
 if __name__ == "__main__":
+    import sys
+    if "--titles" in sys.argv:  # только надписи, фон и луч не трогать
+        for n in TITLES:
+            make_title(n)
+        sys.exit()
     lx, ly = make_bg()
     make_beam()
-    make_title()
+    for n in TITLES:
+        make_title(n)
     print("lamp at", round(lx, 4), round(ly, 4))

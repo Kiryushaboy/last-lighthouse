@@ -98,42 +98,42 @@ static func describe(id: String, level: int, player: Player) -> String:
 	match id:
 		"damage":
 			var d := player.damage if player else 1
-			return "Урон: %d → %d" % [d, d + 1]
+			return Lang.t("Урон: %d → %d") % [d, d + 1]
 		"fire_rate":
 			var iv := player.fire_interval if player else 0.45
 			if weapon == "bats":
-				return "Отдых мыши после укуса: %.1f с → %.1f с" % [iv, iv * FIRE_STEP]
+				return Lang.t("Отдых мыши после укуса: %.1f с → %.1f с") % [iv, iv * FIRE_STEP]
 			if weapon == "wave":
-				return "Пауза между волнами: %.1f с → %.1f с" % [iv, iv * FIRE_STEP]
-			var what := "Вспышек" if weapon == "aura" else ("Молний" if weapon == "lightning" else "Выстрелов")
-			return "%s в секунду: %.1f → %.1f" % [what, 1.0 / iv, 1.0 / (iv * FIRE_STEP)]
+				return Lang.t("Пауза между волнами: %.1f с → %.1f с") % [iv, iv * FIRE_STEP]
+			var what := Lang.t("Вспышек") if weapon == "aura" else (Lang.t("Молний") if weapon == "lightning" else Lang.t("Выстрелов"))
+			return Lang.t("%s в секунду: %.1f → %.1f") % [what, 1.0 / iv, 1.0 / (iv * FIRE_STEP)]
 		"multishot":
 			var p := player.projectiles if player else 1
 			if weapon == "lightning":
-				return "Перескоков молнии: %d → %d" % [p + 1, p + 2]
+				return Lang.t("Перескоков молнии: %d → %d") % [p + 1, p + 2]
 			if weapon == "bats":
-				return "Мышей в стае: %d → %d" % [Player.BATS + p - 1, Player.BATS + p]
+				return Lang.t("Мышей в стае: %d → %d") % [Player.BATS + p - 1, Player.BATS + p]
 			if weapon == "wave":
-				return "Дальность песни: %d%% → %d%%" % [100 + (p - 1) * 20, 100 + p * 20]
+				return Lang.t("Дальность песни: %d%% → %d%%") % [100 + (p - 1) * 20, 100 + p * 20]
 			if weapon == "aura":
-				return "Радиус огня: %d%% → %d%%" % [100 + (p - 1) * 20, 100 + p * 20]
-			return "Гарпунов за выстрел: %d → %d" % [p, p + 1]
+				return Lang.t("Радиус огня: %d%% → %d%%") % [100 + (p - 1) * 20, 100 + p * 20]
+			return Lang.t("Гарпунов за выстрел: %d → %d") % [p, p + 1]
 		"pierce":
 			var pc := player.pierce if player else 0
-			return "Пробивает врагов: %d → %d" % [pc, pc + 1]
+			return Lang.t("Пробивает врагов: %d → %d") % [pc, pc + 1]
 		"shield":
 			if level == 0:
-				return "Восстановление щита: %d с" % SHIELD_RECHARGE[n]
-			return "Восстановление щита: %d с → %d с" % [SHIELD_RECHARGE[level], SHIELD_RECHARGE[n]]
+				return Lang.t("Восстановление щита: %d с") % SHIELD_RECHARGE[n]
+			return Lang.t("Восстановление щита: %d с → %d с") % [SHIELD_RECHARGE[level], SHIELD_RECHARGE[n]]
 		"speed":
-			return "Скорость: %d%% → %d%%" % [SPEED_PCT[level], SPEED_PCT[n]]
+			return Lang.t("Скорость: %d%% → %d%%") % [SPEED_PCT[level], SPEED_PCT[n]]
 		"max_hp":
 			var hp_max := player.max_hp if player else 5
-			return "Сердец: %d → %d" % [hp_max, hp_max + 1]
+			return Lang.t("Сердец: %d → %d") % [hp_max, hp_max + 1]
 		"magnet":
-			return "Радиус сбора: %d%% → %d%%" % [MAGNET_PCT[level], MAGNET_PCT[n]]
+			return Lang.t("Радиус сбора: %d%% → %d%%") % [MAGNET_PCT[level], MAGNET_PCT[n]]
 		"beam":
-			return "Ширина луча: %d° → %d°" % [BEAM_DEG[level], BEAM_DEG[n]]
+			return Lang.t("Ширина луча: %d° → %d°") % [BEAM_DEG[level], BEAM_DEG[n]]
 	return ""
 
 

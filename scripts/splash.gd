@@ -6,7 +6,8 @@ const NEXT_SCENE := "res://scenes/menu.tscn"
 const INTRO_SCENE := "res://scenes/intro.tscn"
 const BG := preload("res://art/splash/bg.png")
 const BEAM := preload("res://art/splash/beam.png")
-const TITLE := preload("res://art/splash/title.png")
+const TITLE_RU := preload("res://art/splash/title.png")
+const TITLE_EN := preload("res://art/splash/title_en.png")
 const LAMP := Vector2(0.5, 0.37)  ## где на фоне фонарь маяка (доли картинки)
 const HORIZON := 0.60
 const FADE_IN := 0.6
@@ -16,6 +17,7 @@ const FADE_OUT := 0.6
 var _bg: TextureRect
 var _beams: Array[TextureRect] = []
 var _title: TextureRect
+var _title_tex: Texture2D  ## название на языке игры
 var _t := 0.0
 var _leaving := false
 
@@ -35,7 +37,8 @@ func _ready() -> void:
 		var b := _picture(BEAM)
 		b.material = add
 		_beams.append(b)
-	_title = _picture(TITLE)
+	_title_tex = TITLE_RU if Lang.is_ru() else TITLE_EN
+	_title = _picture(_title_tex)
 	_title.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_title.modulate.a = 0.0
 	resized.connect(_layout)
@@ -77,7 +80,7 @@ func _layout() -> void:
 		b.position = lamp - b.pivot_offset
 	# Название — под маяком, во всю ширину с полями, но не ниже края экрана.
 	var tw := minf(size.x * 0.92, size.y * 0.75)
-	var th := tw * TITLE.get_height() / TITLE.get_width()
+	var th := tw * _title_tex.get_height() / _title_tex.get_width()
 	var top := origin.y + tex.y * (HORIZON + 0.035) * k
 	top = minf(top, size.y - th - size.y * 0.04)
 	_title.size = Vector2(tw, th)

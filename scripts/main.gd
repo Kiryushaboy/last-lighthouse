@@ -126,8 +126,8 @@ func _ready() -> void:
 	hud.set_time(time_left)
 	_last_hp = player.hp
 	if endless:
-		hud.show_night_banner("Бесконечная ночь", "Каждые 2 минуты событие, каждые 5 — спрут",
-				"продержитесь как можно дольше")
+		hud.show_night_banner(tr("Бесконечная ночь"), tr("Каждые 2 минуты событие, каждые 5 — спрут"),
+				tr("продержитесь как можно дольше"))
 	elif tutorial:
 		# В обучении погибнуть трудно: запас сердец побольше.
 		player.max_hp += 4
@@ -138,7 +138,7 @@ func _ready() -> void:
 		_tut.begin()
 		spawn_timer.paused = true
 	else:
-		hud.show_night_banner("Ночь %d · %s" % [night_index + 1, night.title],
+		hud.show_night_banner(tr("Ночь %d · %s") % [night_index + 1, tr(night.title)],
 				Nights.MODIFIER_TEXT.get(night.get("modifier", ""), ""), Nights.task_text(night.task))
 	_update_task()
 
@@ -255,7 +255,7 @@ func _update_events() -> void:
 		_event_end = elapsed + Nights.EVENT_LENGTH
 		_set_modifier(_event, true)
 		Sound.play("warning", -6.0)
-		hud.show_night_banner("Событие!", Nights.MODIFIER_TEXT[_event], "продержитесь %d секунд" % int(Nights.EVENT_LENGTH))
+		hud.show_night_banner(tr("Событие!"), Nights.MODIFIER_TEXT[_event], tr("продержитесь %d секунд") % int(Nights.EVENT_LENGTH))
 
 
 func _count_hits(hp: int, _max_hp: int) -> void:
@@ -278,7 +278,7 @@ func _task_progress() -> int:
 func _update_task() -> void:
 	if endless:
 		var b := int(SaveData.best_time)
-		hud.set_record("Рекорд: %d:%02d · врагов %d" % [b / 60, b % 60, SaveData.best_kills], kills)
+		hud.set_record(tr("Рекорд: %d:%02d · врагов %d") % [b / 60, b % 60, SaveData.best_kills], kills)
 		return
 	hud.set_star_tasks(hits_taken, Nights.MAX_HITS_FOR_STAR, Nights.task_text(night.task), _task_progress(), night.task[1])
 
@@ -369,7 +369,7 @@ func _boss_intro() -> void:
 	get_tree().paused = true
 	Settings.vibrate(450, 1.0)
 	Fx.flash(Color(0.5, 0.2, 0.8, 0.45), 0.6)
-	hud.show_boss_banner(boss.title + "!", boss.subtitle)
+	hud.show_boss_banner(tr(boss.title) + "!", boss.subtitle)
 	var to_boss := boss.global_position - player.global_position
 	var tw := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	tw.tween_property(camera, "offset", to_boss, 0.7).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
@@ -531,10 +531,10 @@ func _on_player_died() -> void:
 	get_tree().paused = true
 	var dlg := UiDialog.new()
 	add_child(dlg)
-	dlg.setup("Второй шанс", "Смотритель ещё может подняться! Вернитесь в бой с половиной сердец.", Color(1, 0.6, 0.6))
-	dlg.add_choice(("Воскреснуть" if SaveData.no_ads else "▶  Воскреснуть за рекламу"), true, func() -> void:
+	dlg.setup(tr("Второй шанс"), tr("Смотритель ещё может подняться! Вернитесь в бой с половиной сердец."), Color(1, 0.6, 0.6))
+	dlg.add_choice((tr("Воскреснуть") if SaveData.no_ads else tr("▶  Воскреснуть за рекламу")), true, func() -> void:
 		Shop.rewarded("revive", _on_revive_ad))
-	dlg.add_choice("Сдаться", false, func() -> void:
+	dlg.add_choice(tr("Сдаться"), false, func() -> void:
 		_reviving = false
 		_finish(false))
 	dlg.open()

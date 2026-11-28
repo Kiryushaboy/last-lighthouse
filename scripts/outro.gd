@@ -27,7 +27,7 @@ func _ready() -> void:
 	_cover.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(_cover)
 
-	var path: String = VIDEO_PATH
+	var path: String = Lang.localized_path(VIDEO_PATH)
 	_player = VideoStreamPlayer.new()
 	_player.stream = load(path)
 	_player.expand = true

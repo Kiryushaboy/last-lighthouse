@@ -15,6 +15,8 @@ var music_on := true
 var vibration_on := true
 var intro_seen := false  ## интро-ролик уже показывали
 var outro_seen := false  ## аутро после последнего босса уже показывали
+var language := "auto"  ## "auto" — по языку телефона, или "ru" / "en"
+var reopen_settings := false  ## после смены языка меню перезагружается и снова открывает настройки
 
 
 func _ready() -> void:
@@ -26,6 +28,8 @@ func _ready() -> void:
 		vibration_on = cfg.get_value("controls", "vibration", true)
 		intro_seen = cfg.get_value("intro", "seen", false)
 		outro_seen = cfg.get_value("intro", "outro_seen", false)
+		language = cfg.get_value("lang", "language", "auto")
+	Lang.apply(language)
 
 
 func set_sensitivity(value: float) -> void:
@@ -40,6 +44,13 @@ func set_sound(on: bool) -> void:
 
 func set_music(on: bool) -> void:
 	music_on = on
+	_save()
+
+
+## Сменить язык: "auto", "ru" или "en". Тексты на экране обновит тот, кто вызвал (перезагрузкой сцены).
+func set_language(choice: String) -> void:
+	language = choice
+	Lang.apply(choice)
 	_save()
 
 
@@ -82,5 +93,6 @@ func _save() -> void:
 	cfg.set_value("controls", "vibration", vibration_on)
 	cfg.set_value("intro", "seen", intro_seen)
 	cfg.set_value("intro", "outro_seen", outro_seen)
+	cfg.set_value("lang", "language", language)
 	cfg.save(PATH)
 	changed.emit()

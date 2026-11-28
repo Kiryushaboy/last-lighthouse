@@ -53,8 +53,8 @@ func _ready() -> void:
 
 func begin() -> void:
 	_say("welcome", [
-		{"title": "Первая вахта", "text": "Добро пожаловать на маяк, юнга! Я сорок лет зажигаю этот огонь. Сегодня покажу, как дожить до рассвета."},
-		{"title": "Движение", "text": "Коснитесь нижней части экрана и ведите пальцем — герой пойдёт следом. Отпустите палец, и он остановится.",
+		{"title": tr("Первая вахта"), "text": tr("Добро пожаловать на маяк, юнга! Я сорок лет зажигаю этот огонь. Сегодня покажу, как дожить до рассвета.")},
+		{"title": tr("Движение"), "text": tr("Коснитесь нижней части экрана и ведите пальцем — герой пойдёт следом. Отпустите палец, и он остановится."),
 				"target": _move_zone, "demo": true},
 	])
 
@@ -64,7 +64,7 @@ func on_upgrade_offered() -> void:
 		return
 	_seen["upgrade"] = true
 	_passive = "upgrade"
-	_show_passive("Улучшения", "Выберите одно из трёх. Оно останется с вами до конца ночи, а взятое повторно станет сильнее.",
+	_show_passive(tr("Улучшения"), tr("Выберите одно из трёх. Оно останется с вами до конца ночи, а взятое повторно станет сильнее."),
 			main.upgrade_menu.get_node("Box/Choices"))
 
 
@@ -80,10 +80,10 @@ func on_hit() -> void:
 
 func _say_hud() -> void:
 	_say("hud", [
-		{"title": "Сердца", "text": "Каждое касание врага стоит одного сердца. Кончатся сердца — ночь проиграна. На первую вахту я выдал вам запас.",
+		{"title": tr("Сердца"), "text": tr("Каждое касание врага стоит одного сердца. Кончатся сердца — ночь проиграна. На первую вахту я выдал вам запас."),
 				"target": _control_rect.bind("Hearts", Vector2(10, 2))},
-		{"title": "Рассвет", "text": "Это время до рассвета. Доживёте — ночь ваша.", "target": _control_rect.bind("TimeLabel", Vector2(-190, 2))},
-		{"title": "Звёзды", "text": "За ночь дают до трёх звёзд: дожить до рассвета, сберечь сердца и выполнить задание. Звёзды приносят ракушки.",
+		{"title": tr("Рассвет"), "text": tr("Это время до рассвета. Доживёте — ночь ваша."), "target": _control_rect.bind("TimeLabel", Vector2(-190, 2))},
+		{"title": tr("Звёзды"), "text": tr("За ночь дают до трёх звёзд: дожить до рассвета, сберечь сердца и выполнить задание. Звёзды приносят ракушки."),
 				"target": _stars_rect},
 	])
 
@@ -116,7 +116,7 @@ func _process(delta: float) -> void:
 	if not _seen.has("dawn") and main.time_left <= 15.0:
 		_seen["dawn"] = true
 		_passive = "dawn"
-		_show_passive("Рассвет близко", "Ещё немного, юнга! Продержитесь до первых лучей.", null)
+		_show_passive(tr("Рассвет близко"), tr("Ещё немного, юнга! Продержитесь до первых лучей."), null)
 		get_tree().create_timer(5.0).timeout.connect(_hide_passive.bind("dawn"))
 	if _cool <= 0.0 and not _queue.is_empty() and _passive == "" and main.can_tutor():
 		_start(_queue.pop_front())
@@ -135,7 +135,7 @@ func _look_around() -> void:
 		for e: Node2D in main.enemies.get_children():
 			if me.distance_to(e.global_position) < 380.0 and _on_screen(e, 70.0):
 				_say("enemy", [
-					{"title": "Гости из глубины", "text": "Морские твари ползут на свет маяка. Стрелять не нужно: герой сам бьёт ближайшего. Ваше дело — не дать себя окружить.",
+					{"title": tr("Гости из глубины"), "text": tr("Морские твари ползут на свет маяка. Стрелять не нужно: герой сам бьёт ближайшего. Ваше дело — не дать себя окружить."),
 							"target": _around.bind(e, 64.0)},
 				])
 				return
@@ -145,22 +145,22 @@ func _look_around() -> void:
 			continue
 		if g.get("is_shell") and not _seen.has("shells"):
 			_say("shells", [
-				{"title": "Ракушки", "text": "А вот и ракушка! Подберите её — это здешние деньги.", "target": _around.bind(g, 54.0)},
-				{"title": "Ракушки", "text": "Счёт ракушек — здесь. После ночи загляните в мастерскую: за ракушки там продают вечные бонусы и новых героев.",
+				{"title": tr("Ракушки"), "text": tr("А вот и ракушка! Подберите её — это здешние деньги."), "target": _around.bind(g, 54.0)},
+				{"title": tr("Ракушки"), "text": tr("Счёт ракушек — здесь. После ночи загляните в мастерскую: за ракушки там продают вечные бонусы и новых героев."),
 						"target": _label_rect.bind("ShellsLabel")},
 			])
 			return
 		if not g.get("is_shell") and not _seen.has("xp"):
 			_say("xp", [
-				{"title": "Искры опыта", "text": "Из побеждённых тварей выпадают искры. Подойдите ближе — они притянутся сами.", "target": _around.bind(g, 54.0)},
-				{"title": "Искры опыта", "text": "Искры заполняют эту полосу. Когда она заполнится, вы выберете улучшение.",
+				{"title": tr("Искры опыта"), "text": tr("Из побеждённых тварей выпадают искры. Подойдите ближе — они притянутся сами."), "target": _around.bind(g, 54.0)},
+				{"title": tr("Искры опыта"), "text": tr("Искры заполняют эту полосу. Когда она заполнится, вы выберете улучшение."),
 						"target": _control_rect.bind("XPBar", Vector2(10, 10))},
 			])
 			return
 	# Про луч рассказываем, когда маяк в кадре (или если игрок долго к нему не подходит).
 	if _beam_from >= 0.0 and not _seen.has("beam") and (_on_screen(main.beam, 130.0) or main.elapsed - _beam_from > 12.0):
 		_say("beam", [
-			{"title": "Луч маяка", "text": "Свет маяка — ваш союзник. Враги в луче замедляются и получают двойной урон. Заманивайте их под луч!",
+			{"title": tr("Луч маяка"), "text": tr("Свет маяка — ваш союзник. Враги в луче замедляются и получают двойной урон. Заманивайте их под луч!"),
 					"target": _lighthouse},
 		])
 
@@ -233,7 +233,7 @@ func _finish_step() -> void:
 	if key == "welcome" and not skipped:
 		_walked = 0.0
 		_last_pos = main.player.global_position
-		_chip_text.text = "Пройдитесь по причалу"
+		_chip_text.text = tr("Пройдитесь по причалу")
 		_chip_bar.value = 0.0
 		_show_chip()
 
@@ -253,7 +253,7 @@ func _track_walk() -> void:
 		_walked = -1.0
 		hold = false
 		_cool = 1.0
-		_chip_text.text = "Отлично! Теперь — в бой"
+		_chip_text.text = tr("Отлично! Теперь — в бой")
 		_chip_text.add_theme_color_override("font_color", Color(0.6, 1.0, 0.8))
 		Sound.play("levelup", -10.0)
 		UiFx.bump(_chip, 1.12)
@@ -395,6 +395,8 @@ func _focus(rect: Rect2, _round: bool) -> void:
 
 
 func _fill_card(title: String, text: String, dots: String) -> void:
+	title = tr(title)
+	text = tr(text)
 	_title.text = title
 	_text.text = text
 	_dots.text = dots
@@ -518,7 +520,7 @@ func _build() -> void:
 	row.add_child(col)
 
 	var who := Label.new()
-	who.text = "СТАРЫЙ СМОТРИТЕЛЬ"
+	who.text = tr("СТАРЫЙ СМОТРИТЕЛЬ")
 	who.add_theme_font_size_override("font_size", 17)
 	who.add_theme_color_override("font_color", Color(1, 1, 1, 0.55))
 	col.add_child(who)
@@ -543,7 +545,7 @@ func _build() -> void:
 	_dots.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	foot.add_child(_dots)
 	_next = Label.new()
-	_next.text = "Нажмите, чтобы продолжить  ›"
+	_next.text = tr("Нажмите, чтобы продолжить  ›")
 	_next.add_theme_font_size_override("font_size", 19)
 	_next.add_theme_color_override("font_color", GOLD)
 	foot.add_child(_next)
@@ -552,7 +554,7 @@ func _build() -> void:
 	blink.tween_property(_next, "modulate:a", 1.0, 0.6).set_trans(Tween.TRANS_SINE)
 
 	_skip = Button.new()
-	_skip.text = "Пропустить обучение"
+	_skip.text = tr("Пропустить обучение")
 	_skip.flat = true
 	_skip.focus_mode = Control.FOCUS_NONE
 	_skip.add_theme_font_size_override("font_size", 21)

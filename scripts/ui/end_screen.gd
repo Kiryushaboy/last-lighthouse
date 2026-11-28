@@ -39,7 +39,7 @@ func _offer_double(shells: int, allowed: bool) -> void:
 	_run_shells = shells
 	_double.visible = allowed and shells > 0
 	_double.disabled = false
-	_double.text = ("Удвоить ракушки: +%d" if SaveData.no_ads else "▶  Удвоить ракушки за рекламу: +%d") % shells
+	_double.text = (tr("Удвоить ракушки: +%d") if SaveData.no_ads else tr("▶  Удвоить ракушки за рекламу: +%d")) % shells
 
 
 func _on_double() -> void:
@@ -49,7 +49,7 @@ func _on_double() -> void:
 			_double.disabled = false
 			return
 		SaveData.add_shells(_run_shells)
-		_shells.text = "Ракушек за ночь: %d × 2 = %d (всего %d)" % [_run_shells, _run_shells * 2, SaveData.shells]
+		_shells.text = tr("Ракушек за ночь: %d × 2 = %d (всего %d)") % [_run_shells, _run_shells * 2, SaveData.shells]
 		_double.hide()
 		Sound.play("shell")
 		UiFx.bump(_shells, 1.25))
@@ -61,12 +61,12 @@ func show_result(r: Dictionary) -> void:
 		_show_endless(r)
 		return
 	$Card/Box/Stars.show()
-	_title.text = "Рассвет! Маяк устоял" if won else "Маяк погас"
+	_title.text = tr("Рассвет! Маяк устоял") if won else tr("Маяк погас")
 	_title.add_theme_color_override("font_color", Color(1, 0.85, 0.45) if won else Color(1, 0.5, 0.5))
-	$Card/Box/Night.text = "Ночь %d · %s" % [r.night + 1, r.title]
+	$Card/Box/Night.text = tr("Ночь %d · %s") % [r.night + 1, tr(r.title)]
 	if r.get("tutorial", false):
-		_title.text = "Вахта сдана! Вы готовы" if won else "Маяк погас. Бывает!"
-		$Card/Box/Night.text = "Обучение · %s" % r.title
+		_title.text = tr("Вахта сдана! Вы готовы") if won else tr("Маяк погас. Бывает!")
+		$Card/Box/Night.text = tr("Обучение · %s") % tr(r.title)
 		$Card/Box/Stars.hide()
 	($Card/Box/Stars as StarsView).set_stars(r.stars, true)
 	# Три условия звёзд с галочками — видно, чего не хватило.
@@ -74,8 +74,8 @@ func show_result(r: Dictionary) -> void:
 	for c in checks.get_children():
 		c.queue_free()
 	var lines := [
-		"Пережить ночь",
-		"Потерять не больше %d сердец (потеряно %d)" % [Nights.MAX_HITS_FOR_STAR, r.hits],
+		tr("Пережить ночь"),
+		tr("Потерять не больше %d сердец (потеряно %d)") % [Nights.MAX_HITS_FOR_STAR, r.hits],
 		"%s: %d/%d" % [r.task, mini(r.task_progress, r.task_goal), r.task_goal],
 	]
 	for i in 3:
@@ -87,19 +87,19 @@ func show_result(r: Dictionary) -> void:
 		checks.add_child(l)
 	checks.visible = not r.get("tutorial", false)
 	var s := int(r.survived)
-	_stats.text = "Продержались %d:%02d · уровень %d" % [s / 60, s % 60, r.level]
+	_stats.text = tr("Продержались %d:%02d · уровень %d") % [s / 60, s % 60, r.level]
 	_next.visible = won and r.has_next
 	_fit_title()
 	show()
 	# Ракушки досчитываются на глазах — приятно смотреть на награду.
 	var shells: int = r.shells
 	_offer_double(shells, not r.get("tutorial", false))
-	var bonus := "" if r.star_bonus == 0 else "\nиз них %d — за новые звёзды" % r.star_bonus
+	var bonus := "" if r.star_bonus == 0 else tr("\nиз них %d — за новые звёзды") % r.star_bonus
 	if r.get("tutorial", false):
-		bonus = "\nиз них %d — подарок старого смотрителя" % r.star_bonus
+		bonus = tr("\nиз них %d — подарок старого смотрителя") % r.star_bonus
 	var tw := create_tween().set_ignore_time_scale()
 	tw.tween_interval(0.8)
-	tw.tween_method(func(v: float): _shells.text = "Ракушек за ночь: %d (всего %d)%s" % [int(v), SaveData.shells - shells + int(v), bonus],
+	tw.tween_method(func(v: float): _shells.text = tr("Ракушек за ночь: %d (всего %d)%s") % [int(v), SaveData.shells - shells + int(v), bonus],
 			0.0, float(shells), clampf(shells * 0.03, 0.3, 1.2))
 	tw.tween_callback(func(): UiFx.bump(_shells, 1.2))
 
@@ -107,9 +107,9 @@ func show_result(r: Dictionary) -> void:
 ## Итог бесконечной ночи: счётчики и рекорды вместо звёзд.
 func _show_endless(r: Dictionary) -> void:
 	var new_record: bool = r.records[0] or r.records[1]
-	_title.text = "Новый рекорд!" if new_record else "Маяк погас"
+	_title.text = tr("Новый рекорд!") if new_record else tr("Маяк погас")
 	_title.add_theme_color_override("font_color", Color(1, 0.85, 0.45) if new_record else Color(1, 0.5, 0.5))
-	$Card/Box/Night.text = "Бесконечная ночь"
+	$Card/Box/Night.text = tr("Бесконечная ночь")
 	$Card/Box/Stars.hide()
 	var checks: VBoxContainer = $Card/Box/Checks
 	for c in checks.get_children():
@@ -117,8 +117,8 @@ func _show_endless(r: Dictionary) -> void:
 	var s := int(r.survived)
 	var b := int(SaveData.best_time)
 	var lines := [
-		["Продержались %d:%02d (рекорд %d:%02d)" % [s / 60, s % 60, b / 60, b % 60], r.records[0]],
-		["Побеждено врагов: %d (рекорд %d)" % [r.kills, SaveData.best_kills], r.records[1]],
+		[tr("Продержались %d:%02d (рекорд %d:%02d)") % [s / 60, s % 60, b / 60, b % 60], r.records[0]],
+		[tr("Побеждено врагов: %d (рекорд %d)") % [r.kills, SaveData.best_kills], r.records[1]],
 	]
 	for line in lines:
 		var l := Label.new()
@@ -127,13 +127,13 @@ func _show_endless(r: Dictionary) -> void:
 		l.add_theme_font_size_override("font_size", 26)
 		l.add_theme_color_override("font_color", Color(1, 0.85, 0.4) if line[1] else Color(1, 1, 1, 0.8))
 		checks.add_child(l)
-	_stats.text = "Уровень %d" % r.level
+	_stats.text = tr("Уровень %d") % r.level
 	_next.visible = false
 	_fit_title()
 	show()
 	var shells: int = r.shells
 	_offer_double(shells, true)
-	_shells.text = "Ракушек за ночь: %d (всего %d)" % [shells, SaveData.shells]
+	_shells.text = tr("Ракушек за ночь: %d (всего %d)") % [shells, SaveData.shells]
 	if new_record:
 		UiFx.bump(_title, 1.3)
 
@@ -142,7 +142,7 @@ func _show_endless(r: Dictionary) -> void:
 func _fit_title() -> void:
 	var font := _title.get_theme_font("font")
 	var fs := 52
-	while fs > 34 and font.get_string_size(_title.text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > 540.0:
+	while fs > 34 and font.get_string_size(tr(_title.text), HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > 540.0:
 		fs -= 2
 	_title.add_theme_font_size_override("font_size", fs)
 

@@ -5,7 +5,19 @@ config_version=5
 
 [application]
 
-config/name="Последний маяк"
+config/name="The Last Lighthouse"
+config/name_localized={
+"ru": "Последний маяк",
+"uk": "Последний маяк",
+"be": "Последний маяк",
+"kk": "Последний маяк",
+"uz": "Последний маяк",
+"ky": "Последний маяк",
+"tg": "Последний маяк",
+"hy": "Последний маяк",
+"az": "Последний маяк",
+"tk": "Последний маяк"
+}
 config/description="Арена на выживание: продержитесь 5 минут до рассвета."
 run/main_scene="res://scenes/splash.tscn"
 config/icon="res://icon.svg"
@@ -38,6 +50,11 @@ theme/custom="res://ui/theme.tres"
 [input_devices]
 
 pointing/emulate_touch_from_mouse=true
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://locale/en.po")
+locale/fallback="ru"
 
 [layer_names]
 

@@ -46,7 +46,7 @@ func _rebuild() -> void:
 	title.theme_type_variation = &"TitleLabel"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 38)
-	title.text = "Тестовый режим"
+	title.text = tr("Тестовый режим")
 	_box.add_child(title)
 	_hint = Label.new()
 	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -54,15 +54,15 @@ func _rebuild() -> void:
 	_hint.add_theme_font_size_override("font_size", 24)
 	_box.add_child(_hint)
 	if SaveData.test_mode:
-		_hint.text = "Включён. Все ночи и герои открыты, а в мастерской у каждого бонуса кнопки «−» и «+»."
+		_hint.text = tr("Включён. Все ночи и герои открыты, а в мастерской у каждого бонуса кнопки «−» и «+».")
 		_hint.add_theme_color_override("font_color", Color(0.6, 1.0, 0.82))
-		_button("+1000 ракушек", _add_shells, true)
-		_button("Интро и обучение заново", _reset_tutorial, false)
-		_button("Посмотреть аутро", _play_outro, false)
-		_button("Сбросить покупки и сундук", _reset_shop, false)
-		_button("Выключить и вернуть бонусы", _turn_off, false)
+		_button(tr("+1000 ракушек"), _add_shells, true)
+		_button(tr("Интро и обучение заново"), _reset_tutorial, false)
+		_button(tr("Посмотреть аутро"), _play_outro, false)
+		_button(tr("Сбросить покупки и сундук"), _reset_shop, false)
+		_button(tr("Выключить и вернуть бонусы"), _turn_off, false)
 	else:
-		_hint.text = "Введите код"
+		_hint.text = tr("Введите код")
 		_hint.add_theme_color_override("font_color", Color(1, 1, 1, 0.75))
 		_code = LineEdit.new()
 		_code.alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -73,9 +73,9 @@ func _rebuild() -> void:
 		_code.add_theme_font_size_override("font_size", 36)
 		_code.text_submitted.connect(func(_t): _try_code())
 		_box.add_child(_code)
-		_button("Открыть", _try_code, true)
+		_button(tr("Открыть"), _try_code, true)
 		_code.grab_focus.call_deferred()
-	_button("Закрыть", close, false)
+	_button(tr("Закрыть"), close, false)
 
 
 func _button(text: String, action: Callable, primary: bool) -> void:
@@ -98,27 +98,27 @@ func _try_code() -> void:
 	else:
 		Sound.play("warning", -6.0)
 		_code.text = ""
-		_hint.text = "Неверный код"
+		_hint.text = tr("Неверный код")
 		_hint.add_theme_color_override("font_color", Color(1, 0.45, 0.45))
 
 
 func _add_shells() -> void:
 	SaveData.add_shells(1000)
 	Sound.play("shell")
-	_hint.text = "Ракушек: %d" % SaveData.shells
+	_hint.text = tr("Ракушек: %d") % SaveData.shells
 
 
 func _reset_tutorial() -> void:
 	SaveData.set_tutorial_done(false)
 	Settings.reset_intro()
 	Sound.play("shell")
-	_hint.text = "Интро покажется при следующем запуске игры, обучение — по кнопке «Играть»."
+	_hint.text = tr("Интро покажется при следующем запуске игры, обучение — по кнопке «Играть».")
 
 
 func _reset_shop() -> void:
 	SaveData.reset_shop()
 	Sound.play("shell")
-	_hint.text = "Покупки забыты, сундук дня снова доступен."
+	_hint.text = tr("Покупки забыты, сундук дня снова доступен.")
 
 
 func _play_outro() -> void:

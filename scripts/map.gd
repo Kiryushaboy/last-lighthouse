@@ -116,7 +116,7 @@ func _build() -> void:
 	ib.add_child(_go)
 
 	var back := Button.new()
-	back.text = "Назад"
+	back.text = tr("Назад")
 	back.custom_minimum_size = Vector2(0, 104)
 	back.focus_mode = Control.FOCUS_NONE
 	back.pressed.connect(_back)
@@ -154,7 +154,7 @@ func _show_page(page: int) -> void:
 	_chapter = page
 	_prev.disabled = page == 0
 	_next.disabled = page == _pages - 1
-	_total.text = "★ %d из %d      Ракушки: %d" % [SaveData.total_stars(), Nights.count() * 3, SaveData.shells]
+	_total.text = tr("★ %d из %d      Ракушки: %d") % [SaveData.total_stars(), Nights.count() * 3, SaveData.shells]
 	var endless_page := page >= Nights.CHAPTERS.size()
 	var ch: Dictionary = Nights.CHAPTERS[mini(page, Nights.CHAPTERS.size() - 1)]
 	UiTheme.apply(mini(page, Nights.CHAPTERS.size() - 1))
@@ -164,12 +164,12 @@ func _show_page(page: int) -> void:
 	_path.visible = not endless_page
 	_endless_box.visible = endless_page
 	if endless_page:
-		_title.text = "Бесконечная ночь"
-		_sub.text = "Награда за кампанию"
+		_title.text = tr("Бесконечная ночь")
+		_sub.text = tr("Награда за кампанию")
 		_fill_endless()
 		return
 	_title.text = ch.title
-	_sub.text = "Глава %d · %s" % [page + 1, ch.time_of_day]
+	_sub.text = tr("Глава %d · %s") % [page + 1, tr(ch.time_of_day)]
 	_path.set_chapter(page)
 	_select(_selected)
 
@@ -179,14 +179,14 @@ func _select(night: int) -> void:
 	_path.selected = night
 	var n := Nights.get_night(night)
 	var unlocked := Nights.is_unlocked(night)
-	_info_title.text = "%d. %s" % [night + 1, n.title]
+	_info_title.text = "%d. %s" % [night + 1, tr(n.title)]
 	for c in _info_enemies.get_children():
 		c.queue_free()
 	for c in _info_lines.get_children():
 		c.queue_free()
 	if not unlocked:
-		_info_lines.add_child(_label("Откроется после ночи %d" % night, 22, Color(1, 1, 1, 0.5)))
-		_go.text = "Закрыто"
+		_info_lines.add_child(_label(tr("Откроется после ночи %d") % night, 22, Color(1, 1, 1, 0.5)))
+		_go.text = tr("Закрыто")
 		_go.disabled = true
 		return
 	# Кто встретится этой ночью — картинками.
@@ -204,11 +204,11 @@ func _select(night: int) -> void:
 	var mod: String = n.get("modifier", "")
 	if n.has("boss_at"):
 		var boss: Dictionary = Boss.KINDS[Nights.chapter_of(night).boss]
-		_info_lines.add_child(_label("☠ Босс: %s" % boss.title, 22, Color(1, 0.5, 0.5)))
+		_info_lines.add_child(_label(tr("☠ Босс: %s") % tr(boss.title), 22, Color(1, 0.5, 0.5)))
 	if mod != "":
-		_info_lines.add_child(_label("%s %s" % [MODIFIER_ICON[mod], Nights.MODIFIER_TEXT[mod]], 21, Color(0.7, 0.92, 1)))
+		_info_lines.add_child(_label("%s %s" % [MODIFIER_ICON[mod], tr(Nights.MODIFIER_TEXT[mod])], 21, Color(0.7, 0.92, 1)))
 	_info_lines.add_child(_label("★★★ %s" % Nights.task_text(n.task), 21, Color(1, 1, 1, 0.75)))
-	_go.text = "В бой"
+	_go.text = tr("В бой")
 	_go.disabled = false
 
 
@@ -223,20 +223,20 @@ func _fill_endless() -> void:
 	var big := _label("∞", 220, Color(1, 0.85, 0.45) if unlocked else Color(1, 1, 1, 0.2))
 	big.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_endless_box.add_child(big)
-	_info_title.text = "Бесконечная ночь"
+	_info_title.text = tr("Бесконечная ночь")
 	_selected = Nights.ENDLESS
 	if unlocked:
 		var b := int(SaveData.best_time)
-		var rec := "Рекорд: %d:%02d · врагов %d" % [b / 60, b % 60, SaveData.best_kills] if b > 0 else "Сколько продержитесь?"
+		var rec := tr("Рекорд: %d:%02d · врагов %d") % [b / 60, b % 60, SaveData.best_kills] if b > 0 else tr("Сколько продержитесь?")
 		var r := _label(rec, 30, Color(1, 0.88, 0.55))
 		r.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_endless_box.add_child(r)
-		_info_lines.add_child(_label("Событие каждые 2 минуты, босс каждые 5", 21, Color(0.7, 0.92, 1)))
-		_go.text = "В бой"
+		_info_lines.add_child(_label(tr("Событие каждые 2 минуты, босс каждые 5"), 21, Color(0.7, 0.92, 1)))
+		_go.text = tr("В бой")
 		_go.disabled = false
 	else:
-		_info_lines.add_child(_label("Откроется после ночи %d" % (Nights.ENDLESS_AFTER + 1), 22, Color(1, 1, 1, 0.5)))
-		_go.text = "Закрыто"
+		_info_lines.add_child(_label(tr("Откроется после ночи %d") % (Nights.ENDLESS_AFTER + 1), 22, Color(1, 1, 1, 0.5)))
+		_go.text = tr("Закрыто")
 		_go.disabled = true
 
 

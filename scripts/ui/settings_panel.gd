@@ -30,17 +30,41 @@ func _ready() -> void:
 	add_child(slider)
 
 	var hint := Label.new()
-	hint.text = "Больше — меньше вести пальцем до полной скорости"
+	hint.text = tr("Больше — меньше вести пальцем до полной скорости")
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hint.add_theme_font_size_override("font_size", 24)
 	hint.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 	add_child(hint)
 
-	_sound = _toggle("Звуки", Settings.sound_on, Settings.set_sound)
-	_music = _toggle("Музыка", Settings.music_on, Settings.set_music)
-	_toggle("Вибрация", Settings.vibration_on, Settings.set_vibration)
+	_sound = _toggle(tr("Звуки"), Settings.sound_on, Settings.set_sound)
+	_music = _toggle(tr("Музыка"), Settings.music_on, Settings.set_music)
+	_toggle(tr("Вибрация"), Settings.vibration_on, Settings.set_vibration)
+	# Язык меняем только из главного меню: оно перезагружается, и все надписи сразу на новом языке.
+	var scene := get_tree().current_scene
+	if scene and scene.scene_file_path.ends_with("menu.tscn"):
+		_language()
 	_update_label()
+
+
+## Кнопка языка: по кругу «Авто» (по телефону) → «Русский» → «English».
+func _language() -> void:
+	var b := Button.new()
+	b.custom_minimum_size = Vector2(0, 90)
+	b.focus_mode = Control.FOCUS_NONE
+	var names := {"ru": "Русский", "en": "English"}
+	var current: String = names[Lang.resolve(Settings.language)]
+	if Settings.language == "auto":
+		b.text = "%s: %s (%s)" % [tr("Язык"), tr("Авто"), current]
+	else:
+		b.text = "%s: %s" % [tr("Язык"), current]
+	b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	b.pressed.connect(func() -> void:
+		var order := ["auto", "ru", "en"]
+		Settings.set_language(order[(order.find(Settings.language) + 1) % order.size()])
+		Settings.reopen_settings = true
+		get_tree().reload_current_scene.call_deferred())
+	add_child(b)
 
 
 ## Большая кнопка-переключатель: на телефоне в неё легко попасть пальцем.
@@ -49,7 +73,7 @@ func _toggle(title: String, on: bool, setter: Callable) -> Button:
 	b.toggle_mode = true
 	b.button_pressed = on
 	b.custom_minimum_size = Vector2(0, 90)
-	var refresh := func(state: bool): b.text = "%s: %s" % [title, "вкл" if state else "выкл"]
+	var refresh := func(state: bool): b.text = "%s: %s" % [title, tr("вкл") if state else tr("выкл")]
 	refresh.call(on)
 	b.toggled.connect(func(state: bool): setter.call(state); refresh.call(state))
 	add_child(b)
@@ -57,4 +81,4 @@ func _toggle(title: String, on: bool, setter: Callable) -> Button:
 
 
 func _update_label() -> void:
-	_sens_label.text = "Чувствительность: %.1f×" % Settings.sensitivity
+	_sens_label.text = tr("Чувствительность: %.1f×") % Settings.sensitivity

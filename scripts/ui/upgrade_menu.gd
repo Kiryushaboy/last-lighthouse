@@ -59,7 +59,7 @@ func _make_card(upgrade: Dictionary, level: int, player: Player) -> Button:
 	card.add_child(col)
 
 	var badge := Label.new()
-	badge.text = "НОВОЕ" if level == 0 else "УР. %d" % (level + 1)
+	badge.text = tr("НОВОЕ") if level == 0 else tr("УР. %d") % (level + 1)
 	badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	badge.add_theme_font_size_override("font_size", 20)
 	badge.add_theme_color_override("font_color", Color(1, 0.88, 0.45) if level == 0 else Color(1, 1, 1, 0.6))
