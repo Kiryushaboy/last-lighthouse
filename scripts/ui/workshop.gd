@@ -175,6 +175,23 @@ func _make_perk(p: Dictionary) -> Control:
 	pips.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	box.add_child(pips)
 
+	if SaveData.test_mode:
+		# Тестовый режим: уровень бонуса можно свободно убавлять и прибавлять.
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 10)
+		for step in [-1, 1]:
+			var b := Button.new()
+			b.text = "−" if step < 0 else "+"
+			b.focus_mode = Control.FOCUS_NONE
+			b.custom_minimum_size = Vector2(0, 76)
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			b.theme_type_variation = &"PrimaryButton" if step > 0 else &""
+			b.disabled = (lvl <= 0) if step < 0 else (lvl >= max_lvl)
+			b.pressed.connect(_shift.bind(p.id, step))
+			row.add_child(b)
+		box.add_child(row)
+		return card
+
 	var buy := Button.new()
 	buy.focus_mode = Control.FOCUS_NONE
 	buy.custom_minimum_size = Vector2(0, 76)
@@ -210,7 +227,7 @@ func _price(button: Button, cost: int) -> void:
 
 
 func _make_hero(h: Dictionary) -> Control:
-	var owned: bool = h.id in SaveData.heroes
+	var owned: bool = SaveData.hero_owned(h.id)
 	var chosen: bool = SaveData.hero == h.id
 	var neon: Color = h.neon
 	var card := _tile(neon, chosen)
@@ -332,10 +349,18 @@ func _buy(id: String) -> void:
 	_rebuild_keep_scroll(index)
 
 
+func _shift(id: String, step: int) -> void:
+	if not UiFx.tap_ok(_scroll):
+		return
+	SaveData.shift_level(id, step)
+	Sound.play("levelup" if step > 0 else "shell", -6.0)
+	_rebuild_keep_scroll(SaveData.PERKS.map(func(p): return p.id).find(id))
+
+
 func _choose(id: String) -> void:
 	if not UiFx.tap_ok(_scroll):
 		return
-	var bought: bool = not id in SaveData.heroes
+	var bought: bool = not SaveData.hero_owned(id)
 	if not SaveData.choose_hero(id, Heroes.get_hero(id).cost):
 		return
 	Sound.play("levelup" if bought else "shell", -4.0)

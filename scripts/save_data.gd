@@ -30,6 +30,11 @@ var hero := "keeper"  ## выбранный герой
 var heroes := ["keeper"]  ## открытые герои
 var best_time := 0.0  ## рекорд бесконечной ночи: секунд
 var best_kills := 0  ## рекорд бесконечной ночи: врагов
+## Тестовый режим (секретный код в меню): все ночи и герои открыты, бонусы меняются свободно.
+var test_mode := false
+var tutorial_done := false  ## обучение пройдено (или игрок уже играл до его появления)
+var _test_backup := {}  ## бонусы и герой до включения режима, чтобы вернуть при выключении
+const TEST_CODE_HASH := "4021a7b089496e8071def7586497ef50876068d4de9a7b9b53f22ee3348baca7"
 
 
 func _ready() -> void:
@@ -42,6 +47,10 @@ func _ready() -> void:
 		hero = cfg.get_value("heroes", "current", "keeper")
 		heroes = cfg.get_value("heroes", "owned", ["keeper"])
 		best_kills = cfg.get_value("endless", "best_kills", 0)
+		test_mode = cfg.get_value("test", "on", false)
+		# У тех, кто уже играл, обучение считаем пройденным.
+		tutorial_done = cfg.get_value("progress", "tutorial_done", not stars.is_empty())
+		_test_backup = cfg.get_value("test", "backup", {})
 		_refund_removed_heroes()
 	# Меню и карта сразу показывают главу, на которой игрок остановился.
 	if current_night == 0:
@@ -92,6 +101,47 @@ func buy(id: String) -> bool:
 	return true
 
 
+## Включить тестовый режим по коду. Возвращает false, если код неверный.
+func enter_test_code(code: String) -> bool:
+	if code.strip_edges().sha256_text() != TEST_CODE_HASH:
+		return false
+	if not test_mode:
+		_test_backup = {"levels": levels.duplicate(), "hero": hero}
+		test_mode = true
+		for p in PERKS:
+			levels[p.id] = p.costs.size()
+		_save()
+	return true
+
+
+## Выключить тестовый режим: бонусы и герой возвращаются к тому, что было до него.
+func leave_test_mode() -> void:
+	if not test_mode:
+		return
+	test_mode = false
+	levels = _test_backup.get("levels", {})
+	hero = _test_backup.get("hero", "keeper")
+	if not hero in heroes:
+		hero = "keeper"
+	_test_backup = {}
+	_save()
+
+
+## Тестовый режим: поднять или опустить уровень бонуса бесплатно.
+func shift_level(id: String, step: int) -> void:
+	levels[id] = clampi(level_of(id) + step, 0, perk(id).costs.size())
+	_save()
+
+
+func set_tutorial_done(done: bool) -> void:
+	tutorial_done = done
+	_save()
+
+
+func hero_owned(id: String) -> bool:
+	return test_mode or id in heroes
+
+
 func stars_of(night: int) -> int:
 	return stars.get(night, 0)
 
@@ -123,6 +173,10 @@ func record_endless(time: float, kills: int) -> Array:
 
 ## Купить героя за ракушки (или просто выбрать, если уже открыт).
 func choose_hero(id: String, cost: int) -> bool:
+	if test_mode:
+		hero = id
+		_save()
+		return true
 	if not id in heroes:
 		if shells < cost:
 			return false
@@ -147,5 +201,8 @@ func _save() -> void:
 	cfg.set_value("heroes", "current", hero)
 	cfg.set_value("heroes", "owned", heroes)
 	cfg.set_value("endless", "best_kills", best_kills)
+	cfg.set_value("test", "on", test_mode)
+	cfg.set_value("progress", "tutorial_done", tutorial_done)
+	cfg.set_value("test", "backup", _test_backup)
 	cfg.save(PATH)
 	changed.emit()
