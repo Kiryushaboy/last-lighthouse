@@ -44,7 +44,7 @@ func _ready() -> void:
 	var tw := create_tween()
 	tw.tween_property(self, "modulate:a", 1.0, FADE_IN).set_trans(Tween.TRANS_SINE)
 	# Меню грузим в фоне, когда заставка уже проявилась.
-	tw.tween_callback(func(): ResourceLoader.load_threaded_request(_next_scene))
+	tw.tween_callback(func(): if _next_scene == MENU_SCENE: ResourceLoader.load_threaded_request(MENU_SCENE))
 	var tt := create_tween().set_parallel()
 	_title.scale = Vector2(0.86, 0.86)
 	tt.tween_property(_title, "modulate:a", 1.0, 0.5).set_delay(0.35)
@@ -97,7 +97,7 @@ func _process(delta: float) -> void:
 		b.modulate.a = 0.5 + 0.4 * sin(ang)
 	# Уходим, когда и заставку показали достаточно, и меню уже загрузилось: затухание не дёргается.
 	if not _leaving and _t >= FADE_IN + MIN_HOLD \
-			and ResourceLoader.load_threaded_get_status(_next_scene) == ResourceLoader.THREAD_LOAD_LOADED:
+			and (_next_scene == INTRO_SCENE or ResourceLoader.load_threaded_get_status(MENU_SCENE) == ResourceLoader.THREAD_LOAD_LOADED):
 		_leaving = true
 		var tw := create_tween()
 		tw.tween_property(self, "modulate:a", 0.0, FADE_OUT).set_trans(Tween.TRANS_SINE)
@@ -105,5 +105,8 @@ func _process(delta: float) -> void:
 
 
 func _go() -> void:
-	var scene := ResourceLoader.load_threaded_get(_next_scene) as PackedScene
+	# Интро грузим обычным load(): сцена крошечная, а в фоновом потоке её скрипт у Godot 4.7 не загружается.
+	# Меню интро потом загрузит само, пока идёт ролик.
+	var scene: PackedScene = load(_next_scene) if _next_scene == INTRO_SCENE \
+		else ResourceLoader.load_threaded_get(MENU_SCENE) as PackedScene
 	get_tree().change_scene_to_packed(scene)
