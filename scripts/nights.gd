@@ -12,6 +12,20 @@ const ENDLESS_NIGHT := {"title": "Бесконечная ночь", "time": 0, "
 		["puffer", 240, 0.2], ["eel", 330, 0.3], ["narwhal", 450, 0.2], ["angler", 600, 0.3],
 		["seahorse", 720, 0.3], ["ghost", 840, 0.3], ["ember", 960, 0.2], ["weed", 1080, 0.2], ["wisp", 1200, 0.3]],
 	"hp": 2.0, "speed": 1.15, "spawn": 1.3, "task": ["kills", 0]}
+## Обучение при первом запуске: короткая ночь, темп ускорен (pace), по ходу подсказки старого смотрителя.
+const TUTORIAL := 98
+const TUTORIAL_NIGHT := {"title": "Первая вахта", "time": 120, "tutorial": true, "pace": 2.2,
+	"enemies": [["crab", 0, 1.0], ["jellyfish", 50, 0.4]],
+	"hp": 0.8, "speed": 0.9, "spawn": 1.0, "task": ["kills", 80]}
+## Подсказки обучения: [секунда, текст]. Остальные появляются по событиям (см. main.gd).
+const TUTORIAL_HINTS := [
+	[4.2, "Добро пожаловать на маяк! Ведите пальцем по экрану, чтобы двигаться."],
+	[12.0, "Гарпуны летят сами. Ваше дело — не подпускать тварей близко."],
+	[34.0, "Луч маяка — ваш друг: в нём враги медленнее и получают двойной урон."],
+	[58.0, "Розовые ракушки не теряются. В мастерской за них дают бонусы навсегда."],
+	[80.0, "Каждая ночь даёт до трёх звёзд. Звёзды открывают следующие маяки."],
+	[104.0, "Светает! Ещё чуть-чуть, смотритель."],
+]
 const EVENT_EVERY := 120.0
 const EVENT_LENGTH := 45.0
 const BOSS_EVERY := 300.0
@@ -181,13 +195,15 @@ const MODIFIER_TEXT := {
 static func chapter_of(i: int) -> Dictionary:
 	if i == ENDLESS:
 		return CHAPTERS[CHAPTERS.size() - 1]
+	if i == TUTORIAL:
+		return CHAPTERS[0]
 	return CHAPTERS[clampi(i / NIGHTS_PER_CHAPTER, 0, CHAPTERS.size() - 1)]
 
 
 ## Музыка ночи: у главы один или два трека, ночи чередуют их.
 static func music_of(i: int) -> String:
 	var tracks: Array = chapter_of(i).music
-	if i == ENDLESS:
+	if i == ENDLESS or i == TUTORIAL:
 		return tracks[0]
 	return tracks[(i % NIGHTS_PER_CHAPTER) % tracks.size()]
 
@@ -220,6 +236,8 @@ static func count() -> int:
 static func get_night(i: int) -> Dictionary:
 	if i == ENDLESS:
 		return ENDLESS_NIGHT
+	if i == TUTORIAL:
+		return TUTORIAL_NIGHT
 	return LIST[clampi(i, 0, LIST.size() - 1)]
 
 
