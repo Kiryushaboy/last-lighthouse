@@ -13,6 +13,7 @@ var sensitivity := 1.0
 var sound_on := true
 var music_on := true
 var vibration_on := true
+var intro_seen := false  ## интро-ролик уже показывали
 
 
 func _ready() -> void:
@@ -22,6 +23,7 @@ func _ready() -> void:
 		sound_on = cfg.get_value("audio", "sound", true)
 		music_on = cfg.get_value("audio", "music", true)
 		vibration_on = cfg.get_value("controls", "vibration", true)
+		intro_seen = cfg.get_value("intro", "seen", false)
 
 
 func set_sensitivity(value: float) -> void:
@@ -52,11 +54,18 @@ func vibrate(duration_ms: int, strength := 0.5) -> void:
 		Input.vibrate_handheld(duration_ms, clampf(strength, 0.05, 1.0))
 
 
+func mark_intro_seen() -> void:
+	if not intro_seen:
+		intro_seen = true
+		_save()
+
+
 func _save() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("controls", "sensitivity", sensitivity)
 	cfg.set_value("audio", "sound", sound_on)
 	cfg.set_value("audio", "music", music_on)
 	cfg.set_value("controls", "vibration", vibration_on)
+	cfg.set_value("intro", "seen", intro_seen)
 	cfg.save(PATH)
 	changed.emit()
