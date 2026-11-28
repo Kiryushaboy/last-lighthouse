@@ -346,14 +346,10 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, 40.0, Color(0.4, 0.9, 1.0, 0.1))
 		draw_arc(Vector2.ZERO, 40.0 + sin(t * 4.0) * 1.5, 0.0, TAU, 40, Color(0.5, 0.95, 1.0, 0.8), 3.0)
 	elif _shield_recharge > 0.0:
-		# Щит заряжается: тёмная дорожка и яркая толстая дуга прогресса, ближе к концу пульсирует.
+		# Щит заряжается: тонкая неяркая дуга прогресса, чтобы не отвлекать от боя.
 		var k := 1.0 - _shield_timer / _shield_recharge
-		var t2 := Time.get_ticks_msec() / 1000.0
-		var a := 0.85 if k < 0.8 else 0.7 + 0.3 * sin(t2 * 12.0)
-		draw_arc(Vector2.ZERO, 46.0, 0.0, TAU, 48, Color(0.0, 0.0, 0.0, 0.45), 8.0)
-		draw_arc(Vector2.ZERO, 46.0, 0.0, TAU, 48, Color(0.5, 0.95, 1.0, 0.15), 6.0)
-		draw_arc(Vector2.ZERO, 46.0, -PI / 2.0, -PI / 2.0 + TAU * k, 48, Color(0.5, 0.95, 1.0, a), 6.0)
-		draw_circle(Vector2.UP.rotated(TAU * k) * 46.0, 5.0, Color(0.8, 1.0, 1.0, a))
+		draw_arc(Vector2.ZERO, 44.0, 0.0, TAU, 48, Color(0.5, 0.95, 1.0, 0.07), 2.0, true)
+		draw_arc(Vector2.ZERO, 44.0, -PI / 2.0, -PI / 2.0 + TAU * k, 48, Color(0.5, 0.95, 1.0, 0.22 + 0.18 * k), 3.0, true)
 	var moving := velocity.length() > 10.0
 	var bob := absf(sin(_walk)) * 4.0 if moving else 0.0
 	var sq := 1.0 + _recoil * 0.08
