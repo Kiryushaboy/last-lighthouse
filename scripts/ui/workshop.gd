@@ -7,8 +7,7 @@ signal closed
 
 const SHELL := preload("res://art/sprites/seashell.svg")
 const GLOW := preload("res://art/fx/glow.tres")
-const WEAPON_TEXT := {"harpoon": "Гарпуны", "lightning": "Цепная молния", "aura": "Огненный круг",
-		"bats": "Летучие мыши", "trident": "Трезубец-бумеранг"}
+const WEAPON_TEXT := {"harpoon": "Гарпуны", "lightning": "Цепная молния", "aura": "Огненный круг", "bats": "Летучие мыши", "wave": "Песня-волна"}
 
 var _tab := "perks"
 var _shells: Label
@@ -183,15 +182,31 @@ func _make_perk(p: Dictionary) -> Control:
 		buy.text = "Макс."
 		buy.disabled = true
 	else:
-		buy.text = str(cost)
-		buy.icon = SHELL
-		buy.expand_icon = true
-		buy.add_theme_constant_override("icon_max_width", 36)
 		buy.theme_type_variation = &"PrimaryButton"
 		buy.disabled = SaveData.shells < cost
+		_price(buy, cost)
 	buy.pressed.connect(_buy.bind(p.id))
 	box.add_child(buy)
 	return card
+
+
+## Цена на кнопке: ракушка и число рядом, вместе по центру.
+func _price(button: Button, cost: int) -> void:
+	var row := HBoxContainer.new()
+	row.set_anchors_preset(Control.PRESET_FULL_RECT)
+	row.offset_bottom = -6
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 8)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.modulate.a = 0.5 if button.disabled else 1.0
+	button.add_child(row)
+	row.add_child(_picture(SHELL, 36))
+	var num := Label.new()
+	num.text = str(cost)
+	num.add_theme_font_override("font", button.get_theme_font("font", "PrimaryButton"))
+	num.add_theme_font_size_override("font_size", button.get_theme_font_size("font_size", "PrimaryButton"))
+	num.add_theme_color_override("font_color", button.get_theme_color("font_color", "PrimaryButton"))
+	row.add_child(num)
 
 
 func _make_hero(h: Dictionary) -> Control:
@@ -244,12 +259,9 @@ func _make_hero(h: Dictionary) -> Control:
 		btn.text = "Выбрать"
 		btn.theme_type_variation = &"PrimaryButton"
 	else:
-		btn.text = str(h.cost)
-		btn.icon = SHELL
-		btn.expand_icon = true
-		btn.add_theme_constant_override("icon_max_width", 36)
 		btn.theme_type_variation = &"PrimaryButton"
 		btn.disabled = SaveData.shells < h.cost
+		_price(btn, h.cost)
 	btn.pressed.connect(_choose.bind(h.id))
 	text.add_child(btn)
 	return card

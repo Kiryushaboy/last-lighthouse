@@ -11,8 +11,8 @@ const PATH := "user://save.cfg"
 const REGEN_EVERY := [0, 60, 45, 30]
 
 const PERKS := [
-	{"id": "hp", "title": "Крепкое здоровье", "desc": "+1 жизнь на старте", "costs": [10, 20, 35, 55, 80]},
-	{"id": "power", "title": "Закалённые гарпуны", "desc": "+1 к урону оружия", "costs": [60, 150, 300]},
+	{"id": "hp", "title": "Крепкое здоровье", "desc": "+1 жизнь на старте", "costs": [10, 20, 35, 55, 80, 200, 350, 500]},
+	{"id": "power", "title": "Закалённые гарпуны", "desc": "+1 к урону оружия", "costs": [60, 150, 300, 600, 1000, 1500]},
 	{"id": "crit", "title": "Острые гарпуны", "desc": "+8% шанс двойного урона", "costs": [10, 20, 35, 55, 80]},
 	{"id": "speed", "title": "Удобные сапоги", "desc": "+5% к скорости", "costs": [10, 20, 35, 55, 80]},
 	{"id": "start", "title": "Опытный", "desc": "+1 случайное улучшение на старте", "costs": [30, 60, 100]},
@@ -43,6 +43,9 @@ func _ready() -> void:
 		heroes = cfg.get_value("heroes", "owned", ["keeper"])
 		best_kills = cfg.get_value("endless", "best_kills", 0)
 		_refund_removed_heroes()
+	# Меню и карта сразу показывают главу, на которой игрок остановился.
+	if current_night == 0:
+		current_night = Nights.progress_night()
 
 
 ## Героев Боцмана и Фонарщицу убрали в 0.13: кто их купил, получает ракушки обратно.

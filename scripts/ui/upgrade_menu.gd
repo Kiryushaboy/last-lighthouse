@@ -74,7 +74,7 @@ func _make_card(upgrade: Dictionary, level: int, player: Player) -> Button:
 	var title := Label.new()
 	title.text = upgrade.title
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	title.custom_minimum_size = Vector2(0, 74)
 	title.add_theme_font_size_override("font_size", 27)
@@ -87,6 +87,7 @@ func _make_card(upgrade: Dictionary, level: int, player: Player) -> Button:
 	stat.text = parts[0]
 	stat.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	stat.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	stat.custom_minimum_size = Vector2(0, 56)
 	stat.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	stat.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stat.add_theme_font_size_override("font_size", 21)
@@ -96,7 +97,15 @@ func _make_card(upgrade: Dictionary, level: int, player: Player) -> Button:
 	var value := Label.new()
 	value.text = parts[1] if parts.size() > 1 else ""
 	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	value.add_theme_font_size_override("font_size", 34)
+	value.clip_text = false
+	# Длинные числа («100% → 160%») уменьшаем, чтобы не вылезали за карточку.
+	var font: Font = ThemeDB.get_project_theme().default_font
+	if font == null:
+		font = ThemeDB.fallback_font
+	var fs := 34
+	while fs > 20 and font.get_string_size(value.text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > 188.0:
+		fs -= 2
+	value.add_theme_font_size_override("font_size", fs)
 	value.add_theme_color_override("font_color", Color(0.55, 1.0, 0.8))
 	value.add_theme_constant_override("outline_size", 6)
 	value.add_theme_color_override("font_outline_color", Color(0, 0.1, 0.12, 0.9))

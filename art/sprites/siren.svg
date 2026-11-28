@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Сирена сверху, смотрит вправо: рыбий хвост сзади, длинные бирюзовые волосы, ракушка-рупор и звуковые дуги. -->
+  <defs>
+    <linearGradient id="tail" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#2fd0b0"/><stop offset="1" stop-color="#1a6f9a"/></linearGradient>
+    <radialGradient id="hair" cx="0.6" cy="0.5" r="0.6"><stop offset="0" stop-color="#7af0e0"/><stop offset="1" stop-color="#1e9aa8"/></radialGradient>
+  </defs>
+  <!-- хвост с плавником -->
+  <path d="M52 46 Q28 50 22 64 Q28 78 52 82 Z" fill="url(#tail)" stroke="#9ff5e6" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M24 64 Q8 44 4 40 Q10 60 8 64 Q10 68 4 88 Q8 84 24 64 Z" fill="#2fd0b0" stroke="#9ff5e6" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M32 58 Q36 64 32 70 M40 54 Q45 64 40 74" fill="none" stroke="#9ff5e6" stroke-width="2" opacity="0.7"/>
+  <!-- тело -->
+  <ellipse cx="62" cy="64" rx="20" ry="27" fill="#f3c9b0" stroke="#ff9ac0" stroke-width="3"/>
+  <!-- руки и ракушка-рупор -->
+  <circle cx="78" cy="44" r="7" fill="#f3c9b0"/><circle cx="80" cy="82" r="7" fill="#f3c9b0"/>
+  <path d="M80 74 L102 66 Q108 82 102 98 Z" fill="#ffd9e6" stroke="#e0689a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M88 76 L100 72 M88 82 L102 82 M88 88 L100 92" stroke="#e0689a" stroke-width="2" stroke-linecap="round"/>
+  <!-- звуковые дуги -->
+  <path d="M110 70 Q116 82 110 94" fill="none" stroke="#9ff5e6" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M118 64 Q127 82 118 100" fill="none" stroke="#9ff5e6" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+  <!-- волосы и голова -->
+  <path d="M62 44 Q34 40 30 52 Q42 54 44 64 Q42 74 30 76 Q34 88 62 84 Q82 80 82 64 Q82 48 62 44 Z" fill="url(#hair)" stroke="#bafaf0" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="66" cy="64" r="13" fill="#3fd8c8"/>
+  <path d="M56 56 Q66 50 76 58" fill="none" stroke="#bafaf0" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- диадема с жемчужиной -->
+  <path d="M74 54 Q80 64 74 74" fill="none" stroke="#ffd25a" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="78" cy="64" r="3.5" fill="#fff" stroke="#ffd25a" stroke-width="1.5"/>
+</svg>

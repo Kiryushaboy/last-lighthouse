@@ -32,7 +32,9 @@ func _initialize() -> void:
 				sd0.levels[perk.id] = top
 			elif perks_env == "mid":
 				sd0.levels[perk.id] = top / 2
-		sd0.hero = "keeper"
+		sd0.hero = hero_env if hero_env != "" else "keeper"
+		if not sd0.heroes.has(sd0.hero):
+			sd0.heroes.append(sd0.hero)
 		sd0._save()
 	main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)

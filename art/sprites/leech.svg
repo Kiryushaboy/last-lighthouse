@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56">
+  <!-- Пиявка: маленькая, скользкая, с круглой пастью. Смотрит вверх. -->
+  <path d="M28 10 Q40 24 28 34 Q18 42 28 50" fill="none" stroke="#3b4a12" stroke-width="15" stroke-linecap="round"/>
+  <path d="M28 10 Q40 24 28 34 Q18 42 28 50" fill="none" stroke="#b7d43c" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="28" cy="11" r="8" fill="#b7d43c" stroke="#3b4a12" stroke-width="3"/>
+  <circle cx="28" cy="10" r="4" fill="#5a1220"/>
+  <circle cx="28" cy="10" r="1.6" fill="#ff8aa0"/>
+</svg>

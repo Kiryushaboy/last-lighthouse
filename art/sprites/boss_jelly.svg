@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <!-- Королева медуз: огромный купол, корона из кораллов, жалящие щупальца. -->
+  <defs><radialGradient id="dome" cx="0.5" cy="0.35" r="0.7"><stop offset="0" stop-color="#ffd0e8"/><stop offset="0.6" stop-color="#ff7ab8"/><stop offset="1" stop-color="#b8327a"/></radialGradient></defs>
+  <g fill="none" stroke-linecap="round">
+    <g stroke="#8a1f5a" stroke-width="16"><path d="M90 190 Q70 240 96 296"/><path d="M130 200 Q118 250 138 304"/><path d="M190 200 Q204 250 182 304"/><path d="M230 190 Q252 240 224 296"/></g>
+    <g stroke="#ff9ad0" stroke-width="8"><path d="M90 190 Q70 240 96 296"/><path d="M130 200 Q118 250 138 304"/><path d="M190 200 Q204 250 182 304"/><path d="M230 190 Q252 240 224 296"/></g>
+    <path d="M160 204 Q150 250 162 300" stroke="#fff0a0" stroke-width="5" stroke-dasharray="6 12"/>
+  </g>
+  <path d="M40 180 Q40 60 160 60 Q280 60 280 180 Q250 208 220 186 Q190 212 160 188 Q130 212 100 186 Q70 208 40 180 Z" fill="url(#dome)" stroke="#8a1f5a" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M70 150 Q76 90 140 78" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity="0.55"/>
+  <circle cx="122" cy="140" r="20" fill="#fff"/><circle cx="198" cy="140" r="20" fill="#fff"/>
+  <circle cx="125" cy="145" r="10" fill="#3a0c2a"/><circle cx="195" cy="145" r="10" fill="#3a0c2a"/>
+  <path d="M96 112 L134 124 M224 112 L186 124" stroke="#5a1240" stroke-width="9" stroke-linecap="round"/>
+  <path d="M136 172 Q160 160 184 172" fill="none" stroke="#5a1240" stroke-width="7" stroke-linecap="round"/>
+  <path d="M108 74 L98 26 L130 52 L160 14 L190 52 L222 26 L212 74 Z" fill="#ffd25a" stroke="#b8791f" stroke-width="7" stroke-linejoin="round"/>
+  <circle cx="160" cy="50" r="9" fill="#6ae6ff"/><circle cx="118" cy="56" r="5" fill="#ff5a6e"/><circle cx="202" cy="56" r="5" fill="#ff5a6e"/>
+</svg>

@@ -11,6 +11,12 @@ const ENEMY_SCENES := {
 	"eel": preload("res://scenes/enemies/eel.tscn"),
 	"narwhal": preload("res://scenes/enemies/narwhal.tscn"),
 	"angler": preload("res://scenes/enemies/angler.tscn"),
+	"seahorse": preload("res://scenes/enemies/seahorse.tscn"),
+	"ghost": preload("res://scenes/enemies/ghost.tscn"),
+	"ember": preload("res://scenes/enemies/ember.tscn"),
+	"weed": preload("res://scenes/enemies/weed.tscn"),
+	"leech": preload("res://scenes/enemies/leech.tscn"),
+	"wisp": preload("res://scenes/enemies/wisp.tscn"),
 }
 const GEM_SCENE := preload("res://scenes/xp_gem.tscn")
 const BOSS_SCENE := preload("res://scenes/enemies/boss.tscn")
@@ -267,6 +273,12 @@ func _on_spawn_timer() -> void:
 
 
 ## enemy_type и at задаёт подмога босса; обычные враги выбираются по ночи и выходят из-за края экрана.
+## Враг попросил создать рядом другого (пиявки из кома водорослей).
+func _on_spawn_request(enemy_type: String, at: Vector2) -> void:
+	if ENEMY_SCENES.has(enemy_type) and enemies.get_child_count() < MAX_ENEMIES + 20:
+		_spawn_enemy.call_deferred(elapsed, enemy_type, at.clamp(ARENA.position, ARENA.end))
+
+
 func _spawn_enemy(elapsed: float, enemy_type := "", at := Vector2.INF) -> void:
 	var scene: PackedScene = ENEMY_SCENES[enemy_type] if enemy_type != "" else _pick_enemy_type(elapsed)
 	var enemy := scene.instantiate() as Enemy
@@ -282,6 +294,7 @@ func _spawn_enemy(elapsed: float, enemy_type := "", at := Vector2.INF) -> void:
 	elif enemy is Puffer:
 		(enemy as Puffer).projectile_container = enemy_projectiles
 	enemy.killed.connect(_on_enemy_killed.bind(enemy.shell_chance))
+	enemy.spawn_request.connect(_on_spawn_request)
 	enemies.add_child(enemy)
 	if at != Vector2.INF:
 		enemy.global_position = at

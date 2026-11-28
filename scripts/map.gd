@@ -235,7 +235,7 @@ func _fill_endless() -> void:
 		_go.text = "В бой"
 		_go.disabled = false
 	else:
-		_info_lines.add_child(_label("Откроется после ночи %d" % Nights.count(), 22, Color(1, 1, 1, 0.5)))
+		_info_lines.add_child(_label("Откроется после ночи %d" % (Nights.ENDLESS_AFTER + 1), 22, Color(1, 1, 1, 0.5)))
 		_go.text = "Закрыто"
 		_go.disabled = true
 
