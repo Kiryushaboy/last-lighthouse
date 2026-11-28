@@ -20,12 +20,20 @@ var texture: Texture2D = preload("res://art/sprites/player.svg")  ## рисун�
 @export var pickup_radius := 90.0  ## с какого расстояния притягивается опыт
 @export var shoot_range := 520.0
 @export var crit_chance := 0.0  ## шанс двойного урона, из мастерской
-var weapon := "harpoon"  ## harpoon | lightning | aura — задаёт герой
+var weapon := "harpoon"  ## harpoon | lightning | aura | bats | wave — задаёт герой
 var tint := Color.WHITE  ## окраска героя
 var neon := Color(1.0, 0.75, 0.3)  ## цвет неонового контура
 
 const AURA_RADIUS := 120.0
 const CHAIN_RANGE := 200.0
+const BAT_TEXTURE := preload("res://art/sprites/bat.svg")
+const BATS := 4  ## мышей в стае Ведьмы без улучшений
+const BAT_ORBIT := 70.0
+const BAT_HUNT := 300.0  ## как далеко от героя мыши замечают врагов
+const BAT_SPEED := 640.0
+const WAVE_RADIUS := 230.0
+const WAVE_TIME := 0.45
+const WAVE_PUSH := 430.0
 
 var hp := 0
 var joystick_vector := Vector2.ZERO  ## задаёт Main из виртуального джойстика
@@ -42,6 +50,10 @@ var _invulnerable := 0.0  ## после удара пару мгновений �
 var _shield_recharge := 0.0  ## 0 — щита нет; иначе секунд до восстановления
 var _shield_timer := 0.0
 var _shield_up := false
+var _orbit := 0.0  ## угол стаи летучих мышей
+var _bats: Array[Dictionary] = []  ## мыши: {pos, rest, target}
+var _clock := 0.0
+var _waves: Array[Dictionary] = []  ## идущие волны песни: {r, hit}
 
 
 func _ready() -> void:
@@ -78,7 +90,12 @@ func _physics_process(delta: float) -> void:
 	_fire_cooldown -= delta
 
 	# 3. Автострельба: у каждого героя своё оружие.
-	if _fire_cooldown <= 0.0:
+	_clock += delta
+	if weapon == "bats":
+		_update_bats(delta)
+	elif weapon == "wave":
+		_update_waves(delta)
+	elif _fire_cooldown <= 0.0:
 		match weapon:
 			"aura":
 				_burn_around()
@@ -216,6 +233,78 @@ func _nearest_from(from: Vector2, max_dist: float, skip: Dictionary) -> Node2D:
 	return best
 
 
+func bat_count() -> int:
+	return BATS + projectiles - 1
+
+
+## Место мыши номер i в хороводе вокруг героя, когда ей некого кусать.
+func _bat_home(i: int) -> Vector2:
+	return global_position + Vector2.RIGHT.rotated(_orbit + TAU * i / bat_count()) * BAT_ORBIT
+
+
+## Летучие мыши Ведьмы: кружат вокруг, а заметив врага рядом, бросаются на него, кусают и летят к следующему.
+## fire_interval — сколько мышь отдыхает после укуса.
+func _update_bats(delta: float) -> void:
+	_orbit += delta * 2.2
+	while _bats.size() < bat_count():
+		_bats.append({"pos": global_position, "rest": 0.0, "target": null})
+	var taken := {}
+	for b in _bats:
+		if is_instance_valid(b.target) and not (b.target as Enemy)._dead:
+			taken[b.target] = true
+		else:
+			b.target = null
+	for i in _bats.size():
+		var b: Dictionary = _bats[i]
+		b.rest = maxf(b.rest - delta, 0.0)
+		var pos: Vector2 = b.pos
+		if b.target == null and b.rest <= 0.0:
+			b.target = _nearest_from(global_position, BAT_HUNT, taken)
+			if b.target:
+				taken[b.target] = true
+		var goal := _bat_home(i)
+		var en := b.target as Enemy
+		if en:
+			# Цель убежала из охотничьего круга — мышь возвращается.
+			if global_position.distance_to(en.global_position) > BAT_HUNT + 80.0:
+				b.target = null
+			else:
+				goal = en.global_position
+		b.pos = pos.move_toward(goal, BAT_SPEED * delta)
+		if en and b.target and (b.pos as Vector2).distance_to(en.global_position) <= en.radius + 8.0:
+			en.hit(_hit_damage())
+			Sound.play("shoot", -18.0)
+			b.rest = fire_interval
+			b.target = null
+
+
+func wave_radius() -> float:
+	return WAVE_RADIUS * (1.0 + 0.2 * (projectiles - 1))
+
+
+## Песня Сирены: кольцо расходится от героя, ранит и отбрасывает каждого врага один раз.
+func _update_waves(delta: float) -> void:
+	if _fire_cooldown <= 0.0 and _nearest_from(global_position, wave_radius() + 80.0, {}) != null:
+		_fire_cooldown = fire_interval
+		_waves.append({"r": 20.0, "hit": {}})
+		Sound.play("shoot", -8.0)
+		_recoil = 1.0
+	var top := wave_radius()
+	for w in _waves:
+		w.r += top / WAVE_TIME * delta
+		for e in get_tree().get_nodes_in_group("enemies"):
+			var en := e as Enemy
+			if en == null or en._dead or w.hit.has(en):
+				continue
+			var d := global_position.distance_to(en.global_position)
+			if d <= w.r + en.radius:
+				w.hit[en] = true
+				en.hit(_hit_damage())
+				if not en._dead and not en is Boss:
+					en._knock = global_position.direction_to(en.global_position) * WAVE_PUSH
+	_waves = _waves.filter(func(w): return w.r < top)
+
+
 ## Огненный круг Фонарщицы: жжёт всех врагов рядом.
 func _burn_around() -> void:
 	var r := aura_radius()
@@ -236,6 +325,19 @@ func _draw() -> void:
 		var r := aura_radius()
 		draw_circle(Vector2.ZERO, r, Color(1.0, 0.45, 0.15, 0.08 + 0.03 * sin(t * 6.0)))
 		draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(1.0, 0.55, 0.2, 0.45), 3.0)
+	for w in _waves:
+		var k: float = 1.0 - w.r / wave_radius()
+		draw_arc(Vector2.ZERO, w.r, 0.0, TAU, 72, Color(0.5, 1.0, 0.9, 0.75 * k + 0.1), 7.0, true)
+		draw_arc(Vector2.ZERO, w.r * 0.86, 0.0, TAU, 72, Color(0.5, 1.0, 0.9, 0.35 * k), 4.0, true)
+	if weapon == "bats":
+		for i in _bats.size():
+			var at: Vector2 = _bats[i].pos - global_position
+			var flap := 0.75 + 0.25 * sin(_clock * 24.0 + i)
+			var sz := Vector2(46.0, 34.0 * flap)
+			draw_texture_rect(GLOW, Rect2(at - Vector2(30, 30), Vector2(60, 60)), false, Color(0.7, 0.4, 1.0, 0.45))
+			draw_set_transform(at, 0.0, Vector2.ONE)
+			draw_texture_rect(BAT_TEXTURE, Rect2(-sz / 2.0, sz), false)
+			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	# Фонарь смотрителя: тёплый круг света под ногами.
 	draw_texture_rect(GLOW, Rect2(-120, -120, 240, 240), false, Color(1.0, 0.8, 0.45, 0.28))
 	draw_arc(Vector2.ZERO, pickup_radius, 0.0, TAU, 48, Color(0.5, 1, 0.8, 0.06), 2.0)

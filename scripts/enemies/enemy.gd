@@ -4,6 +4,8 @@ extends Area2D
 ## Конкретный враг наследует этот скрипт и переопределяет _move() и _draw_body().
 
 signal killed(at: Vector2, xp_value: int)
+## Враг просит создать рядом другого врага (ком водорослей распадается на пиявок). Создаёт main.gd.
+signal spawn_request(enemy_type: String, at: Vector2)
 
 @export var speed := 90.0
 @export var max_hp := 2

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="48" viewBox="0 0 64 48">
+  <!-- Летучая мышь ведьмы: вид сверху, крылья в стороны. -->
+  <path d="M32 20 Q22 6 4 10 Q10 16 6 26 Q14 22 18 30 Q24 24 32 30 Q40 24 46 30 Q50 22 58 26 Q54 16 60 10 Q42 6 32 20 Z" fill="#7a3fd0" stroke="#2c1356" stroke-width="3" stroke-linejoin="round"/>
+  <ellipse cx="32" cy="24" rx="8" ry="11" fill="#4a2390" stroke="#2c1356" stroke-width="2.5"/>
+  <path d="M26 16 L24 8 L30 14 Z M38 16 L40 8 L34 14 Z" fill="#4a2390" stroke="#2c1356" stroke-width="2" stroke-linejoin="round"/>
+  <circle cx="29" cy="21" r="2.2" fill="#ffe14a"/><circle cx="35" cy="21" r="2.2" fill="#ffe14a"/>
+</svg>

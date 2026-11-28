@@ -33,6 +33,16 @@ const WEAPON_TEXT := {
 		"fire_rate": ["Быстрый заряд", "Молния бьёт чаще"],
 		"multishot": ["Цепная молния", "Молния перескакивает на большее число врагов"],
 	},
+	"bats": {
+		"damage": ["Острые клыки", "Каждый укус сильнее"],
+		"fire_rate": ["Голодная стая", "Мыши меньше отдыхают между укусами"],
+		"multishot": ["Большая стая", "Ещё одна летучая мышь в стае"],
+	},
+	"wave": {
+		"damage": ["Высокая нота", "Песня ранит сильнее"],
+		"fire_rate": ["Быстрый напев", "Сирена поёт чаще"],
+		"multishot": ["Громкий голос", "Волна расходится дальше"],
+	},
 	"aura": {
 		"damage": ["Жаркое пламя", "Огонь жжёт сильнее"],
 		"fire_rate": ["Частое пламя", "Огонь вспыхивает чаще"],
@@ -91,12 +101,20 @@ static func describe(id: String, level: int, player: Player) -> String:
 			return "Урон: %d → %d" % [d, d + 1]
 		"fire_rate":
 			var iv := player.fire_interval if player else 0.45
+			if weapon == "bats":
+				return "Отдых мыши после укуса: %.1f с → %.1f с" % [iv, iv * FIRE_STEP]
+			if weapon == "wave":
+				return "Пауза между волнами: %.1f с → %.1f с" % [iv, iv * FIRE_STEP]
 			var what := "Вспышек" if weapon == "aura" else ("Молний" if weapon == "lightning" else "Выстрелов")
 			return "%s в секунду: %.1f → %.1f" % [what, 1.0 / iv, 1.0 / (iv * FIRE_STEP)]
 		"multishot":
 			var p := player.projectiles if player else 1
 			if weapon == "lightning":
 				return "Перескоков молнии: %d → %d" % [p + 1, p + 2]
+			if weapon == "bats":
+				return "Мышей в стае: %d → %d" % [Player.BATS + p - 1, Player.BATS + p]
+			if weapon == "wave":
+				return "Дальность песни: %d%% → %d%%" % [100 + (p - 1) * 20, 100 + p * 20]
 			if weapon == "aura":
 				return "Радиус огня: %d%% → %d%%" % [100 + (p - 1) * 20, 100 + p * 20]
 			return "Гарпунов за выстрел: %d → %d" % [p, p + 1]

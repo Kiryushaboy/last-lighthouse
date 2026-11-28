@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/wisp.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://art/sprites/wisp.svg" id="2_tex"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 15.0
+
+[node name="Wisp" type="Area2D"]
+collision_layer = 2
+script = ExtResource("1_script")
+texture = ExtResource("2_tex")
+shell_chance = 0.08
+speed = 185.0
+max_hp = 3
+xp_value = 3
+color = Color(1, 0.85, 0.35, 1)
+radius = 15.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_body")

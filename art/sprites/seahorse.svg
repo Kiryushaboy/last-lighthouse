@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+  <!-- Морской конёк: изогнутое тело, закрученный хвост, гребень. -->
+  <path d="M44 12 Q62 22 50 40 Q40 54 48 64 Q54 72 44 72 Q36 70 40 64" fill="none" stroke="#a8431f" stroke-width="18" stroke-linecap="round"/>
+  <path d="M44 12 Q62 22 50 40 Q40 54 48 64 Q54 72 44 72 Q36 70 40 64" fill="none" stroke="#ff8a3c" stroke-width="12" stroke-linecap="round"/>
+  <path d="M56 22 L68 18 L62 28 L70 32 L60 36" fill="#ffd25a" stroke="#a8431f" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="42" cy="16" r="12" fill="#ff8a3c" stroke="#a8431f" stroke-width="3"/>
+  <path d="M32 18 L16 24" stroke="#a8431f" stroke-width="9" stroke-linecap="round"/>
+  <path d="M32 18 L16 24" stroke="#ff8a3c" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="40" cy="13" r="4" fill="#fff"/><circle cx="39" cy="13" r="2" fill="#2a1410"/>
+  <path d="M46 34 L52 36 M44 44 L50 47 M44 54 L50 56" stroke="#ffd25a" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

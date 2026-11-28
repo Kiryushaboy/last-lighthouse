@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <!-- Летучий голландец: призрачный корабль сверху, рваные паруса, носовая фигура-череп. Нос смотрит вверх. -->
+  <path d="M160 14 Q236 80 232 200 Q226 280 160 306 Q94 280 88 200 Q84 80 160 14 Z" fill="#17383a" stroke="#58f0c0" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M160 40 Q214 92 212 198 Q208 262 160 284 Q112 262 108 198 Q106 92 160 40 Z" fill="#245a54" stroke="#0c2224" stroke-width="5"/>
+  <g stroke="#0c2224" stroke-width="3" opacity="0.6"><path d="M112 130 H208"/><path d="M108 170 H212"/><path d="M110 210 H210"/><path d="M118 250 H202"/></g>
+  <!-- рваные паруса -->
+  <path d="M60 110 Q160 84 260 110 L250 150 L226 138 L204 158 L180 140 L160 160 L138 140 L116 158 L94 138 L70 150 Z" fill="#9ff5d8" opacity="0.8" stroke="#2f8f78" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M76 198 Q160 176 244 198 L236 232 L212 222 L188 240 L160 224 L132 240 L108 222 L84 232 Z" fill="#9ff5d8" opacity="0.7" stroke="#2f8f78" stroke-width="5" stroke-linejoin="round"/>
+  <circle cx="160" cy="118" r="10" fill="#0c2224" stroke="#58f0c0" stroke-width="4"/><circle cx="160" cy="206" r="10" fill="#0c2224" stroke="#58f0c0" stroke-width="4"/>
+  <!-- череп на носу -->
+  <path d="M130 56 Q130 22 160 22 Q190 22 190 56 Q190 72 178 76 L178 88 L142 88 L142 76 Q130 72 130 56 Z" fill="#e6fff6" stroke="#2f8f78" stroke-width="5" stroke-linejoin="round"/>
+  <ellipse cx="148" cy="54" rx="8" ry="10" fill="#0c2224"/><ellipse cx="172" cy="54" rx="8" ry="10" fill="#0c2224"/>
+  <circle cx="148" cy="54" r="3.5" fill="#58f0c0"/><circle cx="172" cy="54" r="3.5" fill="#58f0c0"/>
+  <path d="M152 80 V88 M160 80 V88 M168 80 V88" stroke="#2f8f78" stroke-width="3"/>
+  <!-- фонари на корме -->
+  <circle cx="128" cy="276" r="9" fill="#baffea"/><circle cx="192" cy="276" r="9" fill="#baffea"/>
+</svg>

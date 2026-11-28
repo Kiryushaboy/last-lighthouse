@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <!-- Гидра: три головы на длинных шеях из клубка водорослей. -->
+  <g fill="none" stroke-linecap="round">
+    <g stroke="#2c4a10" stroke-width="40"><path d="M160 230 Q80 190 70 96"/><path d="M160 230 Q160 150 160 70"/><path d="M160 230 Q240 190 250 96"/></g>
+    <g stroke="#7fb02a" stroke-width="28"><path d="M160 230 Q80 190 70 96"/><path d="M160 230 Q160 150 160 70"/><path d="M160 230 Q240 190 250 96"/></g>
+    <g stroke="#d6ef7a" stroke-width="5" stroke-dasharray="3 16"><path d="M160 230 Q80 190 70 96"/><path d="M160 230 Q160 150 160 70"/><path d="M160 230 Q240 190 250 96"/></g>
+  </g>
+  <ellipse cx="160" cy="246" rx="92" ry="56" fill="#5a8a1e" stroke="#2c4a10" stroke-width="9"/>
+  <path d="M84 250 Q110 220 140 252 Q170 222 200 252 Q222 226 238 250" fill="none" stroke="#2c4a10" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="110" cy="270" r="7" fill="#d6ef7a" opacity="0.7"/><circle cx="206" cy="274" r="9" fill="#d6ef7a" opacity="0.7"/><circle cx="160" cy="282" r="5" fill="#d6ef7a" opacity="0.7"/>
+  <g stroke="#2c4a10" stroke-width="7" stroke-linejoin="round">
+    <path d="M36 92 Q38 44 70 40 Q102 44 104 92 Q94 120 70 122 Q46 120 36 92 Z" fill="#9cc83a"/>
+    <path d="M124 62 Q126 12 160 8 Q194 12 196 62 Q186 92 160 94 Q134 92 124 62 Z" fill="#9cc83a"/>
+    <path d="M216 92 Q218 44 250 40 Q282 44 284 92 Q274 120 250 122 Q226 120 216 92 Z" fill="#9cc83a"/>
+  </g>
+  <g fill="#ffe14a"><circle cx="56" cy="74" r="9"/><circle cx="84" cy="74" r="9"/><circle cx="146" cy="44" r="10"/><circle cx="174" cy="44" r="10"/><circle cx="236" cy="74" r="9"/><circle cx="264" cy="74" r="9"/></g>
+  <g fill="#1a240a"><ellipse cx="56" cy="75" rx="2.5" ry="7"/><ellipse cx="84" cy="75" rx="2.5" ry="7"/><ellipse cx="146" cy="45" rx="3" ry="8"/><ellipse cx="174" cy="45" rx="3" ry="8"/><ellipse cx="236" cy="75" rx="2.5" ry="7"/><ellipse cx="264" cy="75" rx="2.5" ry="7"/></g>
+  <g fill="#fff" stroke="#2c4a10" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M54 100 L60 114 L66 100 Z M74 100 L80 114 L86 100 Z"/><path d="M142 72 L149 88 L156 72 Z M164 72 L171 88 L178 72 Z"/><path d="M234 100 L240 114 L246 100 Z M254 100 L260 114 L266 100 Z"/>
+  </g>
+</svg>

@@ -11,10 +11,12 @@ const MUSIC := {"menu": "res://audio/music/menu.ogg", "map": "res://audio/music/
 		"battle": "res://audio/music/battle.ogg", "boss": "res://audio/music/boss.ogg", "boss2": "res://audio/music/boss2.ogg",
 		"chapter1": "res://audio/music/chapter1.ogg", "chapter2": "res://audio/music/chapter2.ogg",
 		"chapter3": "res://audio/music/chapter3.ogg", "chapter4": "res://audio/music/chapter4.ogg",
-		"chapter5": "res://audio/music/chapter5.ogg"}
+		"chapter5": "res://audio/music/chapter5.ogg",
+		"chapter6": "res://audio/music/chapter6.ogg", "chapter7": "res://audio/music/chapter7.ogg", "chapter8": "res://audio/music/chapter8.ogg", "chapter9": "res://audio/music/chapter9.ogg", "chapter10": "res://audio/music/chapter10.ogg"}
 ## Громкость треков выровнена по замерам средней громкости (ffmpeg volumedetect), цель около -21,5 дБ.
 const MUSIC_DB := {"menu": -4.0, "map": -8.5, "battle": -11.0, "boss": -10.0, "boss2": -13.0,
-		"chapter1": 5.5, "chapter2": 4.5, "chapter3": -5.5, "chapter4": -5.0, "chapter5": 6.0}
+		"chapter1": 5.5, "chapter2": 4.5, "chapter3": -5.5, "chapter4": -5.0, "chapter5": 6.0,
+		"chapter6": -5.0, "chapter7": 3.5, "chapter8": -7.5, "chapter9": -5.5, "chapter10": -4.0}
 const POOL_SIZE := 14
 ## Поправка громкости каждого звука (дБ), чтобы паки звучали ровно.
 const TRIM := {"win": -6.0, "lose": -6.0, "warning": -5.0, "shell": -4.0, "slam": 4.0, "click": 2.0}

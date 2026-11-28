@@ -28,6 +28,21 @@ const KINDS := {
 	"kraken": {"title": "Кракен", "subtitle": "Хозяин бездны", "texture": "res://art/sprites/boss_kraken.svg",
 		"color": Color(0.6, 0.35, 1.0), "hp": 520, "speed": 60.0, "barrage_count": 18, "barrage_every": 4.5,
 		"slam_every": 3.0, "slam_radius": 125.0, "summon": "angler", "summon_count": 4, "summon_every": 9.0},
+	"jelly_queen": {"title": "Королева медуз", "subtitle": "Риф светится от её свиты", "texture": "res://art/sprites/boss_jelly.svg",
+		"color": Color(1.0, 0.5, 0.75), "hp": 520, "speed": 58.0, "barrage_count": 16, "barrage_every": 5.0,
+		"slam_every": 3.6, "slam_radius": 120.0, "summon": "jellyfish", "summon_count": 6, "summon_every": 8.0},
+	"ghost_ship": {"title": "Летучий голландец", "subtitle": "Корабль, который не тонет", "texture": "res://art/sprites/boss_ship.svg",
+		"color": Color(0.4, 0.95, 0.78), "hp": 540, "speed": 80.0, "barrage_count": 22, "barrage_every": 4.5,
+		"slam_every": 4.0, "slam_radius": 115.0, "summon": "ghost", "summon_count": 4, "summon_every": 9.0},
+	"lava_turtle": {"title": "Огненная черепаха", "subtitle": "На её спине дремлет вулкан", "texture": "res://art/sprites/boss_turtle.svg",
+		"color": Color(1.0, 0.5, 0.15), "hp": 600, "speed": 40.0, "barrage_count": 24, "barrage_every": 5.5,
+		"slam_every": 2.6, "slam_radius": 165.0, "summon": "ember", "summon_count": 2, "summon_every": 11.0},
+	"hydra": {"title": "Гидра", "subtitle": "Три головы и ни капли жалости", "texture": "res://art/sprites/boss_hydra.svg",
+		"color": Color(0.65, 0.85, 0.25), "hp": 620, "speed": 66.0, "barrage_count": 18, "barrage_every": 3.6,
+		"slam_every": 3.0, "slam_radius": 125.0, "summon": "leech", "summon_count": 8, "summon_every": 7.0},
+	"leviathan": {"title": "Левиафан", "subtitle": "Сердце вечной бури", "texture": "res://art/sprites/boss_leviathan.svg",
+		"color": Color(0.4, 0.6, 1.0), "hp": 700, "speed": 72.0, "barrage_count": 24, "barrage_every": 3.8,
+		"slam_every": 2.6, "slam_radius": 140.0, "summon": "wisp", "summon_count": 5, "summon_every": 8.0},
 }
 
 const BARRAGE_WARN := 0.8

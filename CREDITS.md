@@ -30,3 +30,10 @@
 
 ## Своё
 Спрайты в `art/sprites/` (SVG), шейдеры моря, луча и неонового контура, все эффекты — нарисованы кодом для этой игры.
+
+## Музыка глав 6–10 (CC0, OpenGameArt)
+- `audio/music/chapter6.ogg` — Bamboo Blitz, Tsorthan Grove. https://opengameart.org/content/bamboo-blitz
+- `audio/music/chapter7.ogg` — Moonlit Lullaby for the Lost, Tsorthan Grove. https://opengameart.org/content/moonlit-lullaby-for-the-lost
+- `audio/music/chapter8.ogg` — Heavy Boss Battle 2, MintoDog. https://opengameart.org/content/heavy-boss-battle-2
+- `audio/music/chapter9.ogg` — Haunted Beach, SterlingRay. https://opengameart.org/content/haunted-beach
+- `audio/music/chapter10.ogg` — The Final Battle, skrjablin. https://opengameart.org/content/the-final-battle

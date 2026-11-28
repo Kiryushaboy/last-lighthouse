@@ -1,6 +1,6 @@
 class_name Nights
 extends RefCounted
-## Кампания «Маяки побережья»: 5 глав по 6 ночей, ночь длится 5 минут, последняя ночь главы — с боссом.
+## Кампания «Маяки побережья»: 10 глав по 6 ночей, ночь длится 5 минут, последняя ночь главы — с боссом.
 ## Ночь = запись в LIST. Звёзды: ★ пережить, ★★ потерять не больше 2 сердец, ★★★ задание ночи.
 
 const MAX_HITS_FOR_STAR := 2
@@ -9,13 +9,15 @@ const ENDLESS := 99  ## номер «Бесконечной ночи» в SaveDa
 ## Бесконечная ночь: награда за кампанию. Времени нет, каждые 2 минуты событие, каждые 5 — спрут.
 const ENDLESS_NIGHT := {"title": "Бесконечная ночь", "time": 0, "endless": true,
 	"enemies": [["crab", 0, 1.0], ["jellyfish", 30, 0.5], ["squid", 90, 0.3], ["shell", 150, 0.2],
-		["puffer", 240, 0.2], ["eel", 330, 0.3], ["narwhal", 450, 0.2], ["angler", 600, 0.3]],
+		["puffer", 240, 0.2], ["eel", 330, 0.3], ["narwhal", 450, 0.2], ["angler", 600, 0.3],
+		["seahorse", 720, 0.3], ["ghost", 840, 0.3], ["ember", 960, 0.2], ["weed", 1080, 0.2], ["wisp", 1200, 0.3]],
 	"hp": 2.0, "speed": 1.15, "spawn": 1.3, "task": ["kills", 0]}
 const EVENT_EVERY := 120.0
 const EVENT_LENGTH := 45.0
 const BOSS_EVERY := 300.0
 
 const NIGHTS_PER_CHAPTER := 6
+const ENDLESS_AFTER := 29  ## бесконечная ночь открывается после «Бездны» (5-я глава), как и раньше
 
 ## Главы: название, время суток, музыка, босс главы и цвета моря/острова (theme).
 const CHAPTERS := [
@@ -29,6 +31,16 @@ const CHAPTERS := [
 		"theme": {"deep": Color(0.04, 0.14, 0.24), "shallow": Color(0.2, 0.42, 0.55), "foam": Color(0.92, 0.98, 1.0), "island": Color(0.55, 0.65, 0.75), "island_top": Color(0.72, 0.8, 0.88), "rock": Color(0.85, 0.92, 0.97), "rim": Color(0.8, 0.97, 1.0), "bg": Color(0.14, 0.24, 0.33), "fog": Color(0.75, 0.82, 0.88)}},
 	{"title": "Бездна", "music": ["chapter5"], "boss_music": "boss", "time_of_day": "Глубокая ночь", "boss": "kraken",
 		"theme": {"deep": Color(0.0, 0.0, 0.01), "shallow": Color(0.04, 0.01, 0.09), "foam": Color(0.75, 0.4, 1.0), "island": Color(0.06, 0.04, 0.1), "island_top": Color(0.09, 0.06, 0.14), "rock": Color(0.15, 0.1, 0.22), "rim": Color(0.72, 0.4, 1.0), "bg": Color(0.02, 0.01, 0.04), "fog": Color(0.12, 0.08, 0.18)}},
+	{"title": "Коралловый риф", "music": ["chapter6"], "boss_music": "boss2", "time_of_day": "Закат", "boss": "jelly_queen",
+		"theme": {"deep": Color(0.07, 0.02, 0.07), "shallow": Color(0.3, 0.12, 0.16), "foam": Color(1.0, 0.75, 0.45), "island": Color(0.2, 0.11, 0.13), "island_top": Color(0.27, 0.15, 0.16), "rock": Color(0.4, 0.22, 0.2), "rim": Color(1.0, 0.6, 0.3), "bg": Color(0.14, 0.07, 0.08), "fog": Color(0.45, 0.28, 0.26)}},
+	{"title": "Кладбище кораблей", "music": ["chapter7"], "boss_music": "boss", "time_of_day": "Полночь", "boss": "ghost_ship",
+		"theme": {"deep": Color(0.0, 0.03, 0.03), "shallow": Color(0.03, 0.14, 0.12), "foam": Color(0.5, 1.0, 0.8), "island": Color(0.07, 0.12, 0.12), "island_top": Color(0.1, 0.16, 0.16), "rock": Color(0.16, 0.25, 0.24), "rim": Color(0.4, 1.0, 0.75), "bg": Color(0.03, 0.07, 0.07), "fog": Color(0.18, 0.3, 0.28)}},
+	{"title": "Огненные острова", "music": ["chapter8"], "boss_music": "boss2", "time_of_day": "Зарево", "boss": "lava_turtle",
+		"theme": {"deep": Color(0.05, 0.01, 0.0), "shallow": Color(0.22, 0.06, 0.02), "foam": Color(1.0, 0.6, 0.2), "island": Color(0.13, 0.08, 0.07), "island_top": Color(0.18, 0.11, 0.09), "rock": Color(0.3, 0.16, 0.12), "rim": Color(1.0, 0.42, 0.15), "bg": Color(0.1, 0.04, 0.03), "fog": Color(0.35, 0.18, 0.12)}},
+	{"title": "Саргассово море", "music": ["chapter9"], "boss_music": "boss", "time_of_day": "Сумерки", "boss": "hydra",
+		"theme": {"deep": Color(0.02, 0.04, 0.01), "shallow": Color(0.1, 0.16, 0.05), "foam": Color(0.85, 1.0, 0.45), "island": Color(0.1, 0.13, 0.07), "island_top": Color(0.14, 0.18, 0.09), "rock": Color(0.22, 0.28, 0.14), "rim": Color(0.75, 0.95, 0.3), "bg": Color(0.05, 0.08, 0.03), "fog": Color(0.26, 0.32, 0.16)}},
+	{"title": "Око бури", "music": ["chapter10"], "boss_music": "boss2", "time_of_day": "Перед рассветом", "boss": "leviathan",
+		"theme": {"deep": Color(0.01, 0.02, 0.09), "shallow": Color(0.06, 0.12, 0.34), "foam": Color(1.0, 0.95, 0.6), "island": Color(0.1, 0.12, 0.24), "island_top": Color(0.14, 0.17, 0.32), "rock": Color(0.24, 0.28, 0.46), "rim": Color(1.0, 0.88, 0.4), "bg": Color(0.05, 0.06, 0.16), "fog": Color(0.26, 0.3, 0.5)}},
 ]
 
 ## Враги: тип, с какой секунды, вес (как часто). Множители: hp, speed, spawn (сколько врагов).
@@ -96,6 +108,66 @@ const LIST := [
 		"hp": 3.24, "speed": 1.336, "spawn": 1.7, "task": ["beam_kills", 170]},
 	{"title": "Последний маяк", "chapter": 4, "time": 300, "boss_at": 270, "enemies": [["crab", 0, 1.0], ["jellyfish", 0, 0.5], ["squid", 0, 0.4], ["shell", 30, 0.35], ["angler", 0, 0.5], ["narwhal", 90, 0.2], ["puffer", 150, 0.2]],
 		"hp": 3.32, "speed": 1.348, "spawn": 1.725, "task": ["kills", 660]},
+	{"title": "Розовая отмель", "chapter": 5, "time": 300, "enemies": [["crab", 0, 1.0], ["jellyfish", 0, 0.6], ["seahorse", 0, 0.55], ["puffer", 60, 0.3]],
+		"hp": 3.37, "speed": 1.35, "spawn": 1.737, "task": ["kills", 670]},
+	{"title": "Коралловый сад", "chapter": 5, "time": 300, "enemies": [["crab", 0, 1.0], ["jellyfish", 0, 0.6], ["seahorse", 0, 0.55], ["puffer", 60, 0.3], ["eel", 120, 0.25]],
+		"hp": 3.42, "speed": 1.35, "spawn": 1.749, "task": ["beam_kills", 180]},
+	{"title": "Стая коньков", "chapter": 5, "time": 300, "modifier": "swarm", "enemies": [["crab", 0, 1.0], ["jellyfish", 0, 0.6], ["seahorse", 0, 0.55], ["puffer", 60, 0.3], ["eel", 120, 0.25], ["squid", 90, 0.25]],
+		"hp": 3.47, "speed": 1.35, "spawn": 1.761, "task": ["kills", 1010]},
+	{"title": "Жемчужная лагуна", "chapter": 5, "time": 300, "enemies": [["crab", 0, 1.0], ["jellyfish", 0, 0.6], ["seahorse", 0, 0.55], ["puffer", 60, 0.3], ["eel", 120, 0.25], ["squid", 90, 0.25]],
+		"hp": 3.52, "speed": 1.35, "spawn": 1.773, "task": ["shells", 19]},
+	{"title": "Жгучий прилив", "chapter": 5, "time": 300, "modifier": "storm", "enemies": [["crab", 0, 1.0], ["jellyfish", 0, 0.6], ["seahorse", 0, 0.55], ["puffer", 60, 0.3], ["eel", 120, 0.25], ["squid", 90, 0.25]],
+		"hp": 3.57, "speed": 1.35, "spawn": 1.785, "task": ["beam_kills", 190]},
+	{"title": "Королева медуз", "chapter": 5, "time": 300, "boss_at": 270, "enemies": [["crab", 0, 1.0], ["jellyfish", 0, 0.6], ["seahorse", 0, 0.55], ["puffer", 60, 0.3], ["eel", 120, 0.25], ["squid", 90, 0.25]],
+		"hp": 3.62, "speed": 1.35, "spawn": 1.797, "task": ["kills", 730]},
+	{"title": "Сломанные мачты", "chapter": 6, "time": 300, "modifier": "fog", "enemies": [["crab", 0, 0.8], ["ghost", 0, 0.6], ["angler", 30, 0.4], ["squid", 30, 0.3]],
+		"hp": 3.67, "speed": 1.35, "spawn": 1.809, "task": ["kills", 740]},
+	{"title": "Ржавый якорь", "chapter": 6, "time": 300, "enemies": [["crab", 0, 0.8], ["ghost", 0, 0.6], ["angler", 30, 0.4], ["squid", 30, 0.3], ["shell", 60, 0.3]],
+		"hp": 3.72, "speed": 1.35, "spawn": 1.821, "task": ["beam_kills", 200]},
+	{"title": "Огни святого Эльма", "chapter": 6, "time": 300, "modifier": "dark", "enemies": [["crab", 0, 0.8], ["ghost", 0, 0.6], ["angler", 30, 0.4], ["squid", 30, 0.3], ["shell", 60, 0.3], ["seahorse", 120, 0.25]],
+		"hp": 3.77, "speed": 1.35, "spawn": 1.833, "task": ["kills", 770]},
+	{"title": "Сундук мертвеца", "chapter": 6, "time": 300, "enemies": [["crab", 0, 0.8], ["ghost", 0, 0.6], ["angler", 30, 0.4], ["squid", 30, 0.3], ["shell", 60, 0.3], ["seahorse", 120, 0.25]],
+		"hp": 3.82, "speed": 1.35, "spawn": 1.845, "task": ["shells", 21]},
+	{"title": "Мёртвый штиль", "chapter": 6, "time": 300, "modifier": "fog", "enemies": [["crab", 0, 0.8], ["ghost", 0, 0.6], ["angler", 30, 0.4], ["squid", 30, 0.3], ["shell", 60, 0.3], ["seahorse", 120, 0.25]],
+		"hp": 3.87, "speed": 1.35, "spawn": 1.857, "task": ["beam_kills", 210]},
+	{"title": "Летучий голландец", "chapter": 6, "time": 300, "boss_at": 270, "modifier": "fog", "enemies": [["crab", 0, 0.8], ["ghost", 0, 0.6], ["angler", 30, 0.4], ["squid", 30, 0.3], ["shell", 60, 0.3], ["seahorse", 120, 0.25]],
+		"hp": 3.92, "speed": 1.35, "spawn": 1.869, "task": ["kills", 800]},
+	{"title": "Чёрный песок", "chapter": 7, "time": 300, "enemies": [["crab", 0, 0.8], ["ember", 0, 0.45], ["shell", 0, 0.3], ["narwhal", 60, 0.25]],
+		"hp": 3.97, "speed": 1.35, "spawn": 1.881, "task": ["kills", 820]},
+	{"title": "Кипящая бухта", "chapter": 7, "time": 300, "modifier": "storm", "enemies": [["crab", 0, 0.8], ["ember", 0, 0.45], ["shell", 0, 0.3], ["narwhal", 60, 0.25], ["puffer", 30, 0.3]],
+		"hp": 4.02, "speed": 1.35, "spawn": 1.893, "task": ["beam_kills", 220]},
+	{"title": "Пепельный дождь", "chapter": 7, "time": 300, "modifier": "fog", "enemies": [["crab", 0, 0.8], ["ember", 0, 0.45], ["shell", 0, 0.3], ["narwhal", 60, 0.25], ["puffer", 30, 0.3], ["ghost", 150, 0.2]],
+		"hp": 4.07, "speed": 1.35, "spawn": 1.905, "task": ["kills", 840]},
+	{"title": "Лавовый поток", "chapter": 7, "time": 300, "enemies": [["crab", 0, 0.8], ["ember", 0, 0.45], ["shell", 0, 0.3], ["narwhal", 60, 0.25], ["puffer", 30, 0.3], ["ghost", 150, 0.2]],
+		"hp": 4.12, "speed": 1.35, "spawn": 1.917, "task": ["shells", 23]},
+	{"title": "Дым над водой", "chapter": 7, "time": 300, "modifier": "dark", "enemies": [["crab", 0, 0.8], ["ember", 0, 0.45], ["shell", 0, 0.3], ["narwhal", 60, 0.25], ["puffer", 30, 0.3], ["ghost", 150, 0.2]],
+		"hp": 4.17, "speed": 1.35, "spawn": 1.929, "task": ["beam_kills", 220]},
+	{"title": "Огненная черепаха", "chapter": 7, "time": 300, "boss_at": 270, "enemies": [["crab", 0, 0.8], ["ember", 0, 0.45], ["shell", 0, 0.3], ["narwhal", 60, 0.25], ["puffer", 30, 0.3], ["ghost", 150, 0.2]],
+		"hp": 4.22, "speed": 1.35, "spawn": 1.941, "task": ["kills", 880]},
+	{"title": "Зелёный ковёр", "chapter": 8, "time": 300, "modifier": "fog", "enemies": [["crab", 0, 0.7], ["weed", 0, 0.45], ["eel", 0, 0.4], ["jellyfish", 30, 0.4]],
+		"hp": 4.27, "speed": 1.35, "spawn": 1.953, "task": ["kills", 890]},
+	{"title": "Цепкие заросли", "chapter": 8, "time": 300, "enemies": [["crab", 0, 0.7], ["weed", 0, 0.45], ["eel", 0, 0.4], ["jellyfish", 30, 0.4], ["angler", 90, 0.3]],
+		"hp": 4.32, "speed": 1.35, "spawn": 1.965, "task": ["beam_kills", 230]},
+	{"title": "Гнилая вода", "chapter": 8, "time": 300, "modifier": "dark", "enemies": [["crab", 0, 0.7], ["weed", 0, 0.45], ["eel", 0, 0.4], ["jellyfish", 30, 0.4], ["angler", 90, 0.3], ["ember", 150, 0.2]],
+		"hp": 4.37, "speed": 1.35, "spawn": 1.977, "task": ["kills", 910]},
+	{"title": "Тихая трясина", "chapter": 8, "time": 300, "enemies": [["crab", 0, 0.7], ["weed", 0, 0.45], ["eel", 0, 0.4], ["jellyfish", 30, 0.4], ["angler", 90, 0.3], ["ember", 150, 0.2]],
+		"hp": 4.42, "speed": 1.35, "spawn": 1.989, "task": ["shells", 25]},
+	{"title": "Пиявочный рой", "chapter": 8, "time": 300, "modifier": "swarm", "enemies": [["crab", 0, 0.7], ["weed", 0, 0.45], ["eel", 0, 0.4], ["jellyfish", 30, 0.4], ["angler", 90, 0.3], ["ember", 150, 0.2]],
+		"hp": 4.47, "speed": 1.35, "spawn": 2.001, "task": ["beam_kills", 240]},
+	{"title": "Гидра", "chapter": 8, "time": 300, "boss_at": 270, "modifier": "fog", "enemies": [["crab", 0, 0.7], ["weed", 0, 0.45], ["eel", 0, 0.4], ["jellyfish", 30, 0.4], ["angler", 90, 0.3], ["ember", 150, 0.2]],
+		"hp": 4.52, "speed": 1.35, "spawn": 2.013, "task": ["kills", 950]},
+	{"title": "Стена дождя", "chapter": 9, "time": 300, "modifier": "storm", "enemies": [["crab", 0, 0.6], ["wisp", 0, 0.55], ["ghost", 30, 0.3], ["ember", 60, 0.25]],
+		"hp": 4.57, "speed": 1.35, "spawn": 2.025, "task": ["kills", 960]},
+	{"title": "Вихрь", "chapter": 9, "time": 300, "modifier": "storm", "enemies": [["crab", 0, 0.6], ["wisp", 0, 0.55], ["ghost", 30, 0.3], ["ember", 60, 0.25], ["narwhal", 60, 0.25]],
+		"hp": 4.62, "speed": 1.35, "spawn": 2.037, "task": ["beam_kills", 250]},
+	{"title": "Громовой раскат", "chapter": 9, "time": 300, "modifier": "dark", "enemies": [["crab", 0, 0.6], ["wisp", 0, 0.55], ["ghost", 30, 0.3], ["ember", 60, 0.25], ["narwhal", 60, 0.25], ["weed", 120, 0.25], ["seahorse", 0, 0.3]],
+		"hp": 4.67, "speed": 1.35, "spawn": 2.049, "task": ["kills", 980]},
+	{"title": "Затишье", "chapter": 9, "time": 300, "enemies": [["crab", 0, 0.6], ["wisp", 0, 0.55], ["ghost", 30, 0.3], ["ember", 60, 0.25], ["narwhal", 60, 0.25], ["weed", 120, 0.25], ["seahorse", 0, 0.3]],
+		"hp": 4.72, "speed": 1.35, "spawn": 2.061, "task": ["shells", 27]},
+	{"title": "Последняя волна", "chapter": 9, "time": 300, "modifier": "storm", "enemies": [["crab", 0, 0.6], ["wisp", 0, 0.55], ["ghost", 30, 0.3], ["ember", 60, 0.25], ["narwhal", 60, 0.25], ["weed", 120, 0.25], ["seahorse", 0, 0.3]],
+		"hp": 4.77, "speed": 1.35, "spawn": 2.073, "task": ["beam_kills", 260]},
+	{"title": "Левиафан", "chapter": 9, "time": 300, "boss_at": 270, "modifier": "storm", "enemies": [["crab", 0, 0.6], ["wisp", 0, 0.55], ["ghost", 30, 0.3], ["ember", 60, 0.25], ["narwhal", 60, 0.25], ["weed", 120, 0.25], ["seahorse", 0, 0.3]],
+		"hp": 4.82, "speed": 1.35, "spawn": 2.085, "task": ["kills", 1020]},
 ]
 
 const MODIFIER_TEXT := {
@@ -122,6 +194,11 @@ static func music_of(i: int) -> String:
 
 ## Глава, до которой дошёл игрок: по первой открытой и ещё не пройденной ночи.
 static func progress_chapter() -> int:
+	return progress_night() / NIGHTS_PER_CHAPTER
+
+
+## Ночь, на которой игрок остановился: первая открытая и ещё не пройденная.
+static func progress_night() -> int:
 	var last := 0
 	for i in LIST.size():
 		if not is_unlocked(i):
@@ -129,7 +206,7 @@ static func progress_chapter() -> int:
 		last = i
 		if SaveData.stars_of(i) == 0:
 			break
-	return last / NIGHTS_PER_CHAPTER
+	return last
 
 
 static func theme_of(i: int) -> Dictionary:
@@ -146,9 +223,9 @@ static func get_night(i: int) -> Dictionary:
 	return LIST[clampi(i, 0, LIST.size() - 1)]
 
 
-## Бесконечная ночь открывается, когда пройдена последняя ночь кампании.
+## Бесконечная ночь открывается после пятой главы.
 static func endless_unlocked() -> bool:
-	return SaveData.stars_of(LIST.size() - 1) > 0
+	return SaveData.stars_of(ENDLESS_AFTER) > 0
 
 
 static func task_text(task: Array) -> String:

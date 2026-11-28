@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Ведьма сверху, смотрит вправо: фиолетовая мантия, остроконечная шляпа, посох с лунным камнем. -->
+  <defs>
+    <radialGradient id="robe" cx="0.5" cy="0.5" r="0.6"><stop offset="0" stop-color="#7a45c8"/><stop offset="1" stop-color="#34185f"/></radialGradient>
+    <radialGradient id="orb" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#c9a0ff"/><stop offset="1" stop-color="#8a4dff" stop-opacity="0"/></radialGradient>
+  </defs>
+  <!-- плащ развевается сзади -->
+  <path d="M40 30 Q8 44 14 64 Q8 84 40 98 Q30 64 40 30 Z" fill="#2a1250" stroke="#b98cff" stroke-width="3" stroke-linejoin="round"/>
+  <!-- посох -->
+  <rect x="58" y="86" width="52" height="6" rx="3" fill="#6a4a2a"/>
+  <circle cx="112" cy="89" r="15" fill="url(#orb)"/>
+  <circle cx="112" cy="89" r="6" fill="#f2e6ff" stroke="#8a4dff" stroke-width="2"/>
+  <!-- мантия -->
+  <ellipse cx="56" cy="64" rx="27" ry="36" fill="url(#robe)"/>
+  <ellipse cx="56" cy="64" rx="27" ry="36" fill="none" stroke="#b98cff" stroke-width="3" opacity="0.9"/>
+  <!-- руки -->
+  <circle cx="72" cy="89" r="7" fill="#f0c8a8"/><circle cx="72" cy="42" r="7" fill="#f0c8a8"/>
+  <!-- шляпа: поля, тулья, загнутый кончик и пряжка -->
+  <circle cx="56" cy="64" r="24" fill="#1d0d3a" stroke="#b98cff" stroke-width="3"/>
+  <circle cx="56" cy="64" r="13" fill="#34185f" stroke="#ffd25a" stroke-width="4"/>
+  <path d="M50 58 Q36 50 30 58 Q40 60 46 68 Z" fill="#34185f" stroke="#b98cff" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="64" y="59" width="8" height="10" rx="2" fill="#ffd25a" stroke="#8a5a10" stroke-width="2"/>
+  <!-- звёзды на шляпе -->
+  <circle cx="46" cy="80" r="2.2" fill="#ffe98a"/><circle cx="70" cy="48" r="2.2" fill="#ffe98a"/><circle cx="40" cy="52" r="1.8" fill="#ffe98a"/>
+</svg>
