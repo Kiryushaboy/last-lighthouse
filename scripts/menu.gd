@@ -25,7 +25,7 @@ func _ready() -> void:
 	get_tree().paused = false
 	UiTheme.apply(Nights.progress_chapter())
 	Sound.play_music("menu")
-	_play.pressed.connect(func(): get_tree().change_scene_to_file(GAME_SCENE))
+	_play.pressed.connect(_on_play)
 	_workshop_btn.pressed.connect(func(): _ui.hide(); _workshop.open())
 	_workshop.closed.connect(_show_menu)
 	_settings_btn.pressed.connect(_on_settings_pressed)
@@ -40,6 +40,15 @@ func _ready() -> void:
 	_settings.visibility_changed.connect(_on_settings_visibility)
 	_show_menu()
 	UiFx.stagger([$UI/Root/Title, $UI/Root/Subtitle] + $UI/Root/Box.get_children(), 0.08, 0.1)
+
+
+func _on_play() -> void:
+	# Первый запуск: вместо карты — короткая учебная ночь.
+	if not SaveData.tutorial_done:
+		SaveData.current_night = Nights.TUTORIAL
+		get_tree().change_scene_to_file("res://scenes/main.tscn")
+		return
+	get_tree().change_scene_to_file(GAME_SCENE)
 
 
 func _on_settings_pressed() -> void:

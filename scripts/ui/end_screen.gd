@@ -33,6 +33,10 @@ func show_result(r: Dictionary) -> void:
 	_title.text = "Рассвет! Маяк устоял" if won else "Маяк погас"
 	_title.add_theme_color_override("font_color", Color(1, 0.85, 0.45) if won else Color(1, 0.5, 0.5))
 	$Card/Box/Night.text = "Ночь %d · %s" % [r.night + 1, r.title]
+	if r.get("tutorial", false):
+		_title.text = "Вахта сдана! Вы готовы" if won else "Маяк погас. Бывает!"
+		$Card/Box/Night.text = "Обучение · %s" % r.title
+		$Card/Box/Stars.hide()
 	($Card/Box/Stars as StarsView).set_stars(r.stars, true)
 	# Три условия звёзд с галочками — видно, чего не хватило.
 	var checks: VBoxContainer = $Card/Box/Checks
@@ -50,6 +54,7 @@ func show_result(r: Dictionary) -> void:
 		l.add_theme_font_size_override("font_size", 23)
 		l.add_theme_color_override("font_color", Color(0.55, 1, 0.8) if r.stars[i] else Color(1, 1, 1, 0.45))
 		checks.add_child(l)
+	checks.visible = not r.get("tutorial", false)
 	var s := int(r.survived)
 	_stats.text = "Продержались %d:%02d · уровень %d" % [s / 60, s % 60, r.level]
 	_next.visible = won and r.has_next
@@ -57,6 +62,8 @@ func show_result(r: Dictionary) -> void:
 	# Ракушки досчитываются на глазах — приятно смотреть на награду.
 	var shells: int = r.shells
 	var bonus := "" if r.star_bonus == 0 else "\nиз них %d — за новые звёзды" % r.star_bonus
+	if r.get("tutorial", false):
+		bonus = "\nиз них %d — подарок старого смотрителя" % r.star_bonus
 	var tw := create_tween().set_ignore_time_scale()
 	tw.tween_interval(0.8)
 	tw.tween_method(func(v: float): _shells.text = "Ракушек за ночь: %d (всего %d)%s" % [int(v), SaveData.shells - shells + int(v), bonus],

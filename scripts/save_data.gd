@@ -32,6 +32,7 @@ var best_time := 0.0  ## рекорд бесконечной ночи: секу�
 var best_kills := 0  ## рекорд бесконечной ночи: врагов
 ## Тестовый режим (секретный код в меню): все ночи и герои открыты, бонусы меняются свободно.
 var test_mode := false
+var tutorial_done := false  ## обучение пройдено (или игрок уже играл до его появления)
 var _test_backup := {}  ## бонусы и герой до включения режима, чтобы вернуть при выключении
 const TEST_CODE_HASH := "4021a7b089496e8071def7586497ef50876068d4de9a7b9b53f22ee3348baca7"
 
@@ -47,6 +48,8 @@ func _ready() -> void:
 		heroes = cfg.get_value("heroes", "owned", ["keeper"])
 		best_kills = cfg.get_value("endless", "best_kills", 0)
 		test_mode = cfg.get_value("test", "on", false)
+		# У тех, кто уже играл, обучение считаем пройденным.
+		tutorial_done = cfg.get_value("progress", "tutorial_done", not stars.is_empty())
 		_test_backup = cfg.get_value("test", "backup", {})
 		_refund_removed_heroes()
 	# Меню и карта сразу показывают главу, на которой игрок остановился.
@@ -130,6 +133,11 @@ func shift_level(id: String, step: int) -> void:
 	_save()
 
 
+func set_tutorial_done(done: bool) -> void:
+	tutorial_done = done
+	_save()
+
+
 func hero_owned(id: String) -> bool:
 	return test_mode or id in heroes
 
@@ -194,6 +202,7 @@ func _save() -> void:
 	cfg.set_value("heroes", "owned", heroes)
 	cfg.set_value("endless", "best_kills", best_kills)
 	cfg.set_value("test", "on", test_mode)
+	cfg.set_value("progress", "tutorial_done", tutorial_done)
 	cfg.set_value("test", "backup", _test_backup)
 	cfg.save(PATH)
 	changed.emit()

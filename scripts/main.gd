@@ -72,6 +72,9 @@ var boss: Boss
 var _last_hp := 0
 var _spawn_mult := 1.0
 var _hp_mult := 1.0
+var tutorial := false
+var _pace := 1.0  ## во сколько раз быстрее нарастает темп (учебная ночь)
+var _hints_shown := {}  ## какие подсказки обучения уже показаны
 
 
 func _ready() -> void:
@@ -84,6 +87,10 @@ func _ready() -> void:
 	time_left = run_time
 	boss_at = night.get("boss_at", -1.0)
 	endless = night.get("endless", false)
+	tutorial = night.get("tutorial", false)
+	_pace = night.get("pace", 1.0)
+	if tutorial:
+		xp_to_next = _xp_for(1)
 	if endless:
 		boss_at = Nights.BOSS_EVERY - 60.0
 	_base_turn = beam.turn_speed_deg
@@ -119,6 +126,11 @@ func _ready() -> void:
 	if endless:
 		hud.show_night_banner("Бесконечная ночь", "Каждые 2 минуты событие, каждые 5 — спрут",
 				"продержитесь как можно дольше")
+	elif tutorial:
+		# В обучении погибнуть трудно: запас сердец побольше.
+		player.max_hp += 4
+		player.heal(4)
+		hud.show_night_banner("Обучение · %s" % night.title, "Продержитесь две минуты", Nights.task_text(night.task))
 	else:
 		hud.show_night_banner("Ночь %d · %s" % [night_index + 1, night.title],
 				Nights.MODIFIER_TEXT.get(night.get("modifier", ""), ""), Nights.task_text(night.task))
@@ -134,6 +146,10 @@ func _process(delta: float) -> void:
 	# В бесконечной ночи таймер идёт вперёд: сколько продержались.
 	hud.set_time(elapsed if endless else time_left, endless)
 	player.joystick_vector = joystick.vector
+	if tutorial:
+		for h in Nights.TUTORIAL_HINTS:
+			if elapsed >= h[0]:
+				_hint(str(h[0]), h[1])
 	if endless:
 		_update_events()
 	if boss_at >= 0.0 and boss == null and elapsed >= boss_at:
@@ -262,14 +278,14 @@ func _update_task() -> void:
 func _on_spawn_timer() -> void:
 	# Чем дольше идёт ночь, тем больше врагов за раз и тем чаще они приходят.
 	# Когда пришёл босс, мелочи вдвое меньше, чтобы было видно его атаки.
-	var count := int((1.0 + elapsed / 150.0) * night.spawn * _spawn_mult)
+	var count := int((1.0 + elapsed * _pace / 150.0) * night.spawn * _spawn_mult)
 	if is_instance_valid(boss):
 		count = maxi(1, count / 2)
 	for i in count:
 		if enemies.get_child_count() >= MAX_ENEMIES:
 			break
 		_spawn_enemy(elapsed)
-	spawn_timer.wait_time = maxf(0.6, 1.4 - elapsed / 500.0)
+	spawn_timer.wait_time = maxf(0.6, 1.4 - elapsed * _pace / 500.0)
 
 
 ## enemy_type и at задаёт подмога босса; обычные враги выбираются по ночи и выходят из-за края экрана.
@@ -439,14 +455,28 @@ static func xp_needed(lvl: int) -> int:
 	return int(5.0 + 4.0 * k + 0.5 * k * k)
 
 
+## В учебной ночи уровни набираются быстрее.
+func _xp_for(lvl: int) -> int:
+	return maxi(3, int(xp_needed(lvl) * 0.55)) if tutorial else xp_needed(lvl)
+
+
+## Подсказка обучения: каждая показывается один раз.
+func _hint(key: String, text: String) -> void:
+	if not tutorial or _hints_shown.has(key):
+		return
+	_hints_shown[key] = true
+	hud.show_hint(text)
+
+
 func _add_xp(amount: int) -> void:
 	if _over:
 		return
+	_hint("xp", "Зелёные искры — это опыт. Собирайте их, чтобы расти в уровне.")
 	xp += amount
 	while xp >= xp_to_next:
 		xp -= xp_to_next
 		level += 1
-		xp_to_next = xp_needed(level)
+		xp_to_next = _xp_for(level)
 		_pending_levels += 1
 	hud.set_xp(xp, xp_to_next, level)
 	if _pending_levels > 0 and not upgrade_menu.visible:
@@ -474,6 +504,7 @@ func _on_upgrade_chosen(id: String) -> void:
 	Upgrades.apply(id, player, upgrades_taken[id])
 	hud.set_health(player.hp, player.max_hp)
 	get_tree().paused = false
+	_hint("upgrade", "Отличный выбор! Улучшения действуют до конца ночи.")
 	if _pending_levels > 0:
 		_offer_upgrade()
 
@@ -497,7 +528,11 @@ func _finish(victory: bool) -> void:
 			victory and _task_progress() >= night.task[1]]
 	var star_bonus := 0
 	var records := [false, false]
-	if endless:
+	if tutorial:
+		# Обучение звёзд не даёт, зато дарит ракушки на первый бонус мастерской.
+		SaveData.set_tutorial_done(true)
+		star_bonus = 30 if victory else 10
+	elif endless:
 		star_flags = [false, false, false]
 		records = SaveData.record_endless(elapsed, kills)
 	else:
@@ -512,11 +547,11 @@ func _finish(victory: bool) -> void:
 	Sound.play("win" if victory else "lose")
 	Fx.reset()
 	end_screen.show_result({
-		"won": victory, "night": night_index, "title": night.title, "level": level,
+		"won": victory, "night": night_index, "title": night.title, "level": level, "tutorial": tutorial,
 		"survived": elapsed, "shells": shells_this_run, "star_bonus": star_bonus,
 		"stars": star_flags, "hits": hits_taken, "task": Nights.task_text(night.task),
 		"task_progress": _task_progress(), "task_goal": night.task[1],
-		"has_next": not endless and night_index + 1 < Nights.count(),
+		"has_next": tutorial or (not endless and night_index + 1 < Nights.count()),
 		"endless": endless, "kills": kills, "records": records,
 	})
 
@@ -528,17 +563,21 @@ func _restart() -> void:
 
 
 func _next_night() -> void:
-	SaveData.current_night = mini(night_index + 1, Nights.count() - 1)
+	SaveData.current_night = 0 if tutorial else mini(night_index + 1, Nights.count() - 1)
 	_restart()
 
 
 func _to_map() -> void:
+	if tutorial:
+		SaveData.current_night = 0
 	Fx.reset()
 	get_tree().paused = false
 	get_tree().change_scene_to_file(MAP_SCENE)
 
 
 func _to_menu() -> void:
+	if tutorial:
+		SaveData.current_night = 0
 	Fx.reset()
 	get_tree().paused = false
 	get_tree().change_scene_to_file(MENU_SCENE)
