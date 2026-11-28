@@ -42,6 +42,23 @@ func _ready() -> void:
 		hero = cfg.get_value("heroes", "current", "keeper")
 		heroes = cfg.get_value("heroes", "owned", ["keeper"])
 		best_kills = cfg.get_value("endless", "best_kills", 0)
+		_refund_removed_heroes()
+
+
+## Героев Боцмана и Фонарщицу убрали в 0.13: кто их купил, получает ракушки обратно.
+func _refund_removed_heroes() -> void:
+	var refund := {"bosun": 150, "lamplighter": 450}
+	var changed_any := false
+	for id in refund:
+		if id in heroes:
+			heroes.erase(id)
+			shells += refund[id]
+			changed_any = true
+	if refund.has(hero):
+		hero = "keeper"
+		changed_any = true
+	if changed_any:
+		_save()
 
 
 func level_of(id: String) -> int:

@@ -2,9 +2,9 @@ extends Control
 ## Заставка при запуске: картинка плавно проявляется, держится и плавно гаснет, затем меню.
 
 const NEXT_SCENE := "res://scenes/menu.tscn"
-const FADE_IN := 0.7
-const HOLD := 1.4
-const FADE_OUT := 0.6
+const FADE_IN := 0.9
+const HOLD := 2.6
+const FADE_OUT := 0.8
 
 @onready var _image: TextureRect = $Image
 

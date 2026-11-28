@@ -120,6 +120,18 @@ static func music_of(i: int) -> String:
 	return tracks[(i % NIGHTS_PER_CHAPTER) % tracks.size()]
 
 
+## Глава, до которой дошёл игрок: по первой открытой и ещё не пройденной ночи.
+static func progress_chapter() -> int:
+	var last := 0
+	for i in LIST.size():
+		if not is_unlocked(i):
+			break
+		last = i
+		if SaveData.stars_of(i) == 0:
+			break
+	return last / NIGHTS_PER_CHAPTER
+
+
 static func theme_of(i: int) -> Dictionary:
 	return chapter_of(i).theme
 

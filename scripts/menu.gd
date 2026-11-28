@@ -1,5 +1,5 @@
 extends Node2D
-## Главное меню: маяк светит на фоне, кнопки «Играть», «Герои», «Мастерская», «Настройки», «Выйти».
+## Главное меню: маяк светит на фоне, кнопки «Играть», «Мастерская» (бонусы и герои), «Настройки», «Выйти».
 
 const GAME_SCENE := "res://scenes/map.tscn"  ## «Начать ночь» ведёт на карту маяков
 
@@ -9,7 +9,6 @@ const GAME_SCENE := "res://scenes/map.tscn"  ## «Начать ночь» вед
 @onready var _workshop_btn: Button = $UI/Root/Box/Workshop
 @onready var _settings_btn: Button = $UI/Root/Box/Settings
 @onready var _workshop: Workshop = $Workshop
-@onready var _heroes: HeroesPanel = $HeroesPanel
 @onready var _settings: CanvasLayer = $SettingsLayer
 @onready var _settings_back: Button = $SettingsLayer/Card/Box/Back
 
@@ -17,12 +16,11 @@ const GAME_SCENE := "res://scenes/map.tscn"  ## «Начать ночь» вед
 func _ready() -> void:
 	SafeArea.apply(_ui)
 	get_tree().paused = false
+	UiTheme.apply(Nights.progress_chapter())
 	Sound.play_music("menu")
 	_play.pressed.connect(func(): get_tree().change_scene_to_file(GAME_SCENE))
 	_workshop_btn.pressed.connect(func(): _ui.hide(); _workshop.open())
 	_workshop.closed.connect(_show_menu)
-	$UI/Root/Box/Heroes.pressed.connect(func(): _ui.hide(); _heroes.open())
-	_heroes.closed.connect(_show_menu)
 	_settings_btn.pressed.connect(func(): _ui.hide(); _settings.show())
 	$UI/Root/Box/Quit.pressed.connect(func(): get_tree().quit())
 	_settings_back.pressed.connect(func(): _settings.hide(); _show_menu())
@@ -41,11 +39,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		if _settings.visible:
 			_settings_back.pressed.emit()
-		elif _heroes.visible:
-			_heroes.close()
 		elif _workshop.visible:
-			_workshop.hide()
-			_workshop.closed.emit()
+			_workshop.close()
 
 
 func _on_settings_visibility() -> void:

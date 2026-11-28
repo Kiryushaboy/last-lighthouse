@@ -71,6 +71,7 @@ var _hp_mult := 1.0
 func _ready() -> void:
 	Fx.reset()
 	night_index = SaveData.current_night
+	UiTheme.apply(Nights.CHAPTERS.find(Nights.chapter_of(night_index)))
 	Sound.play_music(Nights.music_of(night_index))
 	night = Nights.get_night(night_index)
 	run_time = night.time

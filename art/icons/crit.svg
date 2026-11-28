@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <radialGradient id="bg" cx="0.5" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#ffc08a"/><stop offset="0.55" stop-color="#f27a2a"/><stop offset="1" stop-color="#5a2406"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/><stop offset="1" stop-color="#f27a2a"/>
+    </linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#f0a81c"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4f8ff"/><stop offset="1" stop-color="#8fa3bd"/>
+    </linearGradient>
+  </defs>
+  <circle cx="64" cy="68" r="56" fill="#000" opacity="0.35"/>
+  <circle cx="64" cy="64" r="56" fill="#5a2406"/>
+  <circle cx="64" cy="64" r="56" fill="none" stroke="url(#rim)" stroke-width="5"/>
+  <circle cx="64" cy="64" r="48" fill="url(#bg)"/>
+  <g stroke-linecap="round" stroke-linejoin="round">
+<path d="M64 20 L74 46 L102 38 L84 60 L104 82 L76 80 L64 106 L52 80 L24 82 L44 60 L26 38 L54 46 Z" fill="url(#gold)" stroke="#101828" stroke-width="5"/><path d="M50 54 L62 70 M62 54 L50 70" stroke="#101828" stroke-width="6"/><path d="M68 58 Q68 52 74 52 Q80 52 80 58 Q80 62 68 72 L82 72" stroke="#101828" stroke-width="6" fill="none"/>
+  </g>
+  <path d="M22 54 A44 44 0 0 1 106 54 A60 36 0 0 0 22 54 Z" fill="url(#gloss)"/>
+</svg>

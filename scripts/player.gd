@@ -264,5 +264,5 @@ func _draw() -> void:
 ## Сам смотритель — на дочернем узле с золотым неоновым контуром. Мигает, пока неуязвим.
 func _draw_sprite() -> void:
 	var blink := _invulnerable > 0.0 and int(_invulnerable * 20.0) % 2 == 0
-	var size := texture.get_size() * 0.6
+	var size := texture.get_size() / Enemy.SVG_SCALE * 0.6
 	_body.draw_texture_rect(texture, Rect2(-size / 2.0, size), false, Color(tint, 0.35 if blink else 1.0))
