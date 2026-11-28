@@ -43,5 +43,5 @@ func _draw() -> void:
 	var trail := PackedVector2Array([Vector2(-70, 0), Vector2(-6, -3.5), Vector2(-6, 3.5)])
 	draw_colored_polygon(trail, Color(1.0, 0.9, 0.6, 0.35))
 	draw_texture_rect(GLOW, Rect2(-22, -22, 44, 44), false, Color(1.0, 0.85, 0.5, 0.5))
-	var size := TEXTURE.get_size() * 0.5
+	var size := TEXTURE.get_size() / Enemy.SVG_SCALE * 0.5
 	draw_texture_rect(TEXTURE, Rect2(-size / 2.0, size), false)

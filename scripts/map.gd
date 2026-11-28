@@ -117,7 +117,7 @@ func _build() -> void:
 
 	var back := Button.new()
 	back.text = "Назад"
-	back.custom_minimum_size = Vector2(0, 76)
+	back.custom_minimum_size = Vector2(0, 104)
 	back.focus_mode = Control.FOCUS_NONE
 	back.pressed.connect(_back)
 	box.add_child(back)
@@ -157,6 +157,7 @@ func _show_page(page: int) -> void:
 	_total.text = "★ %d из %d      Ракушки: %d" % [SaveData.total_stars(), Nights.count() * 3, SaveData.shells]
 	var endless_page := page >= Nights.CHAPTERS.size()
 	var ch: Dictionary = Nights.CHAPTERS[mini(page, Nights.CHAPTERS.size() - 1)]
+	UiTheme.apply(mini(page, Nights.CHAPTERS.size() - 1))
 	var mat := $Bg.material as ShaderMaterial
 	for key in ["deep", "shallow", "foam"]:
 		mat.set_shader_parameter(key, ch.theme[key])

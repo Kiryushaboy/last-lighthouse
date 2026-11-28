@@ -150,7 +150,7 @@ func _draw_texture() -> void:
 	var k := 1.0
 	if _barrage_warning >= 0.0:
 		k = 0.85 + 0.15 * sin(_barrage_warning * 30.0)
-	var size := texture.get_size() * 0.5 * texture_scale * k
+	var size := texture.get_size() / SVG_SCALE * 0.5 * texture_scale * k
 	var tint := Color(1.25, 1.1, 1.4) if _barrage_warning >= 0.0 else Color.WHITE
 	if _flash > 0.0:
 		tint = Color(2.5, 2.5, 2.5)

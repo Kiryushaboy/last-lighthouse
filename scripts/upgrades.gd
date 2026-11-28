@@ -13,7 +13,7 @@ const LIST := [
 	{"id": "pierce", "title": "Пробивание", "what": "Гарпун летит сквозь врагов дальше"},
 	{"id": "shield", "title": "Щит", "what": "Пузырь гасит один удар и восстанавливается"},
 	{"id": "speed", "title": "Лёгкие сапоги", "what": "Бегаете быстрее"},
-	{"id": "max_hp", "title": "Крепкий смотритель", "what": "Лишнее сердце и лечение"},
+	{"id": "max_hp", "title": "Крепкий смотритель", "what": "Лишнее сердце, и одно сразу лечит"},
 	{"id": "magnet", "title": "Магнит", "what": "Опыт и ракушки летят к вам издалека"},
 	{"id": "beam", "title": "Линза Френеля", "what": "Луч маяка шире. В луче враги медленнее и получают ×2 урона"},
 ]
@@ -111,7 +111,7 @@ static func describe(id: String, level: int, player: Player) -> String:
 			return "Скорость: %d%% → %d%%" % [SPEED_PCT[level], SPEED_PCT[n]]
 		"max_hp":
 			var hp_max := player.max_hp if player else 5
-			return "Сердец: %d → %d, и лечит одно" % [hp_max, hp_max + 1]
+			return "Сердец: %d → %d" % [hp_max, hp_max + 1]
 		"magnet":
 			return "Радиус сбора: %d%% → %d%%" % [MAGNET_PCT[level], MAGNET_PCT[n]]
 		"beam":

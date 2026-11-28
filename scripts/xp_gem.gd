@@ -46,5 +46,5 @@ func _draw() -> void:
 	var grow := clampf(_age / 0.2, 0.0, 1.0)
 	var hop := -sin(clampf(_age / 0.35, 0.0, 1.0) * PI) * 22.0
 	var bob := sin(_age * 3.0 + get_instance_id()) * 3.0
-	var size := tex.get_size() * 0.5 * grow
+	var size := tex.get_size() / Enemy.SVG_SCALE * 0.5 * grow
 	draw_texture_rect(tex, Rect2(Vector2(0, hop + bob) - size / 2.0, size), false)

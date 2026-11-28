@@ -34,5 +34,5 @@ func _draw() -> void:
 	var wob := Vector2(1.0 + sin(t) * 0.12, 1.0 - sin(t) * 0.12)
 	draw_texture_rect(GLOW, Rect2(-34, -34, 68, 68), false, Color(0.6, 0.3, 0.9, 0.45))
 	draw_set_transform(Vector2.ZERO, direction.angle(), wob)
-	var size := TEXTURE.get_size() * 0.6
+	var size := TEXTURE.get_size() / Enemy.SVG_SCALE * 0.6
 	draw_texture_rect(TEXTURE, Rect2(-size / 2.0, size), false)

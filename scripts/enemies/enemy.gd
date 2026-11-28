@@ -27,6 +27,8 @@ var _age := 0.0  ## для появления из воды
 var _knock := Vector2.ZERO  ## отбрасывание от попадания
 var _body: Node2D  ## узел, на котором рисуется сама картинка (с неоновым материалом)
 
+## SVG-спрайты импортируются втрое крупнее (svg/scale=3), чтобы на больших экранах не было пикселей.
+const SVG_SCALE := 3.0
 const GLOW := preload("res://art/fx/glow.tres")
 const NEON := preload("res://shaders/neon_outline.gdshader")
 static var _materials := {}
@@ -106,7 +108,7 @@ static func neon_material(c: Color, width := 3.0) -> ShaderMaterial:
 		var m := ShaderMaterial.new()
 		m.shader = NEON
 		m.set_shader_parameter("glow_color", c.lightened(0.35))
-		m.set_shader_parameter("width", width)
+		m.set_shader_parameter("width", width * SVG_SCALE)
 		_materials[key] = m
 	return _materials[key]
 
@@ -137,6 +139,6 @@ func _draw_body(c: Color) -> void:
 
 ## Картинка рисуется на дочернем узле _body с неоновым контуром; при попадании вспыхивает белым.
 func _draw_texture() -> void:
-	var size := texture.get_size() * 0.5 * texture_scale
+	var size := texture.get_size() / SVG_SCALE * 0.5 * texture_scale
 	var mod := Color(4, 4, 4) if _flash > 0.0 else Color.WHITE
 	_body.draw_texture_rect(texture, Rect2(-size / 2.0, size), false, mod)
