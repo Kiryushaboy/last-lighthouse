@@ -58,6 +58,7 @@ func show_result(r: Dictionary) -> void:
 	var s := int(r.survived)
 	_stats.text = "Продержались %d:%02d · уровень %d" % [s / 60, s % 60, r.level]
 	_next.visible = won and r.has_next
+	_fit_title()
 	show()
 	# Ракушки досчитываются на глазах — приятно смотреть на награду.
 	var shells: int = r.shells
@@ -96,11 +97,21 @@ func _show_endless(r: Dictionary) -> void:
 		checks.add_child(l)
 	_stats.text = "Уровень %d" % r.level
 	_next.visible = false
+	_fit_title()
 	show()
 	var shells: int = r.shells
 	_shells.text = "Ракушек за ночь: %d (всего %d)" % [shells, SaveData.shells]
 	if new_record:
 		UiFx.bump(_title, 1.3)
+
+
+## Длинный заголовок уменьшаем, чтобы он помещался в окно в одну строку.
+func _fit_title() -> void:
+	var font := _title.get_theme_font("font")
+	var fs := 52
+	while fs > 34 and font.get_string_size(_title.text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > 540.0:
+		fs -= 2
+	_title.add_theme_font_size_override("font_size", fs)
 
 
 ## Окно появляется с анимацией каждый раз, когда его показывают.

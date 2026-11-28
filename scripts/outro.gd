@@ -1,18 +1,15 @@
 class_name Outro
 extends CanvasLayer
 ## Аутро-ролик: огонь возвращается на побережье. Играет поверх забега после победы над Левиафаном
-## в последней ночи, один раз. Касание, клик или клавиша пропускают. По окончании — сигнал finished.
+## в последней ночи, один раз. Пропустить его нельзя. По окончании — сигнал finished.
 
 signal finished
 
 const VIDEO_PATH := "res://video/outro.ogv"
-const SKIP_AFTER := 1.0
 const FADE := 0.5
 
 var _player: VideoStreamPlayer
-var _hint: Label
 var _cover: ColorRect
-var _elapsed := 0.0
 var _leaving := false
 
 
@@ -42,21 +39,6 @@ func _ready() -> void:
 	_player.finished.connect(_leave)
 	add_child(_player)
 
-	_hint = Label.new()
-	_hint.text = "Коснитесь, чтобы пропустить"
-	_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_hint.add_theme_font_size_override("font_size", 22)
-	_hint.add_theme_color_override("font_color", Color(1, 1, 1, 0.75))
-	_hint.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
-	_hint.add_theme_constant_override("outline_size", 6)
-	_hint.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	_hint.offset_top = -70
-	_hint.offset_bottom = -40
-	_hint.offset_left = -300
-	_hint.offset_right = 300
-	_hint.modulate.a = 0.0
-	add_child(_hint)
-
 	Settings.mark_outro_seen()
 	Sound.set_music_paused(true)
 	# Экран забега плавно уходит в чёрное, затем проявляется ролик.
@@ -66,26 +48,6 @@ func _ready() -> void:
 	tw.tween_property(_player, "modulate:a", 1.0, FADE)
 
 
-func _process(delta: float) -> void:
-	_elapsed += delta
-	if _elapsed > SKIP_AFTER + FADE and _hint.modulate.a == 0.0 and not _leaving:
-		var tw := create_tween()
-		tw.tween_property(_hint, "modulate:a", 1.0, 0.5)
-		tw.tween_interval(2.5)
-		tw.tween_property(_hint, "modulate:a", 0.35, 0.8)
-
-
-func _input(event: InputEvent) -> void:
-	if _elapsed < SKIP_AFTER + FADE:
-		return
-	var pressed: bool = (event is InputEventMouseButton and event.pressed) \
-		or (event is InputEventScreenTouch and event.pressed) \
-		or (event is InputEventKey and event.pressed and not event.echo)
-	if pressed:
-		get_viewport().set_input_as_handled()
-		_leave()
-
-
 func _leave() -> void:
 	if _leaving:
 		return
@@ -93,7 +55,6 @@ func _leave() -> void:
 	var tw := create_tween()
 	tw.tween_property(_player, "modulate:a", 0.0, FADE)
 	tw.parallel().tween_property(_player, "volume_db", -40.0, FADE)
-	tw.parallel().tween_property(_hint, "modulate:a", 0.0, FADE)
 	tw.tween_callback(_player.stop)
 	tw.tween_callback(Sound.set_music_paused.bind(false))
 	tw.tween_property(_cover, "color:a", 0.0, FADE)

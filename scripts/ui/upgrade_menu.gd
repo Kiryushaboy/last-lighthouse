@@ -107,8 +107,7 @@ func _make_card(upgrade: Dictionary, level: int, player: Player) -> Button:
 		fs -= 2
 	value.add_theme_font_size_override("font_size", fs)
 	value.add_theme_color_override("font_color", Color(0.55, 1.0, 0.8))
-	value.add_theme_constant_override("outline_size", 6)
-	value.add_theme_color_override("font_outline_color", Color(0, 0.1, 0.12, 0.9))
+	value.add_theme_constant_override("outline_size", 0)
 	col.add_child(value)
 
 	var pips := Pips.new()
