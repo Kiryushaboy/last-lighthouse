@@ -201,7 +201,7 @@ static func progress_chapter() -> int:
 static func progress_night() -> int:
 	var last := 0
 	for i in LIST.size():
-		if not is_unlocked(i):
+		if not (i == 0 or SaveData.stars_of(i - 1) > 0):
 			break
 		last = i
 		if SaveData.stars_of(i) == 0:
@@ -243,6 +243,8 @@ static func star_reward(i: int) -> int:
 
 ## Ночь открыта, если предыдущая пройдена хотя бы на одну звезду.
 static func is_unlocked(i: int) -> bool:
+	if SaveData.test_mode:
+		return true
 	if i == ENDLESS:
 		return endless_unlocked()
 	return i == 0 or SaveData.stars_of(i - 1) > 0

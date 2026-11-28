@@ -3,6 +3,13 @@ extends Node2D
 
 const GAME_SCENE := "res://scenes/map.tscn"  ## «Начать ночь» ведёт на карту маяков
 
+const HOLD_TIME := 1.2  ## сколько держать «Настройки», чтобы открылось тестовое окно
+
+var _test_panel: TestPanel
+var _hold := 0.0
+var _holding := false
+var _held := false
+
 @onready var _ui: Control = $UI/Root
 @onready var _shells: Label = $UI/Root/Box/Shells
 @onready var _play: Button = $UI/Root/Box/Play
@@ -21,12 +28,30 @@ func _ready() -> void:
 	_play.pressed.connect(func(): get_tree().change_scene_to_file(GAME_SCENE))
 	_workshop_btn.pressed.connect(func(): _ui.hide(); _workshop.open())
 	_workshop.closed.connect(_show_menu)
-	_settings_btn.pressed.connect(func(): _ui.hide(); _settings.show())
+	_settings_btn.pressed.connect(_on_settings_pressed)
+	# Долгое нажатие на «Настройки» открывает скрытое окно тестового режима.
+	_settings_btn.button_down.connect(func(): _hold = 0.0; _holding = true; _held = false)
+	_settings_btn.button_up.connect(func(): _holding = false)
+	_test_panel = TestPanel.new()
+	add_child(_test_panel)
+	_test_panel.closed.connect(_on_test_closed)
 	$UI/Root/Box/Quit.pressed.connect(func(): get_tree().quit())
 	_settings_back.pressed.connect(func(): _settings.hide(); _show_menu())
 	_settings.visibility_changed.connect(_on_settings_visibility)
 	_show_menu()
 	UiFx.stagger([$UI/Root/Title, $UI/Root/Subtitle] + $UI/Root/Box.get_children(), 0.08, 0.1)
+
+
+func _on_settings_pressed() -> void:
+	if _held:
+		return
+	_ui.hide()
+	_settings.show()
+
+
+func _on_test_closed() -> void:
+	# Тема и открытые главы могли измениться.
+	_show_menu()
 
 
 func _show_menu() -> void:
@@ -37,7 +62,9 @@ func _show_menu() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	# Кнопка «Назад» на Android и Esc на ноутбуке закрывают окна меню.
 	if event.is_action_pressed("ui_cancel"):
-		if _settings.visible:
+		if _test_panel.visible:
+			_test_panel.close()
+		elif _settings.visible:
 			_settings_back.pressed.emit()
 		elif _workshop.visible:
 			_workshop.close()
@@ -49,6 +76,14 @@ func _on_settings_visibility() -> void:
 
 
 func _process(_delta: float) -> void:
+	if _holding and not _held:
+		_hold += _delta
+		if _hold >= HOLD_TIME:
+			_held = true
+			_holding = false
+			Settings.vibrate(40, 0.6)
+			_ui.hide()
+			_test_panel.open()
 	# Название мягко покачивается, как на волнах.
 	var t := Time.get_ticks_msec() / 1000.0
 	$UI/Root/Title.rotation = sin(t * 0.8) * 0.015
