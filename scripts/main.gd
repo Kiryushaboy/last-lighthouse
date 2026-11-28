@@ -74,7 +74,7 @@ var _spawn_mult := 1.0
 var _hp_mult := 1.0
 var tutorial := false
 var _pace := 1.0  ## во сколько раз быстрее нарастает темп (учебная ночь)
-var _hints_shown := {}  ## какие подсказки обучения уже показаны
+var _tut: Tutorial  ## обучение первой ночи
 
 
 func _ready() -> void:
@@ -130,7 +130,11 @@ func _ready() -> void:
 		# В обучении погибнуть трудно: запас сердец побольше.
 		player.max_hp += 4
 		player.heal(4)
-		hud.show_night_banner("Обучение · %s" % night.title, "Продержитесь две минуты", Nights.task_text(night.task))
+		_tut = Tutorial.new()
+		_tut.main = self
+		add_child(_tut)
+		_tut.begin()
+		spawn_timer.paused = true
 	else:
 		hud.show_night_banner("Ночь %d · %s" % [night_index + 1, night.title],
 				Nights.MODIFIER_TEXT.get(night.get("modifier", ""), ""), Nights.task_text(night.task))
@@ -140,16 +144,16 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if _over:
 		return
+	player.joystick_vector = joystick.vector
+	# Обучение: пока игрок учится ходить, ночь не начинается.
+	if _tut and _tut.hold:
+		return
+	spawn_timer.paused = false
 	elapsed += delta
 	_update_regen(delta)
 	time_left = maxf(run_time - elapsed, 0.0)
 	# В бесконечной ночи таймер идёт вперёд: сколько продержались.
 	hud.set_time(elapsed if endless else time_left, endless)
-	player.joystick_vector = joystick.vector
-	if tutorial:
-		for h in Nights.TUTORIAL_HINTS:
-			if elapsed >= h[0]:
-				_hint(str(h[0]), h[1])
 	if endless:
 		_update_events()
 	if boss_at >= 0.0 and boss == null and elapsed >= boss_at:
@@ -189,7 +193,7 @@ func _apply_workshop() -> void:
 # --- Пауза -------------------------------------------------------------
 
 func _open_pause() -> void:
-	if _over or upgrade_menu.visible or pause_menu.visible:
+	if _over or upgrade_menu.visible or pause_menu.visible or (_tut and _tut.busy()):
 		return
 	joystick.reset()
 	get_tree().paused = true
@@ -255,6 +259,8 @@ func _update_events() -> void:
 func _count_hits(hp: int, _max_hp: int) -> void:
 	if hp < _last_hp:
 		hits_taken += 1
+		if _tut:
+			_tut.on_hit()
 		_update_task()
 	_last_hp = hp
 
@@ -460,18 +466,14 @@ func _xp_for(lvl: int) -> int:
 	return maxi(3, int(xp_needed(lvl) * 0.55)) if tutorial else xp_needed(lvl)
 
 
-## Подсказка обучения: каждая показывается один раз.
-func _hint(key: String, text: String) -> void:
-	if not tutorial or _hints_shown.has(key):
-		return
-	_hints_shown[key] = true
-	hud.show_hint(text)
+## Можно ли сейчас остановить игру ради подсказки обучения.
+func can_tutor() -> bool:
+	return not _over and not upgrade_menu.visible and not pause_menu.visible and not get_tree().paused
 
 
 func _add_xp(amount: int) -> void:
 	if _over:
 		return
-	_hint("xp", "Зелёные искры — это опыт. Собирайте их, чтобы расти в уровне.")
 	xp += amount
 	while xp >= xp_to_next:
 		xp -= xp_to_next
@@ -497,6 +499,8 @@ func _offer_upgrade() -> void:
 	Fx.ring(player.global_position, Color(1, 0.85, 0.4), 260.0, 0.6, 10.0)
 	Fx.burst(player.global_position, Color(1, 0.85, 0.4), 24, 380.0, 6.0)
 	upgrade_menu.show_choices(choices, upgrades_taken, player)
+	if _tut:
+		_tut.on_upgrade_offered()
 
 
 func _on_upgrade_chosen(id: String) -> void:
@@ -504,7 +508,8 @@ func _on_upgrade_chosen(id: String) -> void:
 	Upgrades.apply(id, player, upgrades_taken[id])
 	hud.set_health(player.hp, player.max_hp)
 	get_tree().paused = false
-	_hint("upgrade", "Отличный выбор! Улучшения действуют до конца ночи.")
+	if _tut:
+		_tut.on_upgrade_chosen()
 	if _pending_levels > 0:
 		_offer_upgrade()
 
@@ -522,6 +527,8 @@ func _finish(victory: bool) -> void:
 	won = victory
 	joystick.reset()
 	upgrade_menu.hide()
+	if _tut:
+		_tut.close()
 	get_tree().paused = true
 	# Звёзды: пережить ночь, потерять не больше 2 сердец, выполнить задание.
 	var star_flags := [victory, victory and hits_taken <= Nights.MAX_HITS_FOR_STAR,
