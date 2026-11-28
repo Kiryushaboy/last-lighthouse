@@ -60,6 +60,12 @@ func mark_intro_seen() -> void:
 		_save()
 
 
+## Показать интро снова при следующем «Играть» (тестовая панель).
+func reset_intro() -> void:
+	intro_seen = false
+	_save()
+
+
 func _save() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("controls", "sensitivity", sensitivity)

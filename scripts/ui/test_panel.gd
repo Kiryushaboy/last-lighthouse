@@ -57,7 +57,7 @@ func _rebuild() -> void:
 		_hint.text = "Включён. Все ночи и герои открыты, а в мастерской у каждого бонуса кнопки «−» и «+»."
 		_hint.add_theme_color_override("font_color", Color(0.6, 1.0, 0.82))
 		_button("+1000 ракушек", _add_shells, true)
-		_button("Обучение заново", _reset_tutorial, false)
+		_button("Интро и обучение заново", _reset_tutorial, false)
 		_button("Выключить и вернуть бонусы", _turn_off, false)
 	else:
 		_hint.text = "Введите код"
@@ -108,8 +108,9 @@ func _add_shells() -> void:
 
 func _reset_tutorial() -> void:
 	SaveData.set_tutorial_done(false)
+	Settings.reset_intro()
 	Sound.play("shell")
-	_hint.text = "Обучение начнётся по кнопке «Играть»."
+	_hint.text = "Интро и обучение начнутся по кнопке «Играть»."
 
 
 func _turn_off() -> void:

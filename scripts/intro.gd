@@ -1,8 +1,9 @@
 extends Control
-## Интро-ролик «С чего всё началось». Показывается при первом запуске после заставки.
+## Интро-ролик «С чего всё началось». Показывается при первом нажатии «Играть», до обучения.
 ## Касание, клик или любая клавиша пропускают ролик (после короткой паузы, чтобы не пропустить случайно).
 
-const NEXT_SCENE := "res://scenes/menu.tscn"
+const TUTORIAL_SCENE := "res://scenes/main.tscn"  ## учебная ночь, если обучение ещё не пройдено
+const MAP_SCENE := "res://scenes/map.tscn"
 const VIDEO := "res://video/intro.ogv"
 const SKIP_AFTER := 1.0  ## через сколько секунд можно пропустить
 const FADE := 0.4
@@ -53,7 +54,6 @@ func _ready() -> void:
 	create_tween().tween_property(_cover, "color:a", 0.0, FADE)
 
 	Settings.mark_intro_seen()
-	ResourceLoader.load_threaded_request(NEXT_SCENE)
 	_player.play()
 
 
@@ -88,5 +88,9 @@ func _leave() -> void:
 
 func _go() -> void:
 	_player.stop()
-	var scene := ResourceLoader.load_threaded_get(NEXT_SCENE) as PackedScene
-	get_tree().change_scene_to_packed(scene)
+	# Дальше — как после кнопки «Играть»: обучение при первом запуске, иначе карта маяков.
+	if not SaveData.tutorial_done:
+		SaveData.current_night = Nights.TUTORIAL
+		get_tree().change_scene_to_file(TUTORIAL_SCENE)
+	else:
+		get_tree().change_scene_to_file(MAP_SCENE)

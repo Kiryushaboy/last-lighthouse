@@ -1,10 +1,8 @@
 extends Control
 ## Заставка при запуске. Картинки готовые (их рисует tools/make_splash.py в высоком разрешении),
 ## на лету двигаются только два луча и название — поэтому заставка чёткая и не тормозит.
-## Потом интро-ролик (только при первом запуске) или сразу меню.
 
-const MENU_SCENE := "res://scenes/menu.tscn"
-const INTRO_SCENE := "res://scenes/intro.tscn"  ## интро-ролик, только при первом запуске
+const NEXT_SCENE := "res://scenes/menu.tscn"
 const BG := preload("res://art/splash/bg.png")
 const BEAM := preload("res://art/splash/beam.png")
 const TITLE := preload("res://art/splash/title.png")
@@ -19,12 +17,9 @@ var _beams: Array[TextureRect] = []
 var _title: TextureRect
 var _t := 0.0
 var _leaving := false
-var _next_scene := MENU_SCENE
 
 
 func _ready() -> void:
-	if not Settings.intro_seen:
-		_next_scene = INTRO_SCENE
 	RenderingServer.set_default_clear_color(Color.BLACK)
 	_bg = _picture(BG)
 	_bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
@@ -44,7 +39,7 @@ func _ready() -> void:
 	var tw := create_tween()
 	tw.tween_property(self, "modulate:a", 1.0, FADE_IN).set_trans(Tween.TRANS_SINE)
 	# Меню грузим в фоне, когда заставка уже проявилась.
-	tw.tween_callback(func(): if _next_scene == MENU_SCENE: ResourceLoader.load_threaded_request(MENU_SCENE))
+	tw.tween_callback(func(): ResourceLoader.load_threaded_request(NEXT_SCENE))
 	var tt := create_tween().set_parallel()
 	_title.scale = Vector2(0.86, 0.86)
 	tt.tween_property(_title, "modulate:a", 1.0, 0.5).set_delay(0.35)
@@ -97,7 +92,7 @@ func _process(delta: float) -> void:
 		b.modulate.a = 0.5 + 0.4 * sin(ang)
 	# Уходим, когда и заставку показали достаточно, и меню уже загрузилось: затухание не дёргается.
 	if not _leaving and _t >= FADE_IN + MIN_HOLD \
-			and (_next_scene == INTRO_SCENE or ResourceLoader.load_threaded_get_status(MENU_SCENE) == ResourceLoader.THREAD_LOAD_LOADED):
+			and ResourceLoader.load_threaded_get_status(NEXT_SCENE) == ResourceLoader.THREAD_LOAD_LOADED:
 		_leaving = true
 		var tw := create_tween()
 		tw.tween_property(self, "modulate:a", 0.0, FADE_OUT).set_trans(Tween.TRANS_SINE)
@@ -105,8 +100,5 @@ func _process(delta: float) -> void:
 
 
 func _go() -> void:
-	# Интро грузим обычным load(): сцена крошечная, а в фоновом потоке её скрипт у Godot 4.7 не загружается.
-	# Меню интро потом загрузит само, пока идёт ролик.
-	var scene: PackedScene = load(_next_scene) if _next_scene == INTRO_SCENE \
-		else ResourceLoader.load_threaded_get(MENU_SCENE) as PackedScene
+	var scene := ResourceLoader.load_threaded_get(NEXT_SCENE) as PackedScene
 	get_tree().change_scene_to_packed(scene)
