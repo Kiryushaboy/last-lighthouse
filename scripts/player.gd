@@ -29,9 +29,9 @@ const CHAIN_RANGE := 200.0
 const BAT_TEXTURE := preload("res://art/sprites/bat.svg")
 const BATS := 4  ## мышей в стае Ведьмы без улучшений
 const BAT_ORBIT := 70.0
-const BAT_HUNT := 300.0  ## как далеко от героя мыши замечают врагов
+const BAT_HUNT := 380.0  ## как далеко от героя мыши замечают врагов
 const BAT_SPEED := 640.0
-const WAVE_RADIUS := 230.0
+const WAVE_RADIUS := 290.0
 const WAVE_TIME := 0.45
 const WAVE_PUSH := 430.0
 
