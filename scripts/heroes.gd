@@ -13,11 +13,11 @@ const LIST := [
 		"tint": Color(1, 1, 1), "neon": Color(0.5, 0.8, 1.0)},
 	{"id": "witch", "sprite": "res://art/sprites/witch.svg", "title": "Ведьма", "weapon": "bats", "cost": 2500,
 		"desc": "Летучие мыши кружат рядом и сами бросаются на врагов поблизости.",
-		"hp": 5, "speed": 285.0, "damage": 1, "interval": 0.6, "pierce": 0,
+		"hp": 5, "speed": 285.0, "damage": 1, "interval": 0.55, "pierce": 0,
 		"tint": Color(1, 1, 1), "neon": Color(0.75, 0.5, 1.0)},
 	{"id": "siren", "sprite": "res://art/sprites/siren.svg", "title": "Сирена", "weapon": "wave", "cost": 4000,
 		"desc": "Песня расходится кольцом: ранит и отбрасывает всех вокруг.",
-		"hp": 4, "speed": 260.0, "damage": 2, "interval": 1.3, "pierce": 0,
+		"hp": 5, "speed": 260.0, "damage": 2, "interval": 1.0, "pierce": 0,
 		"tint": Color(1, 1, 1), "neon": Color(0.4, 0.95, 0.85)},
 ]
 
