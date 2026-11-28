@@ -58,6 +58,7 @@ func _rebuild() -> void:
 		_hint.add_theme_color_override("font_color", Color(0.6, 1.0, 0.82))
 		_button("+1000 ракушек", _add_shells, true)
 		_button("Интро и обучение заново", _reset_tutorial, false)
+		_button("Посмотреть аутро", _play_outro, false)
 		_button("Выключить и вернуть бонусы", _turn_off, false)
 	else:
 		_hint.text = "Введите код"
@@ -111,6 +112,10 @@ func _reset_tutorial() -> void:
 	Settings.reset_intro()
 	Sound.play("shell")
 	_hint.text = "Интро и обучение начнутся по кнопке «Играть»."
+
+
+func _play_outro() -> void:
+	get_tree().root.add_child(Outro.new())
 
 
 func _turn_off() -> void:

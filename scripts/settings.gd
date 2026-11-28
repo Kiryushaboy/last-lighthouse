@@ -14,6 +14,7 @@ var sound_on := true
 var music_on := true
 var vibration_on := true
 var intro_seen := false  ## интро-ролик уже показывали
+var outro_seen := false  ## аутро после последнего босса уже показывали
 
 
 func _ready() -> void:
@@ -24,6 +25,7 @@ func _ready() -> void:
 		music_on = cfg.get_value("audio", "music", true)
 		vibration_on = cfg.get_value("controls", "vibration", true)
 		intro_seen = cfg.get_value("intro", "seen", false)
+		outro_seen = cfg.get_value("intro", "outro_seen", false)
 
 
 func set_sensitivity(value: float) -> void:
@@ -60,6 +62,12 @@ func mark_intro_seen() -> void:
 		_save()
 
 
+func mark_outro_seen() -> void:
+	if not outro_seen:
+		outro_seen = true
+		_save()
+
+
 ## Показать интро снова при следующем «Играть» (тестовая панель).
 func reset_intro() -> void:
 	intro_seen = false
@@ -73,5 +81,6 @@ func _save() -> void:
 	cfg.set_value("audio", "music", music_on)
 	cfg.set_value("controls", "vibration", vibration_on)
 	cfg.set_value("intro", "seen", intro_seen)
+	cfg.set_value("intro", "outro_seen", outro_seen)
 	cfg.save(PATH)
 	changed.emit()

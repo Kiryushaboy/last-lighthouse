@@ -544,8 +544,13 @@ func _finish(victory: bool) -> void:
 	# «Удачливый ныряльщик»: +10% за уровень.
 	shells_this_run = int(round(shells_this_run * (1.0 + 0.1 * SaveData.level_of("luck"))))
 	SaveData.add_shells(shells_this_run)
-	Sound.play("win" if victory else "lose")
 	Fx.reset()
+	# Последний босс повержен: перед экраном победы — аутро-ролик (один раз).
+	if victory and Outro.should_play(night_index, tutorial, endless):
+		var outro := Outro.new()
+		add_child(outro)
+		await outro.finished
+	Sound.play("win" if victory else "lose")
 	end_screen.show_result({
 		"won": victory, "night": night_index, "title": night.title, "level": level, "tutorial": tutorial,
 		"survived": elapsed, "shells": shells_this_run, "star_bonus": star_bonus,
