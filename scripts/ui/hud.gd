@@ -11,9 +11,6 @@ signal pause_pressed
 
 var _xp_tween: Tween
 
-var _hint_box: PanelContainer
-var _hint_text: Label
-var _hint_tween: Tween
 
 
 func _ready() -> void:
@@ -163,54 +160,3 @@ func set_record(record_text: String, kills: int) -> void:
 func hide_boss() -> void:
 	$Root/BossLabel.hide()
 	$Root/BossBar.hide()
-
-
-## Подсказка обучения: табличка со словами старого смотрителя. Выезжает снизу и сама уходит.
-func show_hint(text: String) -> void:
-	if _hint_box == null:
-		_hint_box = PanelContainer.new()
-		_hint_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_hint_box.anchor_left = 0.0
-		_hint_box.anchor_right = 1.0
-		_hint_box.anchor_top = 0.27
-		_hint_box.anchor_bottom = 0.27
-		_hint_box.offset_left = 24
-		_hint_box.offset_right = -24
-		_hint_box.grow_vertical = Control.GROW_DIRECTION_END
-		$Root.add_child(_hint_box)
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 14)
-		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_hint_box.add_child(row)
-		var face := TextureRect.new()
-		face.texture = preload("res://art/sprites/lighthouse.svg")
-		face.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		face.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		face.custom_minimum_size = Vector2(72, 72)
-		face.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		row.add_child(face)
-		var col := VBoxContainer.new()
-		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		col.add_theme_constant_override("separation", 2)
-		col.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		row.add_child(col)
-		var who := Label.new()
-		who.text = "Старый смотритель"
-		who.add_theme_font_size_override("font_size", 20)
-		who.add_theme_color_override("font_color", Color(1, 0.85, 0.45))
-		col.add_child(who)
-		_hint_text = Label.new()
-		_hint_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		_hint_text.add_theme_font_size_override("font_size", 25)
-		col.add_child(_hint_text)
-	_hint_text.text = text
-	_hint_box.show()
-	_hint_box.modulate.a = 0.0
-	if _hint_tween:
-		_hint_tween.kill()
-	_hint_tween = create_tween()
-	_hint_tween.tween_property(_hint_box, "modulate:a", 1.0, 0.3)
-	_hint_tween.tween_interval(6.0)
-	_hint_tween.tween_property(_hint_box, "modulate:a", 0.0, 0.5)
-	_hint_tween.tween_callback(_hint_box.hide)
-	Sound.play("click", -6.0)

@@ -70,6 +70,10 @@ func _process(_delta: float) -> bool:
 	dir += -me / 900.0 * 0.6
 	main.joystick.vector = dir.normalized() if dir.length() > 0.05 else Vector2.RIGHT.rotated(t * 0.5) * 0.3
 
+	# Обучение: бот сразу листает подсказки.
+	if main._tut and main._tut.busy() and frames % 30 == 0:
+		main._tut.advance()
+
 	var menu: CanvasLayer = main.upgrade_menu
 	if menu.visible:
 		var buttons := menu.get_node("Box/Choices").get_children().filter(
