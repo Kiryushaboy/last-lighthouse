@@ -55,7 +55,7 @@ func _build() -> void:
 
 	var title := Label.new()
 	title.theme_type_variation = &"TitleLabel"
-	title.text = "Мастерская"
+	title.text = tr("Мастерская")
 	title.add_theme_font_size_override("font_size", 50)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(title)
@@ -74,7 +74,7 @@ func _build() -> void:
 	var tabs := HBoxContainer.new()
 	tabs.add_theme_constant_override("separation", 12)
 	box.add_child(tabs)
-	for t in [["perks", "Бонусы"], ["heroes", "Герои"], ["shop", "Магазин"]]:
+	for t in [["perks", tr("Бонусы")], ["heroes", tr("Герои")], ["shop", tr("Магазин")]]:
 		var b := Button.new()
 		b.text = t[1]
 		b.focus_mode = Control.FOCUS_NONE
@@ -91,7 +91,7 @@ func _build() -> void:
 	box.add_child(_scroll)
 
 	var back := Button.new()
-	back.text = "Назад"
+	back.text = tr("Назад")
 	back.focus_mode = Control.FOCUS_NONE
 	back.custom_minimum_size = Vector2(0, 104)
 	back.pressed.connect(close)
@@ -199,7 +199,7 @@ func _make_perk(p: Dictionary) -> Control:
 	buy.focus_mode = Control.FOCUS_NONE
 	buy.custom_minimum_size = Vector2(0, 76)
 	if cost < 0:
-		buy.text = "Макс."
+		buy.text = tr("Макс.")
 		buy.disabled = true
 	else:
 		buy.theme_type_variation = &"PrimaryButton"
@@ -268,7 +268,7 @@ func _make_hero(h: Dictionary) -> Control:
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	name_label.theme_type_variation = &"TitleLabel"
 	text.add_child(name_label)
-	var weapon := _label("%s  ·  ♥ %d" % [WEAPON_TEXT.get(h.weapon, ""), h.hp], 22, Color(0.6, 1.0, 0.82))
+	var weapon := _label("%s  ·  ♥ %d" % [tr(WEAPON_TEXT.get(h.weapon, "")), h.hp], 22, Color(0.6, 1.0, 0.82))
 	weapon.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	text.add_child(weapon)
 	var desc := _label(h.desc, 20, Color(1, 1, 1, 0.75))
@@ -279,10 +279,10 @@ func _make_hero(h: Dictionary) -> Control:
 	btn.focus_mode = Control.FOCUS_NONE
 	btn.custom_minimum_size = Vector2(0, 76)
 	if chosen:
-		btn.text = "Выбран"
+		btn.text = tr("Выбран")
 		btn.disabled = true
 	elif owned:
-		btn.text = "Выбрать"
+		btn.text = tr("Выбрать")
 		btn.theme_type_variation = &"PrimaryButton"
 	else:
 		btn.theme_type_variation = &"PrimaryButton"
@@ -296,7 +296,7 @@ func _make_hero(h: Dictionary) -> Control:
 		var money := Button.new()
 		money.focus_mode = Control.FOCUS_NONE
 		money.custom_minimum_size = Vector2(0, 68)
-		money.text = "или купить за %s" % Shop.price_of(product)
+		money.text = tr("или купить за %s") % Shop.price_of(product)
 		money.pressed.connect(_buy_product.bind(product))
 		text.add_child(money)
 	return card
@@ -330,31 +330,31 @@ func _change_text(id: String, lvl: int, maxed: bool) -> String:
 	var next := ""
 	match id:
 		"hp":
-			return ("Сердец: %d" % (5 + lvl)) if maxed else "Сердец: %d → %d" % [5 + lvl, 6 + lvl]
+			return (tr("Сердец: %d") % (5 + lvl)) if maxed else tr("Сердец: %d → %d") % [5 + lvl, 6 + lvl]
 		"power":
-			return ("Урон: +%d" % lvl) if maxed else "Урон: +%d → +%d" % [lvl, lvl + 1]
+			return (tr("Урон: +%d") % lvl) if maxed else tr("Урон: +%d → +%d") % [lvl, lvl + 1]
 		"crit":
 			now = "%d%%" % (lvl * 8); next = "%d%%" % ((lvl + 1) * 8)
-			return ("Двойной урон: %s" % now) if maxed else "Двойной урон: %s → %s" % [now, next]
+			return (tr("Двойной урон: %s") % now) if maxed else tr("Двойной урон: %s → %s") % [now, next]
 		"speed":
 			now = "+%d%%" % (lvl * 5); next = "+%d%%" % ((lvl + 1) * 5)
-			return ("Скорость: %s" % now) if maxed else "Скорость: %s → %s" % [now, next]
+			return (tr("Скорость: %s") % now) if maxed else tr("Скорость: %s → %s") % [now, next]
 		"start":
-			return ("Улучшений сразу: %d" % lvl) if maxed else "Улучшений сразу: %d → %d" % [lvl, lvl + 1]
+			return (tr("Улучшений сразу: %d") % lvl) if maxed else tr("Улучшений сразу: %d → %d") % [lvl, lvl + 1]
 		"bubble":
-			return "Щит уже на старте" if maxed else "Щит с первой секунды"
+			return tr("Щит уже на старте") if maxed else tr("Щит с первой секунды")
 		"regen":
 			if maxed:
-				return "Сердце раз в %d с" % SaveData.REGEN_EVERY[lvl]
+				return tr("Сердце раз в %d с") % SaveData.REGEN_EVERY[lvl]
 			if lvl == 0:
-				return "Сердце раз в %d с" % SaveData.REGEN_EVERY[1]
-			return "Сердце раз в %d → %d с" % [SaveData.REGEN_EVERY[lvl], SaveData.REGEN_EVERY[lvl + 1]]
+				return tr("Сердце раз в %d с") % SaveData.REGEN_EVERY[1]
+			return tr("Сердце раз в %d → %d с") % [SaveData.REGEN_EVERY[lvl], SaveData.REGEN_EVERY[lvl + 1]]
 		"pull":
 			now = "+%d%%" % (lvl * 15); next = "+%d%%" % ((lvl + 1) * 15)
-			return ("Радиус сбора: %s" % now) if maxed else "Радиус сбора: %s → %s" % [now, next]
+			return (tr("Радиус сбора: %s") % now) if maxed else tr("Радиус сбора: %s → %s") % [now, next]
 		"luck":
 			now = "+%d%%" % (lvl * 10); next = "+%d%%" % ((lvl + 1) * 10)
-			return ("Ракушек: %s" % now) if maxed else "Ракушек: %s → %s" % [now, next]
+			return (tr("Ракушек: %s") % now) if maxed else tr("Ракушек: %s → %s") % [now, next]
 	return ""
 
 
@@ -394,25 +394,25 @@ func _make_shop() -> Control:
 
 	# Сундук дня: раз в сутки ракушки за ролик.
 	var ready := Shop.chest_ready()
-	var chest_btn := "Завтра будет новый"
+	var chest_btn := tr("Завтра будет новый")
 	if ready:
-		chest_btn = "Открыть" if SaveData.no_ads else "▶  Открыть за рекламу"
-	list.add_child(_offer(UpgradeIcon.texture_of("start"), Color(1.0, 0.75, 0.35), "Сундук дня",
-			"Каждый день бесплатно: от %d до %d ракушек." % [Shop.chest_amount(), Shop.chest_amount() * 2],
+		chest_btn = tr("Открыть") if SaveData.no_ads else tr("▶  Открыть за рекламу")
+	list.add_child(_offer(UpgradeIcon.texture_of("start"), Color(1.0, 0.75, 0.35), tr("Сундук дня"),
+			tr("Каждый день бесплатно: от %d до %d ракушек.") % [Shop.chest_amount(), Shop.chest_amount() * 2],
 			chest_btn, ready, not ready, _open_chest))
 
 	for id in ["shells_small", "shells_medium", "shells_large"]:
 		var p: Dictionary = Shop.PRODUCTS[id]
-		list.add_child(_offer(SHELL, Color(1.0, 0.55, 0.7), p.title, "+%d ракушек" % p.shells,
+		list.add_child(_offer(SHELL, Color(1.0, 0.55, 0.7), p.title, tr("+%d ракушек") % p.shells,
 				Shop.price_of(id), true, false, _buy_product.bind(id)))
 
 	var no_ads := SaveData.no_ads
-	list.add_child(_offer(UpgradeIcon.texture_of("shield"), Color(0.4, 0.85, 1.0), "Без рекламы",
-			"Все награды сразу, без роликов: удвоение ракушек, второй шанс и сундук дня.",
-			"Куплено" if no_ads else Shop.price_of("no_ads"), not no_ads, no_ads, _buy_product.bind("no_ads")))
+	list.add_child(_offer(UpgradeIcon.texture_of("shield"), Color(0.4, 0.85, 1.0), tr("Без рекламы"),
+			tr("Все награды сразу, без роликов: удвоение ракушек, второй шанс и сундук дня."),
+			tr("Куплено") if no_ads else Shop.price_of("no_ads"), not no_ads, no_ads, _buy_product.bind("no_ads")))
 
 	if not Shop.is_live():
-		var note := _label("Покупки и реклама пока тестовые: деньги не списываются, вместо ролика заставка.", 20, Color(1, 1, 1, 0.5))
+		var note := _label(tr("Покупки и реклама пока тестовые: деньги не списываются, вместо ролика заставка."), 20, Color(1, 1, 1, 0.5))
 		list.add_child(note)
 	return list
 
@@ -481,8 +481,8 @@ func _open_chest() -> void:
 		_rebuild_keep_scroll(-1)
 		var dlg := UiDialog.new()
 		add_child(dlg)
-		dlg.setup("Сундук дня", "Внутри %d ракушек! Новый сундук будет завтра." % amount)
-		dlg.add_choice("Забрать", true, func() -> void: pass)
+		dlg.setup(tr("Сундук дня"), tr("Внутри %d ракушек! Новый сундук будет завтра.") % amount)
+		dlg.add_choice(tr("Забрать"), true, func() -> void: pass)
 		dlg.open())
 
 

@@ -239,9 +239,9 @@ static func endless_unlocked() -> bool:
 
 static func task_text(task: Array) -> String:
 	match task[0]:
-		"kills": return "Победить %d врагов" % task[1]
-		"beam_kills": return "Победить %d врагов в луче маяка" % task[1]
-		"shells": return "Собрать %d ракушек" % task[1]
+		"kills": return Lang.t("Победить %d врагов") % task[1]
+		"beam_kills": return Lang.t("Победить %d врагов в луче маяка") % task[1]
+		"shells": return Lang.t("Собрать %d ракушек") % task[1]
 	return ""
 
 

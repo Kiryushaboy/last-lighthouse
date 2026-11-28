@@ -20,7 +20,7 @@ func _ready() -> void:
 
 func set_time(seconds: float, counting_up := false) -> void:
 	var s := int(seconds) if counting_up else int(ceil(maxf(seconds, 0.0)))
-	var text := "%d:%02d" % [s / 60, s % 60] if (s > 0 or counting_up) else "Рассвет близко"
+	var text := "%d:%02d" % [s / 60, s % 60] if (s > 0 or counting_up) else tr("Рассвет близко")
 	if counting_up:
 		_time.text = text
 		return
@@ -37,7 +37,7 @@ func set_health(hp: int, max_hp: int) -> void:
 
 
 func set_xp(xp: int, xp_to_next: int, level: int) -> void:
-	var new_level := "Ур. %d" % level
+	var new_level := tr("Ур. %d") % level
 	if new_level != _level.text:
 		_level.text = new_level
 		UiFx.bump(_level, 1.5)
@@ -65,7 +65,7 @@ func set_boss_health(hp: int, max_hp: int) -> void:
 
 
 func set_shells(count: int) -> void:
-	$Root/ShellsLabel.text = "Ракушки: %d" % count
+	$Root/ShellsLabel.text = tr("Ракушки: %d") % count
 	UiFx.bump($Root/ShellsLabel, 1.3)
 
 
@@ -75,10 +75,10 @@ func set_shells(count: int) -> void:
 func set_star_tasks(hits: int, max_hits: int, task: String, progress: int, goal: int) -> void:
 	if _star_rows.is_empty():
 		_build_star_rows()
-	_set_star_row(0, "Дожить до рассвета", 0)
+	_set_star_row(0, tr("Дожить до рассвета"), 0)
 	var hits_state := 0 if hits <= max_hits else -1
-	_set_star_row(1, "Потерять не больше %d сердец: %d/%d" % [max_hits, mini(hits, max_hits + 1), max_hits], hits_state)
-	_set_star_row(2, "%s: %d/%d" % [task, mini(progress, goal), goal], 1 if progress >= goal else 0)
+	_set_star_row(1, tr("Потерять не больше %d сердец: %d/%d") % [max_hits, mini(hits, max_hits + 1), max_hits], hits_state)
+	_set_star_row(2, "%s: %d/%d" % [tr(task), mini(progress, goal), goal], 1 if progress >= goal else 0)
 
 
 var _star_rows: Array[Label] = []
@@ -123,7 +123,7 @@ func show_night_banner(title: String, modifier: String, task: String) -> void:
 	$Root/Banner/Title.text = title
 	$Root/Banner/Modifier.text = modifier
 	$Root/Banner/Modifier.visible = modifier != ""
-	$Root/Banner/Task.text = "Задание: " + task
+	$Root/Banner/Task.text = tr("Задание: ") + task
 	banner.show()
 	banner.modulate.a = 0.0
 	var tw := create_tween()
@@ -154,7 +154,7 @@ func show_boss_banner(title: String, subtitle: String) -> void:
 
 ## Бесконечная ночь: в углу рекорд и счётчик врагов этой ночи.
 func set_record(record_text: String, kills: int) -> void:
-	$Root/TaskLabel.text = "Врагов: %d   %s" % [kills, record_text]
+	$Root/TaskLabel.text = tr("Врагов: %d   %s") % [kills, record_text]
 
 
 func hide_boss() -> void:

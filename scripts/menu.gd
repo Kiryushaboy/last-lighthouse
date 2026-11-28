@@ -39,6 +39,10 @@ func _ready() -> void:
 	_settings_back.pressed.connect(func(): _settings.hide(); _show_menu())
 	_settings.visibility_changed.connect(_on_settings_visibility)
 	_show_menu()
+	if Settings.reopen_settings:
+		Settings.reopen_settings = false
+		_on_settings_pressed()
+		return
 	UiFx.stagger([$UI/Root/Title, $UI/Root/Subtitle] + $UI/Root/Box.get_children(), 0.08, 0.1)
 
 
@@ -64,9 +68,9 @@ func _on_test_closed() -> void:
 
 
 func _show_menu() -> void:
-	_shells.text = "Ракушки: %d" % SaveData.shells
+	_shells.text = tr("Ракушки: %d") % SaveData.shells
 	if Shop.chest_ready() and SaveData.tutorial_done:
-		_shells.text += "  ·  сундук дня ждёт в магазине"
+		_shells.text += tr("  ·  сундук дня в магазине")
 	_ui.show()
 
 

@@ -1,0 +1,1069 @@
+# Английский перевод «Последнего маяка».
+# msgid — русский текст из кода и сцен, msgstr — английский.
+# Новую строку в игре нужно добавить и сюда, иначе в английской версии она останется русской.
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en\n"
+
+msgid "Краб-король"
+msgstr "Crab King"
+
+msgid "Хозяин старого причала"
+msgstr "Lord of the old pier"
+
+msgid "Спрут из тумана"
+msgstr "Fog Kraken"
+
+msgid "Поднимается из глубин"
+msgstr "Rises from the deep"
+
+msgid "Морской змей"
+msgstr "Sea Serpent"
+
+msgid "Приходит вместе с бурей"
+msgstr "Comes with the storm"
+
+msgid "Ледяной кит"
+msgstr "Ice Whale"
+
+msgid "Лёд трещит под его спиной"
+msgstr "The ice cracks under its back"
+
+msgid "Кракен"
+msgstr "Kraken"
+
+msgid "Хозяин бездны"
+msgstr "Lord of the abyss"
+
+msgid "Королева медуз"
+msgstr "Jellyfish Queen"
+
+msgid "Риф светится от её свиты"
+msgstr "Her court lights up the reef"
+
+msgid "Летучий голландец"
+msgstr "Flying Dutchman"
+
+msgid "Корабль, который не тонет"
+msgstr "The ship that never sinks"
+
+msgid "Огненная черепаха"
+msgstr "Fire Turtle"
+
+msgid "На её спине дремлет вулкан"
+msgstr "A volcano sleeps on its back"
+
+msgid "Гидра"
+msgstr "Hydra"
+
+msgid "Три головы и ни капли жалости"
+msgstr "Three heads and no mercy"
+
+msgid "Левиафан"
+msgstr "Leviathan"
+
+msgid "Сердце вечной бури"
+msgstr "Heart of the eternal storm"
+
+msgid "Смотритель"
+msgstr "Keeper"
+
+msgid "Гарпуны в ближайшего врага. Надёжно и просто."
+msgstr "Harpoons at the nearest enemy. Simple and reliable."
+
+msgid "Механик"
+msgstr "Mechanic"
+
+msgid "Молния: бьёт мгновенно и перескакивает ещё на двух врагов рядом."
+msgstr "Lightning: strikes instantly and jumps to two more enemies nearby."
+
+msgid "Ведьма"
+msgstr "Witch"
+
+msgid "Летучие мыши кружат рядом и сами бросаются на врагов поблизости."
+msgstr "Bats circle around and dive at nearby enemies on their own."
+
+msgid "Сирена"
+msgstr "Siren"
+
+msgid "Песня расходится кольцом: ранит и отбрасывает всех вокруг."
+msgstr "Her song spreads in a ring: hurts and pushes back everyone around."
+
+msgid "Бесконечная ночь"
+msgstr "Endless Night"
+
+msgid "Каждые 2 минуты событие, каждые 5 — спрут"
+msgstr "An event every 2 minutes, the kraken every 5"
+
+msgid "продержитесь как можно дольше"
+msgstr "survive as long as you can"
+
+msgid "Ночь %d · %s"
+msgstr "Night %d · %s"
+
+msgid "Событие!"
+msgstr "Event!"
+
+msgid "продержитесь %d секунд"
+msgstr "survive for %d seconds"
+
+msgid "Рекорд: %d:%02d · врагов %d"
+msgstr "Record: %d:%02d · %d enemies"
+
+msgid "Второй шанс"
+msgstr "Second Chance"
+
+msgid "Смотритель ещё может подняться! Вернитесь в бой с половиной сердец."
+msgstr "The keeper can still get up! Return to battle with half your hearts."
+
+msgid "Воскреснуть"
+msgstr "Revive"
+
+msgid "▶  Воскреснуть за рекламу"
+msgstr "▶  Revive for an ad"
+
+msgid "Сдаться"
+msgstr "Give up"
+
+msgid "Назад"
+msgstr "Back"
+
+msgid "★ %d из %d      Ракушки: %d"
+msgstr "★ %d of %d      Shells: %d"
+
+msgid "Награда за кампанию"
+msgstr "Campaign reward"
+
+msgid "Глава %d · %s"
+msgstr "Chapter %d · %s"
+
+msgid "Откроется после ночи %d"
+msgstr "Unlocks after night %d"
+
+msgid "Закрыто"
+msgstr "Locked"
+
+msgid "☠ Босс: %s"
+msgstr "☠ Boss: %s"
+
+msgid "В бой"
+msgstr "Fight"
+
+msgid "Сколько продержитесь?"
+msgstr "How long can you last?"
+
+msgid "Событие каждые 2 минуты, босс каждые 5"
+msgstr "Event every 2 minutes, boss every 5"
+
+msgid "Ракушки: %d"
+msgstr "Shells: %d"
+
+msgid "  ·  сундук дня в магазине"
+msgstr "  ·  free chest in the shop"
+
+msgid "Первая вахта"
+msgstr "First Watch"
+
+msgid "Старый причал"
+msgstr "Old Pier"
+
+msgid "Ночь"
+msgstr "Night"
+
+msgid "Туманная бухта"
+msgstr "Foggy Bay"
+
+msgid "Рассвет"
+msgstr "Dawn"
+
+msgid "Штормовое море"
+msgstr "Stormy Sea"
+
+msgid "Гроза"
+msgstr "Thunderstorm"
+
+msgid "Ледяной север"
+msgstr "Frozen North"
+
+msgid "Полярный день"
+msgstr "Polar Day"
+
+msgid "Бездна"
+msgstr "The Abyss"
+
+msgid "Глубокая ночь"
+msgstr "Deep Night"
+
+msgid "Коралловый риф"
+msgstr "Coral Reef"
+
+msgid "Закат"
+msgstr "Sunset"
+
+msgid "Кладбище кораблей"
+msgstr "Ship Graveyard"
+
+msgid "Полночь"
+msgstr "Midnight"
+
+msgid "Огненные острова"
+msgstr "Fire Islands"
+
+msgid "Зарево"
+msgstr "Fiery Glow"
+
+msgid "Саргассово море"
+msgstr "Sargasso Sea"
+
+msgid "Сумерки"
+msgstr "Twilight"
+
+msgid "Око бури"
+msgstr "Eye of the Storm"
+
+msgid "Перед рассветом"
+msgstr "Before Dawn"
+
+msgid "Мелководье"
+msgstr "Shallows"
+
+msgid "Скалистый берег"
+msgstr "Rocky Shore"
+
+msgid "Рыбацкие сети"
+msgstr "Fishing Nets"
+
+msgid "Крабовый рой"
+msgstr "Crab Swarm"
+
+msgid "Хозяин причала"
+msgstr "Master of the Pier"
+
+msgid "Первый туман"
+msgstr "First Fog"
+
+msgid "Тихая бухта"
+msgstr "Quiet Bay"
+
+msgid "Молочная мгла"
+msgstr "Milky Haze"
+
+msgid "Затонувшая лодка"
+msgstr "Sunken Boat"
+
+msgid "Чернильный туман"
+msgstr "Ink Fog"
+
+msgid "Первые волны"
+msgstr "First Waves"
+
+msgid "Штормовой мыс"
+msgstr "Stormy Cape"
+
+msgid "Девятый вал"
+msgstr "The Ninth Wave"
+
+msgid "Бронированный риф"
+msgstr "Armored Reef"
+
+msgid "Великая буря"
+msgstr "The Great Storm"
+
+msgid "Ледяная кромка"
+msgstr "Ice Edge"
+
+msgid "Северное сияние"
+msgstr "Northern Lights"
+
+msgid "Торосы"
+msgstr "Ice Ridges"
+
+msgid "Белая мгла"
+msgstr "White Haze"
+
+msgid "Сумеречная зона"
+msgstr "Twilight Zone"
+
+msgid "Огни глубин"
+msgstr "Lights of the Deep"
+
+msgid "Чёрная вода"
+msgstr "Black Water"
+
+msgid "Холодный ключ"
+msgstr "Cold Spring"
+
+msgid "Край бездны"
+msgstr "Edge of the Abyss"
+
+msgid "Последний маяк"
+msgstr "The Last Lighthouse"
+
+msgid "Розовая отмель"
+msgstr "Pink Shoal"
+
+msgid "Коралловый сад"
+msgstr "Coral Garden"
+
+msgid "Стая коньков"
+msgstr "Seahorse Herd"
+
+msgid "Жемчужная лагуна"
+msgstr "Pearl Lagoon"
+
+msgid "Жгучий прилив"
+msgstr "Stinging Tide"
+
+msgid "Сломанные мачты"
+msgstr "Broken Masts"
+
+msgid "Ржавый якорь"
+msgstr "Rusty Anchor"
+
+msgid "Огни святого Эльма"
+msgstr "St. Elmo's Fire"
+
+msgid "Сундук мертвеца"
+msgstr "Dead Man's Chest"
+
+msgid "Мёртвый штиль"
+msgstr "Dead Calm"
+
+msgid "Чёрный песок"
+msgstr "Black Sand"
+
+msgid "Кипящая бухта"
+msgstr "Boiling Bay"
+
+msgid "Пепельный дождь"
+msgstr "Ash Rain"
+
+msgid "Лавовый поток"
+msgstr "Lava Flow"
+
+msgid "Дым над водой"
+msgstr "Smoke on the Water"
+
+msgid "Зелёный ковёр"
+msgstr "Green Carpet"
+
+msgid "Цепкие заросли"
+msgstr "Clinging Thicket"
+
+msgid "Гнилая вода"
+msgstr "Rotten Water"
+
+msgid "Тихая трясина"
+msgstr "Silent Swamp"
+
+msgid "Пиявочный рой"
+msgstr "Leech Swarm"
+
+msgid "Стена дождя"
+msgstr "Wall of Rain"
+
+msgid "Вихрь"
+msgstr "Whirlwind"
+
+msgid "Громовой раскат"
+msgstr "Thunderclap"
+
+msgid "Затишье"
+msgstr "The Lull"
+
+msgid "Последняя волна"
+msgstr "The Last Wave"
+
+msgid "Туман: видно недалеко"
+msgstr "Fog: you can't see far"
+
+msgid "Шторм: луч крутится вдвое быстрее"
+msgstr "Storm: the beam spins twice as fast"
+
+msgid "Рой: врагов гораздо больше, но они слабее"
+msgstr "Swarm: far more enemies, but weaker"
+
+msgid "Тёмные воды: луч вдвое уже"
+msgstr "Dark Waters: the beam is half as wide"
+
+msgid "Победить %d врагов"
+msgstr "Defeat %d enemies"
+
+msgid "Победить %d врагов в луче маяка"
+msgstr "Defeat %d enemies in the beam"
+
+msgid "Собрать %d ракушек"
+msgstr "Collect %d shells"
+
+msgid "Крепкое здоровье"
+msgstr "Strong Health"
+
+msgid "+1 жизнь на старте"
+msgstr "+1 heart at the start"
+
+msgid "Закалённые гарпуны"
+msgstr "Tempered Harpoons"
+
+msgid "+1 к урону оружия"
+msgstr "+1 weapon damage"
+
+msgid "Острые гарпуны"
+msgstr "Sharp Harpoons"
+
+msgid "+8% шанс двойного урона"
+msgstr "+8% chance of double damage"
+
+msgid "Удобные сапоги"
+msgstr "Comfy Boots"
+
+msgid "+5% к скорости"
+msgstr "+5% speed"
+
+msgid "Опытный"
+msgstr "Veteran"
+
+msgid "+1 случайное улучшение на старте"
+msgstr "+1 random upgrade at the start"
+
+msgid "Запасной пузырь"
+msgstr "Spare Bubble"
+
+msgid "Щит с самого начала ночи"
+msgstr "Shield from the very start of the night"
+
+msgid "Второе дыхание"
+msgstr "Second Wind"
+
+msgid "Сердце восстанавливается само"
+msgstr "Hearts regenerate on their own"
+
+msgid "Морской магнит"
+msgstr "Sea Magnet"
+
+msgid "+15% к радиусу сбора"
+msgstr "+15% pickup radius"
+
+msgid "Удачливый ныряльщик"
+msgstr "Lucky Diver"
+
+msgid "+10% ракушек за ночь"
+msgstr "+10% shells per night"
+
+msgid "Горсть ракушек"
+msgstr "Handful of Shells"
+
+msgid "Сундучок ракушек"
+msgstr "Chest of Shells"
+
+msgid "Клад ракушек"
+msgstr "Shell Treasure"
+
+msgid "Без рекламы"
+msgstr "No Ads"
+
+msgid "Тестовая покупка"
+msgstr "Test Purchase"
+
+msgid "%s за %s.\nЭто проверка: деньги не спишутся, товар выдастся сразу."
+msgstr "%s for %s.\nThis is a test: no money will be charged, the item is granted right away."
+
+msgid "Купить"
+msgstr "Buy"
+
+msgid "Отмена"
+msgstr "Cancel"
+
+msgid "Удвоить ракушки: +%d"
+msgstr "Double shells: +%d"
+
+msgid "▶  Удвоить ракушки за рекламу: +%d"
+msgstr "▶  Double shells for an ad: +%d"
+
+msgid "Ракушек за ночь: %d × 2 = %d (всего %d)"
+msgstr "Shells this night: %d × 2 = %d (total %d)"
+
+msgid "Рассвет! Маяк устоял"
+msgstr "Dawn! The lighthouse stands"
+
+msgid "Маяк погас"
+msgstr "The light went out"
+
+msgid "Вахта сдана! Вы готовы"
+msgstr "Watch complete! You're ready"
+
+msgid "Маяк погас. Бывает!"
+msgstr "The light went out. It happens!"
+
+msgid "Обучение · %s"
+msgstr "Tutorial · %s"
+
+msgid "Пережить ночь"
+msgstr "Survive the night"
+
+msgid "Потерять не больше %d сердец (потеряно %d)"
+msgstr "Lose no more than %d hearts (lost %d)"
+
+msgid "Продержались %d:%02d · уровень %d"
+msgstr "Survived %d:%02d · level %d"
+
+msgid "\nиз них %d — за новые звёзды"
+msgstr "\n%d of them for new stars"
+
+msgid "\nиз них %d — подарок старого смотрителя"
+msgstr "\n%d of them a gift from the old keeper"
+
+msgid "Ракушек за ночь: %d (всего %d)%s"
+msgstr "Shells this night: %d (total %d)%s"
+
+msgid "Новый рекорд!"
+msgstr "New record!"
+
+msgid "Продержались %d:%02d (рекорд %d:%02d)"
+msgstr "Survived %d:%02d (record %d:%02d)"
+
+msgid "Побеждено врагов: %d (рекорд %d)"
+msgstr "Enemies defeated: %d (record %d)"
+
+msgid "Уровень %d"
+msgstr "Level %d"
+
+msgid "Ракушек за ночь: %d (всего %d)"
+msgstr "Shells this night: %d (total %d)"
+
+msgid "ТЕСТОВАЯ РЕКЛАМА"
+msgstr "TEST AD"
+
+msgid "Здесь будет ролик"
+msgstr "A video will play here"
+
+msgid "Награда через %d с"
+msgstr "Reward in %d s"
+
+msgid "Награда получена! Можно закрыть"
+msgstr "Reward earned! You can close it"
+
+msgid "Рассвет близко"
+msgstr "Dawn is near"
+
+msgid "Ур. %d"
+msgstr "Lv. %d"
+
+msgid "Дожить до рассвета"
+msgstr "Survive until dawn"
+
+msgid "Потерять не больше %d сердец: %d/%d"
+msgstr "Lose no more than %d hearts: %d/%d"
+
+msgid "Задание: "
+msgstr "Task: "
+
+msgid "Врагов: %d   %s"
+msgstr "Enemies: %d   %s"
+
+msgid "Больше — меньше вести пальцем до полной скорости"
+msgstr "Higher means less finger travel to reach full speed"
+
+msgid "Звуки"
+msgstr "Sounds"
+
+msgid "Музыка"
+msgstr "Music"
+
+msgid "Вибрация"
+msgstr "Vibration"
+
+msgid "Русский"
+msgstr "Русский"
+
+msgid "Язык"
+msgstr "Language"
+
+msgid "Авто"
+msgstr "Auto"
+
+msgid "вкл"
+msgstr "on"
+
+msgid "выкл"
+msgstr "off"
+
+msgid "Чувствительность: %.1f×"
+msgstr "Sensitivity: %.1f×"
+
+msgid "Тестовый режим"
+msgstr "Test Mode"
+
+msgid "Включён. Все ночи и герои открыты, а в мастерской у каждого бонуса кнопки «−» и «+»."
+msgstr "On. All nights and heroes are unlocked, and every workshop bonus has «−» and «+» buttons."
+
+msgid "+1000 ракушек"
+msgstr "+1000 shells"
+
+msgid "Интро и обучение заново"
+msgstr "Replay intro and tutorial"
+
+msgid "Посмотреть аутро"
+msgstr "Watch the outro"
+
+msgid "Сбросить покупки и сундук"
+msgstr "Reset purchases and chest"
+
+msgid "Выключить и вернуть бонусы"
+msgstr "Turn off and restore bonuses"
+
+msgid "Введите код"
+msgstr "Enter code"
+
+msgid "Открыть"
+msgstr "Open"
+
+msgid "Закрыть"
+msgstr "Close"
+
+msgid "Неверный код"
+msgstr "Wrong code"
+
+msgid "Ракушек: %d"
+msgstr "Shells: %d"
+
+msgid "Интро покажется при следующем запуске игры, обучение — по кнопке «Играть»."
+msgstr "The intro will play on the next launch, the tutorial on «Play»."
+
+msgid "Покупки забыты, сундук дня снова доступен."
+msgstr "Purchases forgotten, the daily chest is available again."
+
+msgid "Добро пожаловать на маяк, юнга! Я сорок лет зажигаю этот огонь. Сегодня покажу, как дожить до рассвета."
+msgstr "Welcome to the lighthouse, sailor! I've kept this light burning for forty years. Today I'll show you how to survive until dawn."
+
+msgid "Движение"
+msgstr "Movement"
+
+msgid "Коснитесь нижней части экрана и ведите пальцем — герой пойдёт следом. Отпустите палец, и он остановится."
+msgstr "Touch the lower part of the screen and drag your finger — the hero will follow. Lift your finger and he stops."
+
+msgid "Улучшения"
+msgstr "Upgrades"
+
+msgid "Выберите одно из трёх. Оно останется с вами до конца ночи, а взятое повторно станет сильнее."
+msgstr "Pick one of three. It stays with you until the end of the night, and picking it again makes it stronger."
+
+msgid "Сердца"
+msgstr "Hearts"
+
+msgid "Каждое касание врага стоит одного сердца. Кончатся сердца — ночь проиграна. На первую вахту я выдал вам запас."
+msgstr "Every touch from an enemy costs one heart. Run out of hearts and the night is lost. I gave you extra for your first watch."
+
+msgid "Это время до рассвета. Доживёте — ночь ваша."
+msgstr "This is the time left until dawn. Make it through and the night is yours."
+
+msgid "Звёзды"
+msgstr "Stars"
+
+msgid "За ночь дают до трёх звёзд: дожить до рассвета, сберечь сердца и выполнить задание. Звёзды приносят ракушки."
+msgstr "Each night gives up to three stars: survive until dawn, save your hearts and complete the task. Stars bring shells."
+
+msgid "Ещё немного, юнга! Продержитесь до первых лучей."
+msgstr "Just a little longer, sailor! Hold on until first light."
+
+msgid "Гости из глубины"
+msgstr "Guests from the Deep"
+
+msgid "Морские твари ползут на свет маяка. Стрелять не нужно: герой сам бьёт ближайшего. Ваше дело — не дать себя окружить."
+msgstr "Sea creatures crawl toward the lighthouse's light. No need to shoot: the hero hits the nearest one by himself. Your job is not to get surrounded."
+
+msgid "Ракушки"
+msgstr "Shells"
+
+msgid "А вот и ракушка! Подберите её — это здешние деньги."
+msgstr "And here's a shell! Pick it up — it's the money around here."
+
+msgid "Счёт ракушек — здесь. После ночи загляните в мастерскую: за ракушки там продают вечные бонусы и новых героев."
+msgstr "Your shell count is here. After the night, visit the workshop: shells buy permanent bonuses and new heroes."
+
+msgid "Искры опыта"
+msgstr "Sparks of Experience"
+
+msgid "Из побеждённых тварей выпадают искры. Подойдите ближе — они притянутся сами."
+msgstr "Defeated creatures drop sparks. Come closer — they'll fly to you on their own."
+
+msgid "Искры заполняют эту полосу. Когда она заполнится, вы выберете улучшение."
+msgstr "Sparks fill this bar. When it's full, you'll pick an upgrade."
+
+msgid "Луч маяка"
+msgstr "Lighthouse Beam"
+
+msgid "Свет маяка — ваш союзник. Враги в луче замедляются и получают двойной урон. Заманивайте их под луч!"
+msgstr "The lighthouse light is your ally. Enemies in the beam slow down and take double damage. Lure them into the beam!"
+
+msgid "Пройдитесь по причалу"
+msgstr "Walk along the pier"
+
+msgid "Отлично! Теперь — в бой"
+msgstr "Great! Now — into battle"
+
+msgid "СТАРЫЙ СМОТРИТЕЛЬ"
+msgstr "THE OLD KEEPER"
+
+msgid "Нажмите, чтобы продолжить  ›"
+msgstr "Tap to continue  ›"
+
+msgid "Пропустить обучение"
+msgstr "Skip tutorial"
+
+msgid "НОВОЕ"
+msgstr "NEW"
+
+msgid "УР. %d"
+msgstr "LV. %d"
+
+msgid "Гарпуны"
+msgstr "Harpoons"
+
+msgid "Цепная молния"
+msgstr "Chain Lightning"
+
+msgid "Огненный круг"
+msgstr "Ring of Fire"
+
+msgid "Летучие мыши"
+msgstr "Bats"
+
+msgid "Песня-волна"
+msgstr "Song Wave"
+
+msgid "Мастерская"
+msgstr "Workshop"
+
+msgid "Бонусы"
+msgstr "Bonuses"
+
+msgid "Герои"
+msgstr "Heroes"
+
+msgid "Магазин"
+msgstr "Shop"
+
+msgid "Макс."
+msgstr "Max"
+
+msgid "Выбран"
+msgstr "Selected"
+
+msgid "Выбрать"
+msgstr "Select"
+
+msgid "или купить за %s"
+msgstr "or buy for %s"
+
+msgid "Сердец: %d"
+msgstr "Hearts: %d"
+
+msgid "Сердец: %d → %d"
+msgstr "Hearts: %d → %d"
+
+msgid "Урон: +%d"
+msgstr "Damage: +%d"
+
+msgid "Урон: +%d → +%d"
+msgstr "Damage: +%d → +%d"
+
+msgid "Двойной урон: %s"
+msgstr "Double damage: %s"
+
+msgid "Двойной урон: %s → %s"
+msgstr "Double damage: %s → %s"
+
+msgid "Скорость: %s"
+msgstr "Speed: %s"
+
+msgid "Скорость: %s → %s"
+msgstr "Speed: %s → %s"
+
+msgid "Улучшений сразу: %d"
+msgstr "Upgrades at start: %d"
+
+msgid "Улучшений сразу: %d → %d"
+msgstr "Upgrades at start: %d → %d"
+
+msgid "Щит уже на старте"
+msgstr "Shield ready at start"
+
+msgid "Щит с первой секунды"
+msgstr "Shield from the first second"
+
+msgid "Сердце раз в %d с"
+msgstr "A heart every %d s"
+
+msgid "Сердце раз в %d → %d с"
+msgstr "A heart every %d → %d s"
+
+msgid "Радиус сбора: %s"
+msgstr "Pickup radius: %s"
+
+msgid "Радиус сбора: %s → %s"
+msgstr "Pickup radius: %s → %s"
+
+msgid "Ракушек: %s"
+msgstr "Shells: %s"
+
+msgid "Ракушек: %s → %s"
+msgstr "Shells: %s → %s"
+
+msgid "Завтра будет новый"
+msgstr "A new one tomorrow"
+
+msgid "▶  Открыть за рекламу"
+msgstr "▶  Open for an ad"
+
+msgid "Сундук дня"
+msgstr "Daily Chest"
+
+msgid "Каждый день бесплатно: от %d до %d ракушек."
+msgstr "Free every day: %d to %d shells."
+
+msgid "+%d ракушек"
+msgstr "+%d shells"
+
+msgid "Все награды сразу, без роликов: удвоение ракушек, второй шанс и сундук дня."
+msgstr "All rewards instantly, no videos: double shells, second chance and the daily chest."
+
+msgid "Куплено"
+msgstr "Purchased"
+
+msgid "Покупки и реклама пока тестовые: деньги не списываются, вместо ролика заставка."
+msgstr "Purchases and ads are in test mode: no money is charged, a placeholder plays instead of a video."
+
+msgid "Внутри %d ракушек! Новый сундук будет завтра."
+msgstr "%d shells inside! A new chest arrives tomorrow."
+
+msgid "Забрать"
+msgstr "Collect"
+
+msgid "Каждый гарпун бьёт сильнее"
+msgstr "Every harpoon hits harder"
+
+msgid "Быстрая перезарядка"
+msgstr "Quick Reload"
+
+msgid "Смотритель стреляет чаще"
+msgstr "The keeper shoots more often"
+
+msgid "Веер"
+msgstr "Fan Shot"
+
+msgid "Несколько гарпунов за выстрел, веером"
+msgstr "Several harpoons per shot, in a fan"
+
+msgid "Пробивание"
+msgstr "Piercing"
+
+msgid "Гарпун летит сквозь врагов дальше"
+msgstr "Harpoons fly through more enemies"
+
+msgid "Щит"
+msgstr "Shield"
+
+msgid "Пузырь гасит один удар и восстанавливается"
+msgstr "A bubble blocks one hit and recharges"
+
+msgid "Лёгкие сапоги"
+msgstr "Light Boots"
+
+msgid "Бегаете быстрее"
+msgstr "You run faster"
+
+msgid "Крепкий смотритель"
+msgstr "Sturdy Keeper"
+
+msgid "Лишнее сердце, и одно сразу лечит"
+msgstr "An extra heart, and one heals right away"
+
+msgid "Магнит"
+msgstr "Magnet"
+
+msgid "Опыт и ракушки летят к вам издалека"
+msgstr "XP and shells fly to you from afar"
+
+msgid "Линза Френеля"
+msgstr "Fresnel Lens"
+
+msgid "Луч маяка шире. В луче враги медленнее и получают ×2 урона"
+msgstr "Wider lighthouse beam. Enemies in the beam are slower and take ×2 damage"
+
+msgid "Сильный разряд"
+msgstr "Strong Charge"
+
+msgid "Каждая молния бьёт сильнее"
+msgstr "Every bolt hits harder"
+
+msgid "Быстрый заряд"
+msgstr "Quick Charge"
+
+msgid "Молния бьёт чаще"
+msgstr "Lightning strikes more often"
+
+msgid "Молния перескакивает на большее число врагов"
+msgstr "Lightning jumps to more enemies"
+
+msgid "Острые клыки"
+msgstr "Sharp Fangs"
+
+msgid "Каждый укус сильнее"
+msgstr "Every bite hurts more"
+
+msgid "Голодная стая"
+msgstr "Hungry Swarm"
+
+msgid "Мыши меньше отдыхают между укусами"
+msgstr "Bats rest less between bites"
+
+msgid "Большая стая"
+msgstr "Big Swarm"
+
+msgid "Ещё одна летучая мышь в стае"
+msgstr "One more bat in the swarm"
+
+msgid "Высокая нота"
+msgstr "High Note"
+
+msgid "Песня ранит сильнее"
+msgstr "The song hurts more"
+
+msgid "Быстрый напев"
+msgstr "Quick Tune"
+
+msgid "Сирена поёт чаще"
+msgstr "The siren sings more often"
+
+msgid "Громкий голос"
+msgstr "Loud Voice"
+
+msgid "Волна расходится дальше"
+msgstr "The wave spreads farther"
+
+msgid "Жаркое пламя"
+msgstr "Hot Flame"
+
+msgid "Огонь жжёт сильнее"
+msgstr "The fire burns hotter"
+
+msgid "Частое пламя"
+msgstr "Rapid Flame"
+
+msgid "Огонь вспыхивает чаще"
+msgstr "The fire flares more often"
+
+msgid "Большой фонарь"
+msgstr "Big Lantern"
+
+msgid "Огненный круг шире"
+msgstr "Wider ring of fire"
+
+msgid "Урон: %d → %d"
+msgstr "Damage: %d → %d"
+
+msgid "Отдых мыши после укуса: %.1f с → %.1f с"
+msgstr "Bat rest after a bite: %.1f s → %.1f s"
+
+msgid "Пауза между волнами: %.1f с → %.1f с"
+msgstr "Pause between waves: %.1f s → %.1f s"
+
+msgid "Вспышек"
+msgstr "Flares"
+
+msgid "Молний"
+msgstr "Bolts"
+
+msgid "Выстрелов"
+msgstr "Shots"
+
+msgid "%s в секунду: %.1f → %.1f"
+msgstr "%s per second: %.1f → %.1f"
+
+msgid "Перескоков молнии: %d → %d"
+msgstr "Lightning jumps: %d → %d"
+
+msgid "Мышей в стае: %d → %d"
+msgstr "Bats in swarm: %d → %d"
+
+msgid "Дальность песни: %d%% → %d%%"
+msgstr "Song range: %d%% → %d%%"
+
+msgid "Радиус огня: %d%% → %d%%"
+msgstr "Fire radius: %d%% → %d%%"
+
+msgid "Гарпунов за выстрел: %d → %d"
+msgstr "Harpoons per shot: %d → %d"
+
+msgid "Пробивает врагов: %d → %d"
+msgstr "Pierces enemies: %d → %d"
+
+msgid "Восстановление щита: %d с"
+msgstr "Shield recharge: %d s"
+
+msgid "Восстановление щита: %d с → %d с"
+msgstr "Shield recharge: %d s → %d s"
+
+msgid "Скорость: %d%% → %d%%"
+msgstr "Speed: %d%% → %d%%"
+
+msgid "Радиус сбора: %d%% → %d%%"
+msgstr "Pickup radius: %d%% → %d%%"
+
+msgid "Ширина луча: %d° → %d°"
+msgstr "Beam width: %d° → %d°"
+
+msgid "Последний\nмаяк"
+msgstr "The Last\nLighthouse"
+
+msgid "Продержитесь до рассвета"
+msgstr "Hold on until dawn"
+
+msgid "Ракушки: 0"
+msgstr "Shells: 0"
+
+msgid "Играть"
+msgstr "Play"
+
+msgid "Настройки"
+msgstr "Settings"
+
+msgid "Выйти"
+msgstr "Quit"
+
+msgid "Продержались 0:00"
+msgstr "Survived 0:00"
+
+msgid "Ракушек за ночь: 0"
+msgstr "Shells this night: 0"
+
+msgid "Следующая ночь"
+msgstr "Next night"
+
+msgid "Ещё раз"
+msgstr "Again"
+
+msgid "Карта маяков"
+msgstr "Lighthouse map"
+
+msgid "Ур. 1"
+msgstr "Lv. 1"
+
+msgid "Пауза"
+msgstr "Pause"
+
+msgid "Улучшения этой ночи"
+msgstr "This night's upgrades"
+
+msgid "Продолжить"
+msgstr "Continue"
+
+msgid "Начать заново"
+msgstr "Restart"
+
+msgid "В главное меню"
+msgstr "Main menu"
+
+msgid "Новый уровень!\nВыберите улучшение"
+msgstr "Level up!\nPick an upgrade"

@@ -28,14 +28,14 @@ func _ready() -> void:
 	box.add_theme_constant_override("separation", 18)
 	center.add_child(box)
 	var tag := Label.new()
-	tag.text = "ТЕСТОВАЯ РЕКЛАМА"
+	tag.text = tr("ТЕСТОВАЯ РЕКЛАМА")
 	tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	tag.add_theme_font_size_override("font_size", 26)
 	tag.add_theme_color_override("font_color", Color(1, 1, 1, 0.5))
 	box.add_child(tag)
 	var t := Label.new()
 	t.theme_type_variation = &"TitleLabel"
-	t.text = "Здесь будет ролик"
+	t.text = tr("Здесь будет ролик")
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	t.add_theme_font_size_override("font_size", 44)
 	box.add_child(t)
@@ -60,7 +60,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_left = maxf(_left - delta, 0.0)
-	_count.text = "Награда через %d с" % ceili(_left) if _left > 0.0 else "Награда получена! Можно закрыть"
+	_count.text = tr("Награда через %d с") % ceili(_left) if _left > 0.0 else tr("Награда получена! Можно закрыть")
 	_close.modulate.a = 1.0 if _left <= 0.0 else 0.4
 
 
