@@ -111,7 +111,7 @@ func _reset_tutorial() -> void:
 	SaveData.set_tutorial_done(false)
 	Settings.reset_intro()
 	Sound.play("shell")
-	_hint.text = "Интро и обучение начнутся по кнопке «Играть»."
+	_hint.text = "Интро покажется при следующем запуске игры, обучение — по кнопке «Играть»."
 
 
 func _play_outro() -> void:

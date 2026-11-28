@@ -220,8 +220,13 @@ func _price(button: Button, cost: int) -> void:
 	row.add_child(_picture(SHELL, 36))
 	var num := Label.new()
 	num.text = str(cost)
-	num.add_theme_font_override("font", button.get_theme_font("font", "PrimaryButton"))
-	num.add_theme_font_size_override("font_size", button.get_theme_font_size("font_size", "PrimaryButton"))
+	# Обычный шрифт без обводки и с разрядкой: тёмные цифры на жёлтой кнопке не слипаются.
+	var font := FontVariation.new()
+	font.base_font = ThemeDB.get_project_theme().default_font
+	font.spacing_glyph = 2
+	num.add_theme_font_override("font", font)
+	num.add_theme_font_size_override("font_size", 34)
+	num.add_theme_constant_override("outline_size", 0)
 	num.add_theme_color_override("font_color", button.get_theme_color("font_color", "PrimaryButton"))
 	row.add_child(num)
 

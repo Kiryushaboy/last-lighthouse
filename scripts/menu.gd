@@ -43,10 +43,6 @@ func _ready() -> void:
 
 
 func _on_play() -> void:
-	# Самое первое «Играть»: сначала интро-ролик, после него интро само откроет обучение или карту.
-	if not Settings.intro_seen:
-		get_tree().change_scene_to_file("res://scenes/intro.tscn")
-		return
 	# Первый запуск: вместо карты — короткая учебная ночь.
 	if not SaveData.tutorial_done:
 		SaveData.current_night = Nights.TUTORIAL

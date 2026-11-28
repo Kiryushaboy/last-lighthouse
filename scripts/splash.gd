@@ -3,6 +3,7 @@ extends Control
 ## на лету двигаются только два луча и название — поэтому заставка чёткая и не тормозит.
 
 const NEXT_SCENE := "res://scenes/menu.tscn"
+const INTRO_SCENE := "res://scenes/intro.tscn"
 const BG := preload("res://art/splash/bg.png")
 const BEAM := preload("res://art/splash/beam.png")
 const TITLE := preload("res://art/splash/title.png")
@@ -21,6 +22,11 @@ var _leaving := false
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color.BLACK)
+	# Самый первый запуск: вместо заставки — интро-ролик, после него меню.
+	if not Settings.intro_seen:
+		set_process(false)
+		get_tree().change_scene_to_file.call_deferred(INTRO_SCENE)
+		return
 	_bg = _picture(BG)
 	_bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	var add := CanvasItemMaterial.new()
