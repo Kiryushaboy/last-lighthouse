@@ -1,7 +1,8 @@
 class_name Workshop
 extends CanvasLayer
-## Мастерская: две вкладки. «Бонусы» — вечные улучшения за ракушки (плитки из SaveData.PERKS),
-## «Герои» — выбор и покупка героя (Heroes.LIST). Всё собирается кодом.
+## Мастерская: три вкладки. «Бонусы» — вечные улучшения за ракушки (плитки из SaveData.PERKS),
+## «Герои» — выбор и покупка героя (Heroes.LIST), «Магазин» — сундук дня, ракушки, «Без рекламы».
+## Всё собирается кодом.
 
 signal closed
 
@@ -73,7 +74,7 @@ func _build() -> void:
 	var tabs := HBoxContainer.new()
 	tabs.add_theme_constant_override("separation", 12)
 	box.add_child(tabs)
-	for t in [["perks", "Бонусы"], ["heroes", "Герои"]]:
+	for t in [["perks", "Бонусы"], ["heroes", "Герои"], ["shop", "Магазин"]]:
 		var b := Button.new()
 		b.text = t[1]
 		b.focus_mode = Control.FOCUS_NONE
@@ -120,12 +121,14 @@ func _rebuild() -> void:
 		for p in SaveData.PERKS:
 			grid.add_child(_make_perk(p))
 		_content = grid
-	else:
+	elif _tab == "heroes":
 		var list := VBoxContainer.new()
 		list.add_theme_constant_override("separation", 16)
 		for h in Heroes.LIST:
 			list.add_child(_make_hero(h))
 		_content = list
+	else:
+		_content = _make_shop()
 	_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_scroll.add_child(_content)
 	UiFx.touch_scroll(_scroll)
@@ -215,7 +218,7 @@ func _price(button: Button, cost: int) -> void:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 8)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.modulate.a = 0.5 if button.disabled else 1.0
+	row.modulate.a = 0.6 if button.disabled else 1.0
 	button.add_child(row)
 	row.add_child(_picture(SHELL, 36))
 	var num := Label.new()
@@ -227,7 +230,8 @@ func _price(button: Button, cost: int) -> void:
 	num.add_theme_font_override("font", font)
 	num.add_theme_font_size_override("font_size", 34)
 	num.add_theme_constant_override("outline_size", 0)
-	num.add_theme_color_override("font_color", button.get_theme_color("font_color", "PrimaryButton"))
+	# На неактивной (тёмной) кнопке тёмные цифры не видны — делаем их светлыми.
+	num.add_theme_color_override("font_color", Color(1, 1, 1, 0.8) if button.disabled else button.get_theme_color("font_color", "PrimaryButton"))
 	row.add_child(num)
 
 
@@ -286,6 +290,15 @@ func _make_hero(h: Dictionary) -> Control:
 		_price(btn, h.cost)
 	btn.pressed.connect(_choose.bind(h.id))
 	text.add_child(btn)
+	# Ведьму и Сирену можно купить и за деньги, не копя ракушки.
+	var product := "hero_" + str(h.id)
+	if not owned and Shop.PRODUCTS.has(product):
+		var money := Button.new()
+		money.focus_mode = Control.FOCUS_NONE
+		money.custom_minimum_size = Vector2(0, 68)
+		money.text = "или купить за %s" % Shop.price_of(product)
+		money.pressed.connect(_buy_product.bind(product))
+		text.add_child(money)
 	return card
 
 
@@ -371,6 +384,106 @@ func _choose(id: String) -> void:
 	Sound.play("levelup" if bought else "shell", -4.0)
 	var index := Heroes.LIST.map(func(h): return h.id).find(id)
 	_rebuild_keep_scroll(index)
+
+
+# --- Магазин -------------------------------------------------------------
+
+func _make_shop() -> Control:
+	var list := VBoxContainer.new()
+	list.add_theme_constant_override("separation", 16)
+
+	# Сундук дня: раз в сутки ракушки за ролик.
+	var ready := Shop.chest_ready()
+	var chest_btn := "Завтра будет новый"
+	if ready:
+		chest_btn = "Открыть" if SaveData.no_ads else "▶  Открыть за рекламу"
+	list.add_child(_offer(UpgradeIcon.texture_of("start"), Color(1.0, 0.75, 0.35), "Сундук дня",
+			"Каждый день бесплатно: от %d до %d ракушек." % [Shop.chest_amount(), Shop.chest_amount() * 2],
+			chest_btn, ready, not ready, _open_chest))
+
+	for id in ["shells_small", "shells_medium", "shells_large"]:
+		var p: Dictionary = Shop.PRODUCTS[id]
+		list.add_child(_offer(SHELL, Color(1.0, 0.55, 0.7), p.title, "+%d ракушек" % p.shells,
+				Shop.price_of(id), true, false, _buy_product.bind(id)))
+
+	var no_ads := SaveData.no_ads
+	list.add_child(_offer(UpgradeIcon.texture_of("shield"), Color(0.4, 0.85, 1.0), "Без рекламы",
+			"Все награды сразу, без роликов: удвоение ракушек, второй шанс и сундук дня.",
+			"Куплено" if no_ads else Shop.price_of("no_ads"), not no_ads, no_ads, _buy_product.bind("no_ads")))
+
+	if not Shop.is_live():
+		var note := _label("Покупки и реклама пока тестовые: деньги не списываются, вместо ролика заставка.", 20, Color(1, 1, 1, 0.5))
+		list.add_child(note)
+	return list
+
+
+## Плитка магазина: значок слева, название, описание и кнопка.
+func _offer(icon: Texture2D, col: Color, title: String, desc: String, btn_text: String,
+		primary: bool, disabled: bool, action: Callable) -> Control:
+	var card := _tile(col)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 16)
+	card.add_child(row)
+	var holder := Control.new()
+	holder.custom_minimum_size = Vector2(120, 120)
+	holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(holder)
+	var glow := _picture(GLOW, 0)
+	glow.set_anchors_preset(Control.PRESET_FULL_RECT)
+	glow.modulate = Color(col, 0.4)
+	holder.add_child(glow)
+	var pic := _picture(icon, 0)
+	pic.set_anchors_preset(Control.PRESET_FULL_RECT)
+	pic.offset_left = 14
+	pic.offset_top = 14
+	pic.offset_right = -14
+	pic.offset_bottom = -14
+	holder.add_child(pic)
+	var text := VBoxContainer.new()
+	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	text.alignment = BoxContainer.ALIGNMENT_CENTER
+	text.add_theme_constant_override("separation", 6)
+	row.add_child(text)
+	var t := _label(title, 30, col.lightened(0.4))
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	t.theme_type_variation = &"TitleLabel"
+	text.add_child(t)
+	var d := _label(desc, 21, Color(1, 1, 1, 0.75))
+	d.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	text.add_child(d)
+	var b := Button.new()
+	b.text = btn_text
+	b.focus_mode = Control.FOCUS_NONE
+	b.custom_minimum_size = Vector2(0, 72)
+	b.disabled = disabled
+	if primary:
+		b.theme_type_variation = &"PrimaryButton"
+	b.pressed.connect(func() -> void:
+		if UiFx.tap_ok(_scroll):
+			action.call())
+	text.add_child(b)
+	return card
+
+
+func _buy_product(id: String) -> void:
+	Shop.buy(id, func(ok: bool) -> void:
+		if ok:
+			Settings.vibrate(50, 0.6)
+			Sound.play("levelup", -4.0)
+			_rebuild_keep_scroll(-1))
+
+
+func _open_chest() -> void:
+	Shop.open_chest(func(amount: int) -> void:
+		if amount <= 0:
+			return
+		Sound.play("levelup", -4.0)
+		_rebuild_keep_scroll(-1)
+		var dlg := UiDialog.new()
+		add_child(dlg)
+		dlg.setup("Сундук дня", "Внутри %d ракушек! Новый сундук будет завтра." % amount)
+		dlg.add_choice("Забрать", true, func() -> void: pass)
+		dlg.open())
 
 
 ## Пересобрать вкладку, не сбивая прокрутку, и подсветить изменившуюся плитку.

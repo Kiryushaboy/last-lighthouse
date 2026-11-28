@@ -65,6 +65,8 @@ func _on_test_closed() -> void:
 
 func _show_menu() -> void:
 	_shells.text = "Ракушки: %d" % SaveData.shells
+	if Shop.chest_ready() and SaveData.tutorial_done:
+		_shells.text += "  ·  сундук дня ждёт в магазине"
 	_ui.show()
 
 

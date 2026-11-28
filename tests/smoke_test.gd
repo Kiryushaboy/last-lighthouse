@@ -74,6 +74,11 @@ func _process(_delta: float) -> bool:
 	if main._tut and main._tut.busy() and frames % 30 == 0:
 		main._tut.advance()
 
+	# «Второй шанс» бот не берёт: проверяем честный результат.
+	if main._reviving:
+		main._reviving = false
+		main._finish(false)
+
 	var menu: CanvasLayer = main.upgrade_menu
 	if menu.visible:
 		var buttons := menu.get_node("Box/Choices").get_children().filter(
