@@ -90,6 +90,11 @@ func _start_track() -> void:
 	create_tween().set_ignore_time_scale().tween_property(_music, "volume_db", MUSIC_DB[_music_name], 1.0)
 
 
+## Пауза музыки на время ролика (аутро), потом продолжается с того же места.
+func set_music_paused(paused: bool) -> void:
+	_music.stream_paused = paused
+
+
 func _apply_settings() -> void:
 	if Settings.music_on and not _music.playing and _music.stream:
 		_music.volume_db = MUSIC_DB.get(_music_name, -10.0)

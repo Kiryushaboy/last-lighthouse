@@ -37,3 +37,6 @@
 - `audio/music/chapter8.ogg` — Heavy Boss Battle 2, MintoDog. https://opengameart.org/content/heavy-boss-battle-2
 - `audio/music/chapter9.ogg` — Haunted Beach, SterlingRay. https://opengameart.org/content/haunted-beach
 - `audio/music/chapter10.ogg` — The Final Battle, skrjablin. https://opengameart.org/content/the-final-battle
+
+## Интро и аутро
+`video/intro.ogv`, `video/outro.ogv`: анимация нарисована кодом из спрайтов и шрифтов игры. Музыка и звуки из этого же репозитория (CC0), плюс несколько синтезированных эффектов (гром, рык, удары). Женский голос — синтез речи Microsoft Edge, голос Svetlana (ru-RU-SvetlanaNeural).
